@@ -38,6 +38,8 @@ import CostControl from './pages/CostControl';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Refund from './pages/Refund';
+import Documentation from './pages/Documentation';
+import Pricing from './pages/Pricing';
 
 // Initialize analytics on app load
 initAnalytics();
@@ -121,6 +123,8 @@ function App() {
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/refund" element={<Refund />} />
+                <Route path="/docs" element={<Documentation />} />
+                <Route path="/pricing" element={<Pricing />} />
 
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />

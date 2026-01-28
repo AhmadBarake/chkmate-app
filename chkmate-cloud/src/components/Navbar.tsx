@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-black/90 backdrop-blur-md border-b border-white/10' : 'bg-transparent'}`}>
+    <nav className="fixed top-0 left-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
@@ -52,13 +52,14 @@ const Navbar: React.FC = () => {
                   {link.name}
                 </a>
               ))}
-              <a 
-                href="#contact" 
-                onClick={(e) => handleLinkClick(e, '#contact')}
-                className="ml-4 px-5 py-2 border border-white text-white text-sm font-medium rounded-none hover:bg-white hover:text-black transition-all duration-300 cursor-pointer"
-              >
-                Get Started
+              <a href="/login" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer">
+                Sign In
               </a>
+              <span 
+                className="ml-4 px-5 py-2 border border-white/20 text-white/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none"
+              >
+                v1.40 (Closed Beta)
+              </span>
             </div>
           </div>
 
@@ -76,7 +77,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-black border-b border-gray-800">
+        <div className="md:hidden bg-slate-950 border-b border-slate-800">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {NAV_LINKS.map((link) => (
               <a
@@ -88,13 +89,12 @@ const Navbar: React.FC = () => {
                 {link.name}
               </a>
             ))}
-             <a 
-               href="#contact" 
-               onClick={(e) => handleLinkClick(e, '#contact')} 
-               className="block w-full text-center mt-4 px-5 py-3 border border-white text-white text-base font-medium hover:bg-white hover:text-black transition-all cursor-pointer"
-             >
-                Get Started
+             <a href="/login" className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer">
+                Sign In
               </a>
+             <div className="block w-full text-center mt-4 px-5 py-3 border border-white/20 text-white/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none">
+                v1.40 (Closed Beta)
+             </div>
           </div>
         </div>
       )}
