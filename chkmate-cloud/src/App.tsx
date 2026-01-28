@@ -35,6 +35,9 @@ import CaseStudyAEMENA from './pages/CaseStudyAEMENA';
 import Recommendations from './pages/Recommendations';
 import InfrastructureMap from './pages/InfrastructureMap';
 import CostControl from './pages/CostControl';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import Refund from './pages/Refund';
 
 // Initialize analytics on app load
 initAnalytics();
@@ -115,6 +118,9 @@ function App() {
                 <Route path="/case-studies/lumi" element={<CaseStudyLumi />} />
                 <Route path="/case-studies/afc" element={<CaseStudyAFC />} />
                 <Route path="/case-studies/ae-mena" element={<CaseStudyAEMENA />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/refund" element={<Refund />} />
 
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />

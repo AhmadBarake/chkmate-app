@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
 
 const Footer: React.FC = () => {
@@ -12,12 +13,19 @@ const Footer: React.FC = () => {
           <p className="text-gray-500 text-sm mt-2">© {new Date().getFullYear()} chkmate interactive. All rights reserved.</p>
         </div>
 
-        <div className="flex space-x-8">
-          {NAV_LINKS.map((link) => (
+        <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8 text-center md:text-left">
+          <div className="space-x-6">
+            {NAV_LINKS.map((link) => (
              <a key={link.name} href={link.href} className="text-gray-500 hover:text-white text-sm transition-colors">
                {link.name}
              </a>
-          ))}
+            ))}
+          </div>
+          <div className="space-x-6 border-t md:border-t-0 md:border-l border-gray-800 pt-4 md:pt-0 md:pl-8">
+            <Link to="/terms" className="text-gray-600 hover:text-gray-400 text-xs transition-colors">Terms</Link>
+            <Link to="/privacy" className="text-gray-600 hover:text-gray-400 text-xs transition-colors">Privacy</Link>
+            <Link to="/refund" className="text-gray-600 hover:text-gray-400 text-xs transition-colors">Refunds</Link>
+          </div>
         </div>
       </div>
     </footer>
