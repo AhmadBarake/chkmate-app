@@ -499,7 +499,18 @@ export async function scanAWSAccount(credentials: AWSCredentials): Promise<Cloud
   ]);
 
   // Calculate detailed cost breakdown
-  const costBreakdown = await costService.analyzeLiveResources(allResources, scannedRegion);
+  let costBreakdown;
+  try {
+    costBreakdown = await costService.analyzeLiveResources(allResources, scannedRegion);
+  } catch (error: any) {
+    console.warn(`[CloudScanner] Cost analysis failed: ${error.message}`);
+    // Provide a fallback empty breakdown
+    costBreakdown = {
+      totalMonthly: 0,
+      byService: {},
+      resources: [],
+    };
+  }
 
   console.log(`[CloudScanner] Scan complete for ${scannedRegion}:`);
   console.log(`  - S3 Buckets: ${s3.scannedCount} (global)`);

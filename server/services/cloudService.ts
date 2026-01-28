@@ -191,12 +191,15 @@ export async function syncConnection(connectionId: string, region?: string): Pro
 
     return connection;
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Sync failed:', error);
     await prisma.cloudConnection.update({
       where: { id: connectionId },
       data: { status: 'FAILED' }
     });
+    if (error.message.includes('No credentials') || error.message.includes('AccessDenied')) {
+        throw { statusCode: 403, message: 'Access Denied: Could not assume role. Check AWS configuration.' };
+    }
     throw error;
   }
 }
@@ -248,8 +251,18 @@ export async function scanSavedConnection(connectionId: string, region?: string)
   }
 
   // 1. Get Credentials with optional region override
-  const credentials = await assumeRole(connection.awsRoleArn, connection.awsExternalId, region);
+  try {
+    const credentials = await assumeRole(connection.awsRoleArn, connection.awsExternalId, region);
 
-  // 2. Run Scan
-  return scanAWSAccount(credentials);
+    // 2. Run Scan
+    return await scanAWSAccount(credentials);
+  } catch (error: any) {
+    console.error(`[ScanFailed] Connection ${connectionId}:`, error);
+    if (error.message && (error.message.includes('No credentials') || error.message.includes('AccessDenied'))) {
+      const customError: any = new Error('Access Denied: Could not assume role. Please verify your CloudFormation stack is deployed and the External ID matches.');
+      customError.statusCode = 403;
+      throw customError;
+    }
+    throw error;
+  }
 }

@@ -229,6 +229,40 @@ resource "aws_iam_role_policy_attachment" "execution_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# IAM Role for Task (Application-level permissions - cross-account access)
+resource "aws_iam_role" "task_role" {
+  name = "chkmate-ecs-task-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = { Service = "ecs-tasks.amazonaws.com" }
+    }]
+  })
+}
+
+# Policy to allow assuming cross-account roles
+resource "aws_iam_policy" "assume_role_policy" {
+  name = "chkmate-assume-role-policy"
+  description = "Allow chkmate backend to assume customer cross-account roles"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = "sts:AssumeRole"
+      Resource = "*"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "task_role_assume_policy" {
+  role       = aws_iam_role.task_role.name
+  policy_arn = aws_iam_policy.assume_role_policy.arn
+}
+
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
   name              = "/ecs/chkmate-backend"
   retention_in_days = 7
@@ -241,6 +275,7 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = aws_iam_role.execution_role.arn
+  task_role_arn            = aws_iam_role.task_role.arn
 
   container_definitions = jsonencode([{
     name  = "backend"

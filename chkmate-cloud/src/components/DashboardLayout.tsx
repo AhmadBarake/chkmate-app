@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useToastActions } from '../context/ToastContext';
-import { useClerk } from '@clerk/clerk-react';
+import { useClerk, useUser } from '@clerk/clerk-react';
 import { LayoutDashboard, Folder, FileText, FileCode, LogOut, Box, Cloud, Server, Sparkles, Map, DollarSign } from 'lucide-react';
 import clsx from 'clsx';
 import { CreditIndicator } from './CreditBalance';
@@ -20,9 +20,15 @@ const navItems = [
 
 export default function DashboardLayout() {
   const { signOut } = useClerk();
+  const { user } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToastActions();
+
+  // Get user display info
+  const userName = user?.fullName || user?.primaryEmailAddress?.emailAddress?.split('@')[0] || 'User';
+  const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  const userAvatar = user?.imageUrl;
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -42,8 +48,10 @@ export default function DashboardLayout() {
     }
   }, [location, toast, navigate]);
 
-  const handleLogout = () => {
-    signOut(() => navigate('/'));
+  const handleLogout = async () => {
+    await signOut();
+    // Navigate after sign out completes
+    window.location.href = '/';
   };
 
   return (
@@ -113,12 +121,20 @@ export default function DashboardLayout() {
             <div className="flex items-center gap-3 pl-2 group cursor-pointer">
               <div className="text-right flex flex-col items-end">
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Account</span>
-                <span className="text-xs font-bold text-white group-hover:text-brand-400 transition-colors">Admin User</span>
+                <span className="text-xs font-bold text-white group-hover:text-brand-400 transition-colors">{userName}</span>
               </div>
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform border border-white/10 overflow-hidden relative">
-                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                AU
-              </div>
+              {userAvatar ? (
+                <img 
+                  src={userAvatar} 
+                  alt={userName}
+                  className="h-9 w-9 rounded-xl object-cover shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform border border-white/10"
+                />
+              ) : (
+                <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform border border-white/10 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  {userInitials}
+                </div>
+              )}
             </div>
           </div>
         </header>

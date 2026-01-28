@@ -130,6 +130,19 @@ export function errorHandler(
     return;
   }
 
+  // Handle generic errors with statusCode (e.g. from services)
+  if ((err as any).statusCode) {
+    const statusCode = (err as any).statusCode;
+    const response: ErrorResponse = {
+      error: true,
+      code: statusCode === 403 ? 'FORBIDDEN' : 'ERROR',
+      message: err.message,
+      requestId,
+    };
+    res.status(statusCode).json(response);
+    return;
+  }
+
   // Handle all other errors (programming errors, unexpected issues)
   const response: ErrorResponse = {
     error: true,

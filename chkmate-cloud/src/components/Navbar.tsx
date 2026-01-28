@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
 import { NAV_LINKS } from '../constants';
 
 const Navbar: React.FC = () => {
@@ -49,12 +50,21 @@ const Navbar: React.FC = () => {
                   onClick={(e) => handleLinkClick(e, link.href)}
                   className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:tracking-wide cursor-pointer"
                 >
-                  {link.name}
+                  {link.name === 'Documentation' ? 'Roadmap' : link.name}
                 </a>
               ))}
-              <a href="/login" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer">
-                Sign In
-              </a>
+              
+              <div className="flex items-center gap-4">
+                <SignedIn>
+                  <UserButton afterSignOutUrl="/" />
+                </SignedIn>
+                <SignedOut>
+                  <a href="/login" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer">
+                    Sign In
+                  </a>
+                </SignedOut>
+              </div>
+
               <span 
                 className="ml-4 px-5 py-2 border border-white/20 text-white/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none"
               >
@@ -89,9 +99,16 @@ const Navbar: React.FC = () => {
                 {link.name}
               </a>
             ))}
-             <a href="/login" className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer">
-                Sign In
-              </a>
+             <SignedIn>
+               <div className="px-3 py-2">
+                 <UserButton afterSignOutUrl="/" />
+               </div>
+             </SignedIn>
+             <SignedOut>
+               <a href="/login" className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer">
+                 Sign In
+               </a>
+             </SignedOut>
              <div className="block w-full text-center mt-4 px-5 py-3 border border-white/20 text-white/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none">
                 v1.40 (Closed Beta)
              </div>

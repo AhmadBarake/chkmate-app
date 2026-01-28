@@ -15,7 +15,7 @@ export default function Documentation() {
           <main className="flex-1">
             <div className="mb-16">
               <span className="inline-block px-3 py-1 bg-brand-500/10 text-brand-400 border border-brand-500/20 rounded-full text-xs font-bold mb-6">
-                Documentation
+                Roadmap
               </span>
               <h1 className="text-4xl md:text-5xl font-bold mb-6">Changelog & Roadmap</h1>
               <p className="text-xl text-slate-400 max-w-3xl leading-relaxed">
@@ -70,14 +70,121 @@ export default function Documentation() {
                   </ul>
                 </div>
 
-                {/* Previous Version Placeholder */}
-                <div className="relative opacity-60">
+                {/* v1.39 - Repository Separation */}
+                 <div className="relative">
                    <span className="absolute -left-[39px] top-1 h-5 w-5 rounded-full border-4 border-slate-950 bg-slate-700"></span>
                    <div className="mb-2 flex items-center gap-3">
                     <h3 className="text-xl font-bold text-white">v1.39</h3>
-                    <span className="text-xs text-slate-500 font-mono">Previous</span>
+                    <span className="text-xs text-slate-500 font-mono">2026-01-26</span>
                   </div>
-                   <p className="text-slate-500 text-sm">Initial codebase migration and setup.</p>
+                   <ul className="space-y-4 text-slate-400 mt-4">
+                     <li className="flex items-start gap-3">
+                      <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Feat</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Project Restructuring</strong>
+                         Separated SaaS application from marketing website into dedicated repository (chkmate-app).
+                      </span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                      <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Feat</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Secure Authentication Suite</strong>
+                         Implemented Clerk-based auth with backend token validation and protected routes.
+                      </span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                      <span className="bg-blue-500/10 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Refactor</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">AI Widget Optimization</strong>
+                         Refactored embedded AI assistant into a floating widget for better UX.
+                      </span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                      <span className="bg-purple-500/10 text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Fix</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Amplify Deployment</strong>
+                         Resolved blank screen issues and build configuration conflicts on AWS Amplify.
+                      </span>
+                    </li>
+                   </ul>
+                </div>
+
+                {/* v1.30 - v1.38: Previous Development */}
+                 <div className="relative">
+                   <span className="absolute -left-[39px] top-1 h-5 w-5 rounded-full border-4 border-slate-950 bg-slate-600"></span>
+                   <div className="mb-2 flex items-center gap-3">
+                    <h3 className="text-xl font-bold text-white">v1.30 - v1.38</h3>
+                    <span className="text-xs text-slate-500 font-mono">Dec 2025 - Jan 2026</span>
+                  </div>
+                   <ul className="space-y-4 text-slate-400 mt-4">
+                     <li className="flex items-start gap-3">
+                      <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Feat</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">AWS Cloud Scanner</strong>
+                         Full-stack cloud security scanner with cross-account role assumption, S3/RDS/EC2/IAM scanning.
+                      </span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                      <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Feat</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Infrastructure as Code Builder</strong>
+                         AI-powered Terraform/HCL generation with real-time cost estimation and policy validation.
+                      </span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                      <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Feat</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Cost Control Dashboard</strong>
+                         Real-time AWS cost breakdown with historical trend analysis from Cost Explorer API.
+                      </span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                      <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Feat</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Infrastructure Map Visualization</strong>
+                         Interactive network topology visualization of discovered AWS resources.
+                      </span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                      <span className="bg-blue-500/10 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">UX</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Dashboard Redesign</strong>
+                         Complete UI overhaul with glassmorphism design, dark mode, and responsive layouts.
+                      </span>
+                    </li>
+                   </ul>
+                </div>
+
+                {/* v1.0 - v1.29: Foundation */}
+                 <div className="relative opacity-70">
+                   <span className="absolute -left-[39px] top-1 h-5 w-5 rounded-full border-4 border-slate-950 bg-slate-700"></span>
+                   <div className="mb-2 flex items-center gap-3">
+                    <h3 className="text-xl font-bold text-white">v1.0 - v1.29</h3>
+                    <span className="text-xs text-slate-500 font-mono">Oct - Nov 2025</span>
+                  </div>
+                   <ul className="space-y-4 text-slate-400 mt-4">
+                     <li className="flex items-start gap-3">
+                      <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Feat</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Core Platform Launch</strong>
+                         Initial release with project management, template library, and Terraform scaffolding.
+                      </span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                      <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Feat</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Credit System</strong>
+                         Implemented usage-based credit system with Paddle payment integration.
+                      </span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                      <span className="bg-blue-500/10 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Infra</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">AWS Deployment Pipeline</strong>
+                         ECS Fargate deployment with ALB, RDS PostgreSQL, and CloudFormation templates.
+                      </span>
+                    </li>
+                   </ul>
                 </div>
 
               </div>
