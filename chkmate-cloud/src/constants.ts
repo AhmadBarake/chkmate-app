@@ -1,11 +1,9 @@
 import { Layers, Zap, Shield, TrendingUp, Users, Cpu, Code, Database, Cloud, ShoppingBag, GraduationCap, Bot, ArrowUpRight } from 'lucide-react';
 
 export const NAV_LINKS = [
-  { name: 'Services', href: '#services' },
-  { name: 'Sectors', href: '#sectors' },
-  { name: 'Case Studies', href: '#case-studies' },
-  { name: 'Process', href: '#process' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Features', href: '/#features' },
+  { name: 'How it Works', href: '/#how-it-works' },
+  { name: 'Pricing', href: '/#pricing' },
 ];
 
 export const SERVICES = [

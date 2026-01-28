@@ -1,6 +1,7 @@
 import { Box, Cloud, Map, DollarSign, Rocket, Shield, Users, Code, Layout, Sparkles, GitCompare, FileCode as File } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ThreeCloudBackground from '../components/ThreeCloudBackground';
+import Footer from '../components/Footer';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ export default function LandingPage() {
 
       {/* Features Section Starts Here - Natural Flow */}
 
-      <div className="mt-32 max-w-6xl mx-auto">
+      <div id="features" className="mt-32 max-w-6xl mx-auto">
         <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">Everything you need to <span className="text-brand-400">master the cloud</span></h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
@@ -238,7 +239,7 @@ export default function LandingPage() {
       </div>
 
        {/* Pricing */}
-       <div className="mt-32 max-w-5xl mx-auto px-6 mb-20">
+       <div id="pricing" className="mt-32 max-w-5xl mx-auto px-6 mb-20">
           <h2 className="text-3xl md:text-5xl font-bold text-center mb-6">Simple Pricing</h2>
           <p className="text-center text-slate-400 mb-16 text-xl">Start building for free, upgrade when you scale.</p>
           
@@ -290,52 +291,7 @@ export default function LandingPage() {
 
 
     {/* Footer */}
-    <footer className="border-t border-slate-900 bg-slate-950 pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-                <div className="col-span-2 md:col-span-1">
-                    <h1 className="text-2xl font-bold tracking-tighter text-white font-mono mb-4">
-                        chkmate<span className="text-slate-400">_</span>
-                    </h1>
-                    <p className="text-slate-500 text-sm">
-                        Building the future of infrastructure automation. Join us on our journey to secure, scalable cloud deployments.
-                    </p>
-                </div>
-                <div>
-                    <h4 className="font-bold mb-4 text-white">Product</h4>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                        <li className="hover:text-brand-400 cursor-pointer">Features</li>
-                        <li className="hover:text-brand-400 cursor-pointer">Integrations</li>
-                        <li className="hover:text-brand-400 cursor-pointer">Pricing</li>
-                        <li className="hover:text-brand-400 cursor-pointer">Changelog</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 className="font-bold mb-4 text-white">Resources</h4>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                        <li className="hover:text-brand-400 cursor-pointer">Documentation</li>
-                        <li className="hover:text-brand-400 cursor-pointer">API Reference</li>
-                        <li className="hover:text-brand-400 cursor-pointer">Community</li>
-                        <li className="hover:text-brand-400 cursor-pointer">Blog</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 className="font-bold mb-4 text-white">Legal</h4>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                        <li className="hover:text-brand-400 cursor-pointer">Privacy Policy</li>
-                        <li className="hover:text-brand-400 cursor-pointer">Terms of Service</li>
-                        <li className="hover:text-brand-400 cursor-pointer">Security</li>
-                    </ul>
-                </div>
-            </div>
-            <div className="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p className="text-slate-600 text-sm">© 2024 chkmate Inc. All rights reserved.</p>
-                <div className="flex gap-6 text-slate-600">
-                    {/* Social icons could go here */}
-                </div>
-            </div>
-        </div>
-    </footer>
+    <Footer />
   </div>
   );
 }
