@@ -1,0 +1,280 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects      Project[]
+  invoices      Invoice[]
+  creditBalance CreditBalance?
+  cloudConnections CloudConnection[]
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id])
+  templates Template[]
+}
+
+model Template {
+  id        String   @id @default(uuid())
+  name      String
+  content   String   // Terraform code
+  provider  String   // aws, azure, gcp, etc.
+  projectId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project      Project       @relation(fields: [projectId], references: [id])
+  violations   Violation[]
+  auditReports AuditReport[]
+}
+
+model Invoice {
+  id        String   @id @default(uuid())
+  amount    Float
+  status    String   // PENDING, PAID, OVERDUE
+  date      DateTime @default(now())
+  pdfUrl    String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// ============================================================================
+// POLICY ENGINE MODELS
+// ============================================================================
+
+model Policy {
+  id          String         @id @default(uuid())
+  code        String         @unique // e.g., SEC001, COST001
+  name        String
+  description String?
+  provider    String         // aws, azure, gcp, all
+  category    PolicyCategory
+  severity    Severity
+  ruleLogic   Json           // Rule definition (conditions, checks)
+  isBuiltIn   Boolean        @default(false)
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  violations  Violation[]
+}
+
+model Violation {
+  id          String   @id @default(uuid())
+  templateId  String
+  policyId    String
+  resourceRef String   // e.g., "aws_s3_bucket.main"
+  resourceType String? // e.g., "aws_s3_bucket"
+  line        Int?
+  message     String
+  suggestion  String?
+  autoFixable Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  template    Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  policy      Policy   @relation(fields: [policyId], references: [id])
+
+  @@index([templateId])
+  @@index([policyId])
+}
+
+model AuditReport {
+  id            String   @id @default(uuid())
+  templateId    String
+  totalIssues   Int
+  criticalCount Int      @default(0)
+  highCount     Int      @default(0)
+  mediumCount   Int      @default(0)
+  lowCount      Int      @default(0)
+  passedChecks  Int      @default(0)
+  score         Float    // 0-100 security/compliance score
+  summary       String?  // AI-generated summary
+  createdAt     DateTime @default(now())
+
+  template      Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId])
+}
+
+enum PolicyCategory {
+  SECURITY
+  COST
+  RELIABILITY
+  PERFORMANCE
+  COMPLIANCE
+}
+
+enum Severity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  INFO
+}
+
+// ============================================================================
+// CREDITS & BILLING MODELS
+// ============================================================================
+
+model CreditBalance {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  balance       Int      @default(0) // Current credit balance
+  lifetimeUsed  Int      @default(0) // Total credits ever used
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id])
+  transactions  CreditTransaction[]
+}
+
+model CreditTransaction {
+  id              String          @id @default(uuid())
+  creditBalanceId String
+  amount          Int             // Positive = purchase, Negative = usage
+  type            TransactionType
+  description     String          // "Template Generation", "Audit Scan", etc.
+  referenceId     String?         // Related templateId, auditId, etc.
+  stripePaymentId String?         // For purchases
+  createdAt       DateTime        @default(now())
+
+  creditBalance   CreditBalance   @relation(fields: [creditBalanceId], references: [id])
+
+  @@index([creditBalanceId])
+  @@index([createdAt])
+}
+
+enum TransactionType {
+  PURCHASE        // Bought credits
+  GENERATION      // Used for template generation
+  AUDIT           // Used for audit scan
+  COST_ANALYSIS   // Used for cost analysis
+  CLOUD_SCAN      // Used for cloud resource scan
+  RECOMMENDATION  // Used for AI recommendation
+  BONUS           // Promotional credits
+  REFUND          // Refunded credits
+}
+
+
+// ============================================================================
+// CLOUD INTEGRATION MODELS
+// ============================================================================
+
+model CloudConnection {
+  id            String         @id @default(uuid())
+  userId        String
+  provider      String         // aws, azure, gcp
+  name          String         // "Production AWS", "Dev Account"
+  
+  // AWS
+  awsRoleArn    String?        // Cross-account role ARN
+  awsExternalId String?        // Security external ID
+  
+  // Azure
+  azureTenantId String?
+  azureClientId String?
+  
+  // GCP
+  gcpProjectId  String?
+  gcpKeyPath    String?        // Encrypted reference
+  
+  status        ConnectionStatus @default(PENDING)
+  lastSyncAt    DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id])
+  resources     CloudResource[]
+  recommendations Recommendation[]
+
+  @@index([userId])
+}
+
+model CloudResource {
+  id              String   @id @default(uuid())
+  connectionId    String
+  resourceType    String   // vpc, subnet, rds, etc.
+  resourceId      String   // AWS ARN or resource ID
+  name            String?
+  region          String
+  metadata        Json     // Provider-specific details
+  lastSyncedAt    DateTime @default(now())
+
+  connection      CloudConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@index([connectionId])
+  @@index([resourceType])
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACTIVE
+  FAILED
+  DISCONNECTED
+}
+
+// ============================================================================
+// RECOMMENDATION ENGINE MODELS
+// ============================================================================
+
+model Recommendation {
+  id              String               @id @default(uuid())
+  connectionId    String
+  resourceId      String?              // Optional: link to specific resource
+  type            RecommendationType
+  title           String
+  description     String
+  impact          String               // JSON: { savings: 120, risk: "low" }
+  effort          EffortLevel
+  status          RecommendationStatus @default(OPEN)
+  dismissedAt     DateTime?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  connection      CloudConnection      @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@index([connectionId])
+  @@index([status])
+}
+
+enum RecommendationType {
+  COST
+  SECURITY
+  PERFORMANCE
+  RELIABILITY
+}
+
+enum RecommendationStatus {
+  OPEN
+  APPLIED
+  DISMISSED
+}
+
+enum EffortLevel {
+  LOW
+  MEDIUM
+  HIGH
+}

@@ -1,0 +1,5 @@
+{
+  "name": "Chkmate Cloud",
+  "description": "An AI-powered infrastructure orchestration platform that converts natural language prompts into Terraform code, providing cost estimation and visual architecture diagrams.",
+  "requestFramePermissions": []
+}

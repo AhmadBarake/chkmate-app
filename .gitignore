@@ -1,0 +1,7 @@
+server/.env
+chkmate-cloud/.env
+infra/terraform.tfvars
+infra/*.tfstate
+infra/*.tfstate.backup
+infra/.terraform/
+amplify_apps.json

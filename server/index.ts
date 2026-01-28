@@ -1,0 +1,1007 @@
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from current directory
+dotenv.config();
+
+import express from 'express';
+import cors from 'cors';
+import { PrismaClient } from '@prisma/client';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// Import error handling utilities
+import {
+  AppError,
+  ValidationError,
+  NotFoundError,
+  GenerationError,
+  ExternalServiceError,
+} from './lib/errors.js';
+import { errorHandler, asyncHandler, notFoundHandler } from './middleware/errorHandler.js';
+
+// Import policy engine
+import {
+  seedBuiltInPolicies,
+  auditTemplate,
+  saveAuditReport,
+  getLatestAuditReport,
+  listPolicies,
+  togglePolicy,
+} from './services/policyEngine.js';
+
+// Import credit service
+import {
+  getCreditBalance,
+  getTransactionHistory,
+  getUsageStats,
+  deductCredits,
+  addCredits,
+  hasEnoughCredits,
+  CREDIT_COSTS,
+  CREDIT_PACKS,
+  type CreditAction,
+} from './services/creditService.js';
+
+// Import AWS cloud service
+import {
+  scanAWSAccount,
+  validateCredentials,
+  type AWSCredentials,
+} from './services/awsCloudService.js';
+
+// Import cloud connection service
+import {
+  createAWSConnection,
+  generateAWSSetupDetails,
+  listConnections,
+  syncConnection,
+
+  deleteConnection,
+  getConnectionResources,
+  scanSavedConnection,
+} from './services/cloudService.js';
+import { compareTemplates } from './lib/diff.js';
+import { verifyPaddleWebhook } from './services/paddleService.js';
+
+const app = express();
+const PORT = process.env.PORT || 3002;
+
+console.log('DATABASE_URL:', process.env.DATABASE_URL);
+
+const prisma = new PrismaClient({
+  log: ['query', 'info', 'warn', 'error'],
+});
+
+// Gemini setup
+const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '';
+if (!apiKey) {
+  console.warn('Warning: GEMINI_API_KEY is not set.');
+}
+const genAI = new GoogleGenerativeAI(apiKey);
+
+app.use(cors());
+app.use(cors());
+
+// Use JSON parser for all routes EXCEPT webhook which needs raw body
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/webhooks/paddle') {
+    next(); // Skip json parsing for webhook
+  } else {
+    express.json()(req, res, next);
+  }
+});
+
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+// Middleware to check auth (placeholder for now, Clerk verification should be added)
+const requireAuth = asyncHandler(async (req: any, res: any, next: any) => {
+  // Hardcoded for user testing request: abarake56@gmail.com
+  // In production this would verify the token
+  const email = 'abarake56@gmail.com';
+  const clerkId = 'user_abarake56'; // Consistent ID for this user
+  
+  let user = await prisma.user.findUnique({ where: { email } });
+  
+  if (!user) {
+    // Try by clerkId
+    user = await prisma.user.findUnique({ where: { clerkId } });
+  }
+
+  if (!user) {
+    console.log(`Creating user for ${email}...`);
+    try {
+      user = await prisma.user.create({
+        data: {
+          clerkId,
+          email,
+          name: 'Ahmad Barakeh',
+        },
+      });
+    } catch (e: any) {
+      // Race condition or constraint violation handling
+      console.error('User creation failed, trying fetch:', e.message);
+      user = await prisma.user.findUnique({ where: { email } });
+      if (!user) throw e;
+    }
+  }
+
+  // Ensure high credit balance (Infinite Credits)
+  // We use upsert here to ensure the record exists and has sufficient funds
+  // This bypasses the race condition in creditService.ts/getOrCreateCreditBalance
+  try {
+    await prisma.creditBalance.upsert({
+      where: { userId: user.id },
+      update: { 
+        balance: 1000000, // Reset to 1M if exists
+      },
+      create: {
+        userId: user.id,
+        balance: 1000000, // 1M credits
+      },
+    });
+  } catch (e: any) {
+    console.error('Failed to set infinite credits:', e.message);
+    // Continue anyway, maybe creditService will handle it or it already exists
+  }
+  
+  // Attach the INTERNAL UUID to the request so foreign keys work
+  req.userId = user.id;
+  console.log(`Authenticated as ${user.email} (${user.id})`);
+  next();
+});
+
+// ============================================================================
+// PROJECTS ROUTES
+// ============================================================================
+
+app.get(
+  '/api/projects',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const projects = await prisma.project.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(projects);
+  })
+);
+
+app.post(
+  '/api/projects',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { name, description, userId, email, userName } = req.body;
+
+    // Validate required fields
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      throw new ValidationError('Project name is required');
+    }
+
+    // req.userId is guaranteed to be set by requireAuth
+    const internalUserId = (req as any).userId;
+
+    const project = await prisma.project.create({
+      data: {
+        name: name.trim(),
+        description: description?.trim() || null,
+        userId: internalUserId,
+      },
+    });
+
+    res.status(201).json(project);
+  })
+);
+
+app.get(
+  '/api/projects/:id',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const project = await prisma.project.findUnique({
+      where: { id },
+      include: { 
+        templates: {
+          include: {
+            auditReports: {
+              orderBy: { createdAt: 'desc' },
+              take: 1
+            }
+          }
+        } 
+      },
+    });
+
+    if (!project) {
+      throw new NotFoundError('Project');
+    }
+
+    res.json(project);
+  })
+);
+
+app.delete(
+  '/api/projects/:id',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    // Check if project exists
+    const existingProject = await prisma.project.findUnique({
+      where: { id },
+    });
+
+    if (!existingProject) {
+      throw new NotFoundError('Project');
+    }
+
+    // Delete related templates first (cascade)
+    await prisma.template.deleteMany({
+      where: { projectId: id },
+    });
+
+    const project = await prisma.project.delete({
+      where: { id },
+    });
+
+    res.json({ success: true, deleted: project });
+  })
+);
+
+// ============================================================================
+// TEMPLATES ROUTES
+// ============================================================================
+
+app.get(
+  '/api/templates',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const templates = await prisma.template.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { 
+        project: true,
+        auditReports: {
+          orderBy: { createdAt: 'desc' },
+          take: 1
+        }
+      },
+    });
+    res.json(templates);
+  })
+);
+
+app.get(
+  '/api/templates/:id',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const template = await prisma.template.findUnique({
+      where: { id },
+      include: { 
+        project: true,
+        auditReports: {
+          orderBy: { createdAt: 'desc' },
+          take: 1
+        }
+      },
+    });
+
+    if (!template) {
+      throw new NotFoundError('Template');
+    }
+
+    res.json(template);
+  })
+);
+
+app.post(
+  '/api/templates',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { name, content, provider, projectId } = req.body;
+
+    // Validate required fields
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      throw new ValidationError('Template name is required');
+    }
+
+    if (!content) {
+      throw new ValidationError('Template content is required');
+    }
+
+    if (!provider) {
+      throw new ValidationError('Provider is required');
+    }
+
+    if (!projectId) {
+      throw new ValidationError('Project ID is required');
+    }
+
+    // Verify project exists
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (!project) {
+      throw new NotFoundError('Project');
+    }
+
+    const template = await prisma.template.create({
+      data: {
+        name: name.trim(),
+        content,
+        provider,
+        projectId,
+      },
+    });
+
+    res.status(201).json(template);
+  })
+);
+
+app.put(
+  '/api/templates/:id',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { name, content, provider } = req.body;
+
+    // Check if template exists
+    const existingTemplate = await prisma.template.findUnique({
+      where: { id },
+    });
+
+    if (!existingTemplate) {
+      throw new NotFoundError('Template');
+    }
+
+    const template = await prisma.template.update({
+      where: { id },
+      data: {
+        ...(name && { name: name.trim() }),
+        ...(content && { content }),
+        ...(provider && { provider }),
+      },
+    });
+
+    res.json(template);
+  })
+);
+
+app.delete(
+  '/api/templates/:id',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    // Check if template exists
+    const existingTemplate = await prisma.template.findUnique({
+      where: { id },
+    });
+
+    if (!existingTemplate) {
+      throw new NotFoundError('Template');
+    }
+
+    const template = await prisma.template.delete({
+      where: { id },
+    });
+
+    res.json({ success: true, deleted: template });
+  })
+);
+
+// Get Diff for a template
+app.post(
+  '/api/templates/:id/diff',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { content } = req.body;
+
+    if (!content) {
+      throw new ValidationError('Content is required for comparison');
+    }
+
+    const template = await prisma.template.findUnique({
+      where: { id },
+    });
+
+    if (!template) {
+      throw new NotFoundError('Template');
+    }
+
+    const diff = await compareTemplates(template.content, content, template.provider, template.id);
+    res.json(diff);
+  })
+);
+
+// ============================================================================
+// GENERATION ROUTE
+// ============================================================================
+
+app.post(
+  '/api/generate',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { prompt, provider, connectionId } = req.body;
+    const userId = (req as any).userId; // Check requireAuth for how this is set
+
+    // Validate input
+    if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
+      throw new ValidationError('Architecture description is required');
+    }
+
+    if (!provider || !['aws', 'azure', 'gcp', 'kubernetes'].includes(provider.toLowerCase())) {
+      throw new ValidationError('Valid provider is required (aws, azure, gcp, kubernetes)');
+    }
+
+    if (prompt.length > 5000) {
+      throw new ValidationError('Architecture description is too long (max 5000 characters)');
+    }
+
+    // Check and deduct credits
+    const creditResult = await deductCredits(userId, 'GENERATION');
+    if (!creditResult.success) {
+      throw new ValidationError(creditResult.error || 'Insufficient credits');
+    }
+
+    try {
+      const model = genAI.getGenerativeModel({ model: 'gemini-3-pro-preview' });
+
+        // Context Injection
+        let contextInstruction = '';
+        if (connectionId) {
+             try {
+                const resources = await getConnectionResources(connectionId);
+                if (resources && resources.length > 0) {
+                    const resourceSummary = resources.map((r: any) => 
+                       `- ${r.resourceType}: ${r.name || r.resourceId} (${r.region}) ${JSON.stringify(r.metadata)}`
+                    ).join('\n');
+   
+                    contextInstruction = `
+   CONTEXT - EXISTING CLOUD RESOURCES:
+   The following resources already exist in the user's ${provider} account. 
+   You MUST prioritize using these existing resources (via data sources or imports) instead of creating new ones where appropriate to save costs and avoid conflicts.
+   
+   ${resourceSummary}
+   
+   If you use an existing resource, mention it in your reasoning.
+                    `;
+                }
+             } catch (err) {
+                 console.error('Failed to inject context:', err);
+                 // Continue without context
+             }
+        }
+
+      const systemPrompt = `
+        You are an expert Terraform Infrastructure Architect.
+        Your task is to generate Terraform configuration for the ${provider} provider based on the user's description.
+        ${contextInstruction}
+        Return ONLY a JSON object with this structure (no markdown code blocks):
+        {
+          "files": {
+            "main.tf": "...",
+            "variables.tf": "...",
+            "outputs.tf": "..."
+          },
+          "cost": {
+             "total": number,
+             "breakdown": [{ "resource": "string", "cost": number }]
+          },
+          "diagram": {
+             "nodes": [{ "id": "string", "type": "string", "label": "string", "position": { "x": number, "y": number } }],
+             "edges": [{ "id": "string", "source": "string", "target": "string" }]
+          }
+        }
+
+        Ensure the code is valid HCL (as strings). Estimate costs roughly based on current pricing. Creates nodes and edges for a ReactFlow diagram to visualize updates.
+        `;
+
+      const result = await model.generateContent([systemPrompt, `User Request: ${prompt}`]);
+
+      const responseText = result.response.text();
+
+      // Clean up markdown if any
+      const cleaned = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+      let data;
+      try {
+        data = JSON.parse(cleaned);
+      } catch (parseError) {
+        console.error('Failed to parse AI response:', cleaned.substring(0, 500));
+        throw new GenerationError('AI returned invalid response. Please try again.');
+      }
+
+      // Validate response structure
+      if (!data.files || !data.files['main.tf']) {
+        throw new GenerationError('AI response missing required Terraform files.');
+      }
+
+      // Add remaining credits to response
+      res.json({
+        ...data,
+        creditsRemaining: creditResult.remainingBalance,
+      });
+    } catch (error) {
+      // Re-throw our custom errors
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      // Handle Gemini API errors
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      if (errorMessage.includes('quota') || errorMessage.includes('rate')) {
+        throw new ExternalServiceError('AI Service');
+      }
+
+      if (errorMessage.includes('safety') || errorMessage.includes('blocked')) {
+        throw new GenerationError(
+          'Request was blocked by safety filters. Please rephrase your architecture description.'
+        );
+      }
+
+      console.error('Gemini Error:', error);
+      throw new GenerationError();
+    }
+  })
+);
+
+// ============================================================================
+// HEALTH CHECK
+// ============================================================================
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+  });
+});
+
+// ============================================================================
+// AUDIT & POLICY ROUTES
+// ============================================================================
+
+// Run audit on template content (inline)
+app.post(
+  '/api/audit',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { content, provider, templateId } = req.body;
+
+    if (!content || typeof content !== 'string') {
+      throw new ValidationError('Terraform content is required');
+    }
+
+    if (!provider) {
+      throw new ValidationError('Provider is required (aws, azure, gcp)');
+    }
+
+    const result = await auditTemplate(content, provider, templateId);
+
+    // Save to database if templateId provided
+    if (templateId) {
+      await saveAuditReport(templateId, result);
+    }
+
+    res.json(result);
+  })
+);
+
+// Get audit report for a template
+app.get(
+  '/api/audit/:templateId',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { templateId } = req.params;
+
+    const report = await getLatestAuditReport(templateId);
+
+    if (!report) {
+      throw new NotFoundError('Audit report');
+    }
+
+    res.json(report);
+  })
+);
+
+// List all policies
+app.get(
+  '/api/policies',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const policies = await listPolicies();
+    res.json(policies);
+  })
+);
+
+// Toggle policy active status
+app.put(
+  '/api/policies/:id/toggle',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { isActive } = req.body;
+
+    if (typeof isActive !== 'boolean') {
+      throw new ValidationError('isActive must be a boolean');
+    }
+
+    const policy = await togglePolicy(id, isActive);
+    res.json(policy);
+  })
+);
+
+// ============================================================================
+// CREDITS ROUTES
+// ============================================================================
+
+// Get credit balance
+app.get(
+  '/api/credits/balance',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId; // Now guaranteed to be UUID by requireAuth
+    const balance = await getCreditBalance(userId);
+    res.json({ balance, costs: CREDIT_COSTS, packs: CREDIT_PACKS });
+  })
+);
+
+// Get transaction history
+app.get(
+  '/api/credits/history',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const limit = parseInt(req.query.limit as string) || 50;
+    const transactions = await getTransactionHistory(userId, limit);
+    res.json(transactions);
+  })
+);
+
+// Get usage statistics
+app.get(
+  '/api/credits/usage',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const stats = await getUsageStats(userId);
+    res.json(stats);
+  })
+);
+
+// Check if user has enough credits for action
+app.post(
+  '/api/credits/check',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const { action } = req.body;
+
+    if (!action || !CREDIT_COSTS[action as CreditAction]) {
+      throw new ValidationError('Valid action is required');
+    }
+
+    const hasCredits = await hasEnoughCredits(userId, action as CreditAction);
+    const cost = CREDIT_COSTS[action as CreditAction];
+    const balance = await getCreditBalance(userId);
+
+    res.json({ hasCredits, cost, balance });
+  })
+);
+
+// Paddle Webhook Handler
+app.post(
+  '/api/webhooks/paddle',
+  express.raw({ type: 'application/json' }),
+  asyncHandler(async (req, res) => {
+    const signature = req.headers['paddle-signature'] as string;
+    const webhookSecret = process.env.PADDLE_WEBHOOK_SECRET;
+
+    if (!signature || !webhookSecret) {
+      console.error('Missing Paddle signature or webhook secret');
+      return res.status(400).send('Webhook Error: Missing config');
+    }
+
+    const isValid = await verifyPaddleWebhook(signature, req.body.toString(), webhookSecret);
+    
+    if (!isValid) {
+        console.error('Paddle Webhook Signature Verification Failed');
+        return res.status(400).send('Webhook Error: Invalid signature');
+    }
+
+    const event = JSON.parse(req.body.toString());
+    
+    // Handle the event
+    if (event.event_type === 'transaction.completed') {
+      const transaction = event.data;
+      const customData = transaction.custom_data; // Paddle stores metadata here
+      
+      // Determine pack based on items or custom data
+      // For simplicity, we can pass packId in custom_data from frontend
+      const userId = customData?.userId;
+      const packId = customData?.packId; 
+      // OR map from transaction.items[0].price.id if we sync price IDs strict
+      
+      if (userId && packId) {
+        console.log(`Processing successful Paddle payment for user ${userId}, pack ${packId}`);
+        
+        const pack = CREDIT_PACKS[packId as keyof typeof CREDIT_PACKS];
+        const credits = pack ? pack.credits : 0;
+
+        if (credits > 0) {
+            try {
+                await addCredits(
+                    userId,
+                    credits,
+                    transaction.id,
+                    `Purchase: ${packId} Pack (Paddle)`
+                );
+                console.log('Credits added successfully via Paddle webhook');
+            } catch (err) {
+                console.error('Failed to fulfill order via webhook:', err);
+            }
+        } else {
+             console.warn('Unknown pack or 0 credits for packId:', packId);
+        }
+      } else {
+          console.warn('Paddle webhook received but missing required metadata (userId/packId)', customData);
+      }
+    }
+
+    res.json({ received: true });
+  })
+);
+
+/*
+// Recharge credits (Mock) - COMMENTED OUT FOR STRIPE INTEGRATION
+app.post(
+  '/api/credits/recharge',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    // ... existing mock implementation ...
+  })
+);
+*/
+
+// ============================================================================
+// CLOUD INTEGRATION ROUTES
+// ============================================================================
+
+// Validate AWS credentials
+app.post(
+  '/api/cloud/validate',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { credentials } = req.body;
+
+    if (!credentials || !credentials.accessKeyId || !credentials.secretAccessKey || !credentials.region) {
+      throw new ValidationError('Invalid credentials format');
+    }
+
+    // Sanitize - trim whitespace which is a common copy-paste error
+    const sanitizedCredentials = {
+      accessKeyId: credentials.accessKeyId.trim(),
+      secretAccessKey: credentials.secretAccessKey.trim(),
+      region: credentials.region.trim(),
+    };
+
+    // We DO NOT log credentials here or anywhere else
+    const isValid = await validateCredentials(sanitizedCredentials);
+    res.json({ isValid });
+  })
+);
+
+// Run full cloud scan
+app.post(
+  '/api/cloud/scan',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { credentials } = req.body;
+    const userId = (req as any).userId; // Now guaranteed to be UUID by requireAuth
+
+    if (!credentials || !credentials.accessKeyId || !credentials.secretAccessKey || !credentials.region) {
+      throw new ValidationError('Invalid credentials format');
+    }
+
+    const sanitizedCredentials = {
+      accessKeyId: credentials.accessKeyId.trim(),
+      secretAccessKey: credentials.secretAccessKey.trim(),
+      region: credentials.region.trim(),
+    };
+
+    // Deduct credits for scan
+    const creditResult = await deductCredits(userId, 'CLOUD_SCAN');
+    if (!creditResult.success) {
+      throw new ValidationError(creditResult.error || 'Insufficient credits');
+    }
+
+    try {
+      // Validate first using STS
+      const isValid = await validateCredentials(sanitizedCredentials);
+      if (!isValid) {
+        throw new ValidationError('Invalid AWS credentials or insufficient permissions');
+      }
+
+      const scanResult = await scanAWSAccount(sanitizedCredentials);
+      
+      res.json({
+        ...scanResult,
+        creditsRemaining: creditResult.remainingBalance
+      });
+    } catch (error) {
+      console.error('Cloud scan failed:', error);
+      throw new ExternalServiceError('Failed to scan cloud account. Please check permissions.');
+    }
+  })
+);
+
+
+// Cloud Connections Management (Phase 2)
+
+// GET setup details (Generate External ID for IAM Role)
+app.post(
+  '/api/cloud/aws/setup',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const result = await generateAWSSetupDetails(userId);
+    res.json(result);
+  })
+);
+
+// Connect AWS Account (Role Assumption)
+app.post(
+  '/api/cloud/aws/connect',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const { name, roleArn, externalId } = req.body;
+
+    if (!name || !roleArn || !externalId) {
+      throw new ValidationError('Missing required fields: name, roleArn, externalId');
+    }
+    
+    // Validate ARN format
+    if (!roleArn.startsWith('arn:aws:iam::') || !roleArn.includes(':role/')) {
+       throw new ValidationError('Invalid Role ARN format');
+    }
+
+    const connection = await createAWSConnection(userId, name, roleArn, externalId);
+    res.json(connection);
+  })
+);
+
+// List Connections
+app.get(
+  '/api/cloud/connections',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const connections = await listConnections(userId);
+    res.json(connections);
+  })
+);
+
+// Sync Connection (Trigger Scan)
+app.post(
+  '/api/cloud/connections/:id/sync',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    // Note: Syncing consumes credits in the future, for now free or included in sub
+    // We could add deductCredits here too
+    const { region } = req.body || {};
+    const connection = await syncConnection(req.params.id, region);
+    res.json(connection);
+  })
+);
+
+// Scan Connection Report (Ephemeral Security/Cost Scan)
+app.post(
+  '/api/cloud/connections/:id/scan-report',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    // Deduct credits for scan
+    const creditResult = await deductCredits(userId, 'CLOUD_SCAN');
+    if (!creditResult.success) {
+      throw new ValidationError(creditResult.error || 'Insufficient credits');
+    }
+
+    const { region } = req.body || {};
+    const report = await scanSavedConnection(req.params.id, region);
+    res.json({
+      ...report,
+      creditsRemaining: creditResult.remainingBalance
+    });
+  })
+);
+
+// Get Resources for Connection
+app.get(
+  '/api/cloud/connections/:id/resources',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const resources = await getConnectionResources(req.params.id);
+    res.json(resources);
+  })
+);
+
+
+
+// Generate Recommendations
+app.post(
+  '/api/cloud/connections/:id/recommendations',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { generateRecommendations } = await import('./services/recommendationService');
+    const recs = await generateRecommendations(req.params.id);
+    res.json(recs);
+  })
+);
+
+// Get Recommendations
+app.get(
+  '/api/cloud/connections/:id/recommendations',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { getRecommendations } = await import('./services/recommendationService');
+    const recs = await getRecommendations(req.params.id);
+    res.json(recs);
+  })
+);
+
+// Delete Connection
+app.delete(
+  '/api/cloud/connections/:id',
+  requireAuth,
+
+  asyncHandler(async (req, res) => {
+    await deleteConnection(req.params.id);
+    res.json({ success: true });
+  })
+);
+
+// ============================================================================
+// ============================================================================
+// ERROR HANDLING
+// ============================================================================
+
+// 404 handler for unmatched routes
+app.use(notFoundHandler);
+
+// Global error handler (must be last)
+app.use(errorHandler);
+
+// ============================================================================
+// START SERVER
+// ============================================================================
+
+async function startServer() {
+  try {
+    // Seed built-in policies
+    console.log('Seeding built-in policies...');
+    await seedBuiltInPolicies();
+    console.log('Policies seeded successfully');
+
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
