@@ -3,7 +3,18 @@ import { ApiError, parseError, isApiError } from './errors';
 /**
  * Base API URL - uses relative paths for same-origin requests
  */
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+/**
+ * Base API URL - uses relative paths for same-origin requests
+ * Ensures /api prefix is present when using absolute URLs
+ */
+const resolveApiBase = () => {
+  const url = import.meta.env.VITE_API_URL;
+  if (!url) return '/api';
+  if (url.endsWith('/api')) return url;
+  return url.endsWith('/') ? `${url}api` : `${url}/api`;
+};
+
+const API_BASE = resolveApiBase();
 
 /**
  * Default request timeout (30 seconds)
