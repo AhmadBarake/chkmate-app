@@ -18,7 +18,8 @@ import {
   Database,
   Globe,
   Smartphone,
-  Server
+  Server,
+  Box
 } from 'lucide-react';
 import { 
   PieChart, 
@@ -52,6 +53,8 @@ const AWS_REGIONS = [
   { value: 'ap-southeast-1', label: 'Asia Pacific (Singapore)' },
 ];
 
+import { useAuth, useUser } from '@clerk/clerk-react';
+
 export default function CostControl() {
   const [connections, setConnections] = useState<CloudConnection[]>([]);
   const [selectedConnectionId, setSelectedConnectionId] = useState<string>('');
@@ -59,20 +62,24 @@ export default function CostControl() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [scanResult, setScanResult] = useState<CloudScanResult | null>(null);
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   useEffect(() => {
     loadConnections();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (selectedConnectionId) {
       handleSync();
     }
-  }, [selectedConnectionId]);
+  }, [selectedConnectionId, user]);
 
   const loadConnections = async () => {
+    if (!user) return;
     try {
-      const conns = await fetchConnections();
+      const token = await getToken();
+      const conns = await fetchConnections(token);
       setConnections(conns);
       if (conns.length > 0) {
         setSelectedConnectionId(conns[0].id);
@@ -85,10 +92,11 @@ export default function CostControl() {
   };
 
   const handleSync = async () => {
-    if (!selectedConnectionId) return;
+    if (!selectedConnectionId || !user) return;
     setSyncing(true);
     try {
-      const result = await scanSavedConnection(selectedConnectionId, selectedRegion);
+      const token = await getToken();
+      const result = await scanSavedConnection(selectedConnectionId, selectedRegion, token);
       setScanResult(result);
     } catch (err) {
       console.error("Sync failed", err);

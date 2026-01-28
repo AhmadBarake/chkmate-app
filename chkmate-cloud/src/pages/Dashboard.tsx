@@ -17,9 +17,13 @@ interface DashboardStats {
   generationsLimit: number;
 }
 
+import { useAuth, useUser } from '@clerk/clerk-react';
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const toast = useToastActions();
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats>({
@@ -33,13 +37,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+  }, [user]);
 
   const loadDashboardData = async () => {
     try {
+      if (!user) return;
+      const token = await getToken();
       const [projects, templates] = await Promise.all([
-        fetchProjects(),
-        fetchTemplates(),
+        fetchProjects(token),
+        fetchTemplates(token),
       ]);
 
       setStats({

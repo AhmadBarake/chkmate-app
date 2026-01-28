@@ -30,18 +30,25 @@ function createTimeoutController(timeout: number): AbortController {
 async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {},
-  timeout: number = DEFAULT_TIMEOUT
+  timeout: number = DEFAULT_TIMEOUT,
+  token?: string | null
 ): Promise<T> {
   const controller = createTimeoutController(timeout);
 
   try {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(`${API_BASE}${endpoint}`, {
       ...options,
       signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
     });
 
     const data = await res.json();
@@ -85,8 +92,8 @@ export interface Project {
   templates?: Template[];
 }
 
-export async function fetchProjects(): Promise<Project[]> {
-  return apiRequest<Project[]>('/projects');
+export async function fetchProjects(token?: string | null): Promise<Project[]> {
+  return apiRequest<Project[]>('/projects', {}, DEFAULT_TIMEOUT, token);
 }
 
 export async function createProject(
@@ -94,22 +101,23 @@ export async function createProject(
   description: string,
   userId: string,
   email: string,
-  userName?: string | null
+  userName?: string | null,
+  token?: string | null
 ): Promise<Project> {
   return apiRequest<Project>('/projects', {
     method: 'POST',
     body: JSON.stringify({ name, description, userId, email, userName }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
-export async function fetchProject(id: string): Promise<Project> {
-  return apiRequest<Project>(`/projects/${id}`);
+export async function fetchProject(id: string, token?: string | null): Promise<Project> {
+  return apiRequest<Project>(`/projects/${id}`, {}, DEFAULT_TIMEOUT, token);
 }
 
-export async function deleteProject(id: string): Promise<{ success: boolean; deleted: Project }> {
+export async function deleteProject(id: string, token?: string | null): Promise<{ success: boolean; deleted: Project }> {
   return apiRequest<{ success: boolean; deleted: Project }>(`/projects/${id}`, {
     method: 'DELETE',
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
 // ============================================================================
@@ -127,40 +135,42 @@ export interface Template {
   project?: Project;
 }
 
-export async function fetchTemplates(): Promise<Template[]> {
-  return apiRequest<Template[]>('/templates');
+export async function fetchTemplates(token?: string | null): Promise<Template[]> {
+  return apiRequest<Template[]>('/templates', {}, DEFAULT_TIMEOUT, token);
 }
 
-export async function fetchTemplate(id: string): Promise<Template> {
-  return apiRequest<Template>(`/templates/${id}`);
+export async function fetchTemplate(id: string, token?: string | null): Promise<Template> {
+  return apiRequest<Template>(`/templates/${id}`, {}, DEFAULT_TIMEOUT, token);
 }
 
 export async function createTemplate(
   projectId: string,
   name: string,
   content: string,
-  provider: string
+  provider: string,
+  token?: string | null
 ): Promise<Template> {
   return apiRequest<Template>('/templates', {
     method: 'POST',
     body: JSON.stringify({ projectId, name, content, provider }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
 export async function updateTemplate(
   id: string,
-  data: { name?: string; content?: string; provider?: string }
+  data: { name?: string; content?: string; provider?: string },
+  token?: string | null
 ): Promise<Template> {
   return apiRequest<Template>(`/templates/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
-export async function deleteTemplate(id: string): Promise<{ success: boolean; deleted: Template }> {
+export async function deleteTemplate(id: string, token?: string | null): Promise<{ success: boolean; deleted: Template }> {
   return apiRequest<{ success: boolean; deleted: Template }>(`/templates/${id}`, {
     method: 'DELETE',
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
 export interface DiffResult {
@@ -174,11 +184,11 @@ export interface DiffResult {
   };
 }
 
-export async function fetchTemplateDiff(id: string, content: string): Promise<DiffResult> {
+export async function fetchTemplateDiff(id: string, content: string, token?: string | null): Promise<DiffResult> {
   return apiRequest<DiffResult>(`/templates/${id}/diff`, {
     method: 'POST',
     body: JSON.stringify({ content }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
 // ============================================================================
@@ -222,7 +232,8 @@ export interface GenerationResult {
 export async function generateTemplate(
   prompt: string,
   provider: string,
-  connectionId?: string
+  connectionId?: string,
+  token?: string | null
 ): Promise<GenerationResult> {
   return apiRequest<GenerationResult>(
     '/generate',
@@ -230,7 +241,8 @@ export async function generateTemplate(
       method: 'POST',
       body: JSON.stringify({ prompt, provider, connectionId }),
     },
-    GENERATION_TIMEOUT // Use extended timeout for generation
+    GENERATION_TIMEOUT, // Use extended timeout for generation
+    token
   );
 }
 
@@ -312,30 +324,32 @@ export interface AuditResult {
 export async function runAudit(
   content: string,
   provider: string,
-  templateId?: string
+  templateId?: string,
+  token?: string | null
 ): Promise<AuditResult> {
   return apiRequest<AuditResult>('/audit', {
     method: 'POST',
     body: JSON.stringify({ content, provider, templateId }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
-export async function getAuditReport(templateId: string): Promise<AuditResult> {
-  return apiRequest<AuditResult>(`/audit/${templateId}`);
+export async function getAuditReport(templateId: string, token?: string | null): Promise<AuditResult> {
+  return apiRequest<AuditResult>(`/audit/${templateId}`, {}, DEFAULT_TIMEOUT, token);
 }
 
-export async function fetchPolicies(): Promise<Policy[]> {
-  return apiRequest<Policy[]>('/policies');
+export async function fetchPolicies(token?: string | null): Promise<Policy[]> {
+  return apiRequest<Policy[]>('/policies', {}, DEFAULT_TIMEOUT, token);
 }
 
 export async function togglePolicyStatus(
   id: string,
-  isActive: boolean
+  isActive: boolean,
+  token?: string | null
 ): Promise<Policy> {
   return apiRequest<Policy>(`/policies/${id}/toggle`, {
     method: 'PUT',
     body: JSON.stringify({ isActive }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
 // ============================================================================
@@ -388,31 +402,31 @@ export interface CreditCheck {
   balance: number;
 }
 
-export async function getCreditBalance(): Promise<CreditBalance> {
-  return apiRequest<CreditBalance>('/credits/balance');
+export async function getCreditBalance(token?: string | null): Promise<CreditBalance> {
+  return apiRequest<CreditBalance>('/credits/balance', {}, DEFAULT_TIMEOUT, token);
 }
 
-export async function getCreditHistory(limit?: number): Promise<CreditTransaction[]> {
+export async function getCreditHistory(limit?: number, token?: string | null): Promise<CreditTransaction[]> {
   const query = limit ? `?limit=${limit}` : '';
-  return apiRequest<CreditTransaction[]>(`/credits/history${query}`);
+  return apiRequest<CreditTransaction[]>(`/credits/history${query}`, {}, DEFAULT_TIMEOUT, token);
 }
 
-export async function getCreditUsage(): Promise<CreditUsageStats> {
-  return apiRequest<CreditUsageStats>('/credits/usage');
+export async function getCreditUsage(token?: string | null): Promise<CreditUsageStats> {
+  return apiRequest<CreditUsageStats>('/credits/usage', {}, DEFAULT_TIMEOUT, token);
 }
 
-export async function checkCredits(action: CreditAction): Promise<CreditCheck> {
+export async function checkCredits(action: CreditAction, token?: string | null): Promise<CreditCheck> {
   return apiRequest<CreditCheck>('/credits/check', {
     method: 'POST',
     body: JSON.stringify({ action }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
-export async function rechargeCredits(packId: string): Promise<{ sessionId: string; url: string }> {
+export async function rechargeCredits(packId: string, token?: string | null): Promise<{ sessionId: string; url: string }> {
   return apiRequest<{ sessionId: string; url: string }>('/credits/checkout', {
     method: 'POST',
     body: JSON.stringify({ packId }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
 // ============================================================================
@@ -462,25 +476,25 @@ export interface CloudScanResult {
   creditsRemaining?: number;
 }
 
-export async function validateCloudCredentials(credentials: AWSCredentials): Promise<{ isValid: boolean }> {
+export async function validateCloudCredentials(credentials: AWSCredentials, token?: string | null): Promise<{ isValid: boolean }> {
   return apiRequest<{ isValid: boolean }>('/cloud/validate', {
     method: 'POST',
     body: JSON.stringify({ credentials }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
-export async function scanCloudAccount(credentials: AWSCredentials): Promise<CloudScanResult> {
+export async function scanCloudAccount(credentials: AWSCredentials, token?: string | null): Promise<CloudScanResult> {
   return apiRequest<CloudScanResult>('/cloud/scan', {
     method: 'POST',
     body: JSON.stringify({ credentials }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
-export async function scanSavedConnection(connectionId: string, region?: string): Promise<CloudScanResult> {
+export async function scanSavedConnection(connectionId: string, region?: string, token?: string | null): Promise<CloudScanResult> {
   return apiRequest<CloudScanResult>(`/cloud/connections/${connectionId}/scan-report`, {
     method: 'POST',
     body: JSON.stringify({ region }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 // ============================================================================
 // CLOUD CONNECTIONS (MANAGED)
@@ -508,12 +522,12 @@ export interface CloudResource {
   lastSyncedAt: string;
 }
 
-export async function fetchConnections(): Promise<CloudConnection[]> {
-  return apiRequest<CloudConnection[]>('/cloud/connections');
+export async function fetchConnections(token?: string | null): Promise<CloudConnection[]> {
+  return apiRequest<CloudConnection[]>('/cloud/connections', {}, DEFAULT_TIMEOUT, token);
 }
 
-export async function fetchConnectionResources(connectionId: string): Promise<CloudResource[]> {
-  return apiRequest<CloudResource[]>(`/cloud/connections/${connectionId}/resources`);
+export async function fetchConnectionResources(connectionId: string, token?: string | null): Promise<CloudResource[]> {
+  return apiRequest<CloudResource[]>(`/cloud/connections/${connectionId}/resources`, {}, DEFAULT_TIMEOUT, token);
 }
 
 // ----------------------------------------------------------------------------
@@ -537,42 +551,42 @@ export interface Recommendation {
   createdAt: string;
 }
 
-export async function generateRecommendations(connectionId: string): Promise<Recommendation[]> {
+export async function generateRecommendations(connectionId: string, token?: string | null): Promise<Recommendation[]> {
     return apiRequest<Recommendation[]>(`/cloud/connections/${connectionId}/recommendations`, {
         method: 'POST'
-    });
+    }, DEFAULT_TIMEOUT, token);
 }
 
-export async function fetchRecommendations(connectionId: string): Promise<Recommendation[]> {
-    return apiRequest<Recommendation[]>(`/cloud/connections/${connectionId}/recommendations`);
+export async function fetchRecommendations(connectionId: string, token?: string | null): Promise<Recommendation[]> {
+    return apiRequest<Recommendation[]>(`/cloud/connections/${connectionId}/recommendations`, {}, DEFAULT_TIMEOUT, token);
 }
 
-export async function getAWSSetupDetails(): Promise<{ externalId: string; setupUrl: string; hostAccountId: string; templateYaml: string }> {
+export async function getAWSSetupDetails(token?: string | null): Promise<{ externalId: string; setupUrl: string; hostAccountId: string; templateYaml: string }> {
   return apiRequest<{ externalId: string; setupUrl: string; hostAccountId: string; templateYaml: string }>('/cloud/aws/setup', {
     method: 'POST',
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
 export async function connectAWS(data: {
   name: string;
   roleArn: string;
   externalId: string;
-}): Promise<CloudConnection> {
+}, token?: string | null): Promise<CloudConnection> {
   return apiRequest<CloudConnection>('/cloud/aws/connect', {
     method: 'POST',
     body: JSON.stringify(data),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
-export async function syncConnection(id: string, region?: string): Promise<CloudConnection> {
+export async function syncConnection(id: string, region?: string, token?: string | null): Promise<CloudConnection> {
   return apiRequest<CloudConnection>(`/cloud/connections/${id}/sync`, {
     method: 'POST',
     body: JSON.stringify({ region }),
-  });
+  }, DEFAULT_TIMEOUT, token);
 }
 
-export async function deleteConnection(id: string): Promise<{ success: boolean }> {
+export async function deleteConnection(id: string, token?: string | null): Promise<{ success: boolean }> {
   return apiRequest<{ success: boolean }>(`/cloud/connections/${id}`, {
     method: 'DELETE',
-  });
+  }, DEFAULT_TIMEOUT, token);
 }

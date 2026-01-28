@@ -44,11 +44,15 @@ const AWS_REGIONS = [
   { value: 'me-south-1', label: 'Middle East (Bahrain)' },
 ];
 
+import { useUser, useAuth } from '@clerk/clerk-react';
+
 export default function CloudConnections() {
   const [connections, setConnections] = useState<CloudConnection[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const toast = useToastActions();
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   // Setup state
   const [setupDetails, setSetupDetails] = useState<{ externalId: string, setupUrl: string, hostAccountId: string } | null>(null);
@@ -64,11 +68,13 @@ export default function CloudConnections() {
 
   useEffect(() => {
     loadConnections();
-  }, []);
+  }, [user]);
 
   const loadConnections = async () => {
+    if (!user) return;
     try {
-      const data = await fetchConnections();
+      const token = await getToken();
+      const data = await fetchConnections(token);
       setConnections(data);
     } catch (err) {
       console.error('Failed to load connections:', err);
@@ -81,7 +87,8 @@ export default function CloudConnections() {
   const startAddConnection = async () => {
     setIsAdding(true);
     try {
-      const details = await getAWSSetupDetails();
+      const token = await getToken();
+      const details = await getAWSSetupDetails(token);
       setSetupDetails(details);
     } catch (err) {
       toast.error('Failed to initialize setup');
@@ -95,11 +102,12 @@ export default function CloudConnections() {
 
     setConnecting(true);
     try {
+      const token = await getToken();
       await connectAWS({
         name: connectionName,
         roleArn,
         externalId: setupDetails.externalId
-      });
+      }, token);
       toast.success('AWS Account connected successfully');
       setIsAdding(false);
       setRoleArn('');
@@ -116,7 +124,8 @@ export default function CloudConnections() {
     try {
       const region = selectedRegions[id] || 'us-east-1';
       toast.info(`Scanning ${region}...`);
-      await syncConnection(id, region);
+      const token = await getToken();
+      await syncConnection(id, region, token);
       toast.success('Synchronization complete');
       loadConnections();
     } catch (err) {
@@ -127,7 +136,8 @@ export default function CloudConnections() {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to remove this connection?')) return;
     try {
-      await deleteConnection(id);
+      const token = await getToken();
+      await deleteConnection(id, token);
       toast.success('Connection removed');
       loadConnections();
     } catch (err) {

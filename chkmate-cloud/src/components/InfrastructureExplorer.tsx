@@ -36,21 +36,27 @@ const RESOURCE_ICONS: Record<string, React.ReactNode> = {
   'amplify': <Smartphone className="w-4 h-4 text-pink-400" />,
 };
 
+import { useAuth, useUser } from '@clerk/clerk-react';
+
 export default function InfrastructureExplorer({ connectionId, onClose }: InfrastructureExplorerProps) {
   const [resources, setResources] = useState<CloudResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [expandedResource, setExpandedResource] = useState<string | null>(null);
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   useEffect(() => {
     loadResources();
-  }, [connectionId]);
+  }, [connectionId, user]);
 
   const loadResources = async () => {
+    if (!user) return;
     setLoading(true);
     try {
-      const data = await fetchConnectionResources(connectionId);
+      const token = await getToken();
+      const data = await fetchConnectionResources(connectionId, token);
       setResources(data);
     } catch (err) {
       console.error('Failed to load resources', err);

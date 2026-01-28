@@ -13,21 +13,27 @@ interface CreditBalanceProps {
   compact?: boolean;
 }
 
+import { useAuth, useUser } from '@clerk/clerk-react';
+
 export default function CreditBalance({ onBuyCredits, className, compact = false }: CreditBalanceProps) {
   const [balance, setBalance] = useState<CreditBalanceType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
   const toast = useToastActions();
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   useEffect(() => {
     loadBalance();
-  }, []);
+  }, [user]);
 
   const loadBalance = async () => {
+    if (!user) return;
     try {
       setLoading(true);
-      const data = await getCreditBalance();
+      const token = await getToken();
+      const data = await getCreditBalance(token);
       setBalance(data);
     } catch (err: any) {
       setError(err.message || 'Failed to load balance');
@@ -47,7 +53,7 @@ export default function CreditBalance({ onBuyCredits, className, compact = false
     const handleUpdate = () => loadBalance();
     window.addEventListener('balanceUpdated', handleUpdate);
     return () => window.removeEventListener('balanceUpdated', handleUpdate);
-  }, []);
+  }, [user]);
 
   if (loading) {
     return (
@@ -135,12 +141,19 @@ export default function CreditBalance({ onBuyCredits, className, compact = false
 export function CreditIndicator({ className }: { className?: string }) {
   const [balance, setBalance] = useState<number | null>(null);
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+  const { user } = useUser();
+  const { getToken } = useAuth();
  
   useEffect(() => {
-    const fetchBalance = () => {
-      getCreditBalance()
-        .then(data => setBalance(data.balance))
-        .catch(() => setBalance(null));
+    const fetchBalance = async () => {
+      if (!user) return;
+      try {
+        const token = await getToken();
+        const data = await getCreditBalance(token);
+        setBalance(data.balance);
+      } catch (e) {
+        setBalance(null);
+      }
     };
 
     fetchBalance();
@@ -150,7 +163,7 @@ export function CreditIndicator({ className }: { className?: string }) {
     window.addEventListener('balanceUpdated', handleUpdate);
     
     return () => window.removeEventListener('balanceUpdated', handleUpdate);
-  }, []);
+  }, [user]);
  
   if (balance === null) return null;
  
@@ -194,13 +207,24 @@ export function CreditIndicator({ className }: { className?: string }) {
 export function CreditHistory({ className }: { className?: string }) {
   const [transactions, setTransactions] = useState<CreditTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   useEffect(() => {
-    getCreditHistory(20)
-      .then(setTransactions)
-      .catch(() => setTransactions([]))
-      .finally(() => setLoading(false));
-  }, []);
+    const loadHistory = async () => {
+      if (!user) return;
+      try {
+        const token = await getToken();
+        const data = await getCreditHistory(20, token);
+        setTransactions(data);
+      } catch (e) {
+        setTransactions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadHistory();
+  }, [user]);
 
   if (loading) {
     return <div className="animate-pulse space-y-2">

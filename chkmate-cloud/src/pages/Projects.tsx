@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useUser, useAuth } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import { fetchProjects, createProject, deleteProject, Project } from '../lib/api';
 import { parseError } from '../lib/errors';
@@ -13,6 +13,7 @@ import { cn } from '../lib/utils';
 
 export default function Projects() {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const navigate = useNavigate();
   const toast = useToastActions();
 
@@ -26,11 +27,13 @@ export default function Projects() {
 
   useEffect(() => {
     loadProjects();
-  }, []);
+  }, [user]); // Reload if user changes
 
   const loadProjects = async () => {
     try {
-      const data = await fetchProjects();
+      if (!user) return;
+      const token = await getToken();
+      const data = await fetchProjects(token);
       setProjects(data);
     } catch (e) {
       const error = parseError(e);
@@ -46,8 +49,9 @@ export default function Projects() {
 
     setCreating(true);
     try {
+      const token = await getToken();
       const email = user.primaryEmailAddress?.emailAddress || '';
-      const project = await createProject(newName, newDesc, user.id, email, user.fullName);
+      const project = await createProject(newName, newDesc, user.id, email, user.fullName, token);
       setShowNew(false);
       setNewName('');
       setNewDesc('');
@@ -73,7 +77,8 @@ export default function Projects() {
 
     setDeletingId(id);
     try {
-      await deleteProject(id);
+      const token = await getToken();
+      await deleteProject(id, token);
       toast.success('Project deleted successfully');
 
       // Track project deletion

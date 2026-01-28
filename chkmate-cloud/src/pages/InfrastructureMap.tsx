@@ -226,6 +226,8 @@ function ResourceGroup({ title, icon: Icon, iconColor, resources, defaultExpande
   );
 }
 
+import { useAuth, useUser } from '@clerk/clerk-react';
+
 export default function InfrastructureMap() {
   const [connections, setConnections] = useState<CloudConnection[]>([]);
   const [selectedConnectionId, setSelectedConnectionId] = useState<string>('');
@@ -233,20 +235,24 @@ export default function InfrastructureMap() {
   const [resources, setResources] = useState<CloudResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   useEffect(() => {
     loadConnections();
-  }, []);
+  }, [user]); // Add user dependency
 
   useEffect(() => {
     if (selectedConnectionId) {
       loadResources();
     }
-  }, [selectedConnectionId]);
+  }, [selectedConnectionId, user]); // Add user dependency
 
   const loadConnections = async () => {
+    if (!user) return;
     try {
-      const conns = await fetchConnections();
+      const token = await getToken();
+      const conns = await fetchConnections(token);
       setConnections(conns);
       if (conns.length > 0) {
         setSelectedConnectionId(conns[0].id);
@@ -259,10 +265,11 @@ export default function InfrastructureMap() {
   };
 
   const loadResources = async () => {
-    if (!selectedConnectionId) return;
+    if (!selectedConnectionId || !user) return;
     setLoading(true);
     try {
-      const data = await fetchConnectionResources(selectedConnectionId);
+      const token = await getToken();
+      const data = await fetchConnectionResources(selectedConnectionId, token);
       setResources(data);
     } catch (err) {
       console.error('Failed to load resources', err);
@@ -275,7 +282,8 @@ export default function InfrastructureMap() {
     if (!selectedConnectionId) return;
     setSyncing(true);
     try {
-      await syncConnection(selectedConnectionId, selectedRegion);
+      const token = await getToken();
+      await syncConnection(selectedConnectionId, selectedRegion, token);
       await loadResources();
     } catch (err) {
       console.error('Sync failed', err);

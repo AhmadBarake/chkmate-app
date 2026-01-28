@@ -7,16 +7,30 @@ import { SecurityBadge, Severity } from '../components/SecurityBadge';
 import { staggerContainer, staggerItem } from '../lib/animations';
 import { formatRelativeTime } from '../lib/utils';
 
+import { useAuth, useUser } from '@clerk/clerk-react';
+
 export default function Templates() {
+  const { user } = useUser();
+  const { getToken } = useAuth();
   const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTemplates()
-      .then(data => setTemplates(data))
-      .catch(err => console.error(err))
-      .finally(() => setLoading(false));
-  }, []);
+    const loadTemplates = async () => {
+      try {
+        if (!user) return;
+        const token = await getToken();
+        const data = await fetchTemplates(token);
+        setTemplates(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadTemplates();
+  }, [user]);
 
   const getTemplateStatus = (t: any) => {
     const report = t.auditReports?.[0];

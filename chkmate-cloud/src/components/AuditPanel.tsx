@@ -26,6 +26,8 @@ interface AuditPanelProps {
 
 type TabType = 'all' | 'security' | 'cost';
 
+import { useAuth, useUser } from '@clerk/clerk-react';
+
 export default function AuditPanel({
   content,
   provider,
@@ -37,13 +39,18 @@ export default function AuditPanel({
   const [result, setResult] = useState<AuditResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('all');
+  const { getToken } = useAuth();
+  const { user } = useUser();
 
   const handleRunAudit = async () => {
     setLoading(true);
     setError(null);
 
+    if (!user) return;
+
     try {
-      const auditResult = await runAudit(content, provider, templateId);
+      const token = await getToken();
+      const auditResult = await runAudit(content, provider, templateId, token);
       setResult(auditResult);
     } catch (err) {
       console.error('Audit failed:', err);

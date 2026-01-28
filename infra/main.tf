@@ -25,6 +25,7 @@ variable "api_subdomain" {
 # Secrets for Environment Variables
 variable "database_url" { sensitive = true }
 variable "clerk_publishable_key" {}
+variable "clerk_secret_key" { sensitive = true }
 variable "gemini_api_key" { sensitive = true }
 variable "posthog_key" { sensitive = true }
 variable "posthog_host" { default = "https://app.posthog.com" }
@@ -251,6 +252,8 @@ resource "aws_ecs_task_definition" "app" {
     environment = [
         { name = "DATABASE_URL", value = var.database_url },
         { name = "VITE_CLERK_PUBLISHABLE_KEY", value = var.clerk_publishable_key },
+        { name = "CLERK_PUBLISHABLE_KEY", value = var.clerk_publishable_key },
+        { name = "CLERK_SECRET_KEY", value = var.clerk_secret_key },
         { name = "VITE_GEMINI_API_KEY", value = var.gemini_api_key },
         { name = "GEMINI_API_KEY", value = var.gemini_api_key },
         { name = "VITE_POSTHOG_KEY", value = var.posthog_key },

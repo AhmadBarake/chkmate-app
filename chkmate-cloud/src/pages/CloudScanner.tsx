@@ -24,6 +24,8 @@ import { fadeInUp } from '../lib/animations';
 import { validateCloudCredentials, scanCloudAccount, scanSavedConnection, fetchConnections, AWSCredentials, CloudScanResult, CloudConnection, CREDIT_COSTS } from '../lib/api';
 import { useToastActions } from '../context/ToastContext';
 
+import { useAuth, useUser } from '@clerk/clerk-react';
+
 export default function CloudScanner() {
   const [step, setStep] = useState<'connect' | 'scanning' | 'results'>('connect');
   const [credentials, setCredentials] = useState<AWSCredentials>({
@@ -35,7 +37,8 @@ export default function CloudScanner() {
   const [results, setResults] = useState<CloudScanResult | null>(null);
   const [showSecret, setShowSecret] = useState(false);
   const [validating, setValidating] = useState(false);
-
+  const { user } = useUser();
+  const { getToken } = useAuth();
   
   // New State for Saved Connections
   const [scanMode, setScanMode] = useState<'saved' | 'manual'>('saved');
@@ -46,8 +49,19 @@ export default function CloudScanner() {
   const toast = useToastActions();
 
   React.useEffect(() => {
-    fetchConnections().then(setConnections).catch(console.error);
-  }, []);
+    const loadConnections = async () => {
+      if (!user) return;
+      try {
+        const token = await getToken();
+        // Updated to use token
+        const data = await fetchConnections(token);
+        setConnections(data);
+      } catch (e) {
+        console.error("Failed to load connections", e);
+      }
+    };
+    loadConnections();
+  }, [user]);
 
   const handleConnect = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +75,8 @@ export default function CloudScanner() {
         region: credentials.region.trim(),
       };
       
-      const { isValid } = await validateCloudCredentials(sanitized);
+      const token = await getToken();
+      const { isValid } = await validateCloudCredentials(sanitized, token);
       if (isValid) {
         toast.success('Credentials validated successfully');
         handleScan();
@@ -84,6 +99,7 @@ export default function CloudScanner() {
       await new Promise(r => setTimeout(r, 2000));
       
       let scanResults;
+      const token = await getToken();
       
       if (scanMode === 'saved') {
          if (!selectedConnectionId) throw new Error('Please select a connection');
@@ -91,7 +107,7 @@ export default function CloudScanner() {
          if (!conn) throw new Error('Connection not found');
          
          // Using saved connection with selected region
-         scanResults = await scanSavedConnection(selectedConnectionId, selectedRegion);
+         scanResults = await scanSavedConnection(selectedConnectionId, selectedRegion, token);
       } else {
          // Using manual credentials
          const sanitized = {
@@ -101,7 +117,7 @@ export default function CloudScanner() {
            region: credentials.region.trim(),
          };
          
-         scanResults = await scanCloudAccount(sanitized);
+         scanResults = await scanCloudAccount(sanitized, token);
       }
       
       setResults(scanResults);

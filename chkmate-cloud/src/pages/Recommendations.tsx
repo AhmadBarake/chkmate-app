@@ -39,6 +39,8 @@ const AWS_REGIONS = [
   { value: 'me-south-1', label: 'Middle East (Bahrain)' },
 ];
 
+import { useAuth, useUser } from '@clerk/clerk-react';
+
 export default function Recommendations() {
   const [connections, setConnections] = useState<CloudConnection[]>([]);
   const [selectedConnectionId, setSelectedConnectionId] = useState<string>('');
@@ -47,10 +49,12 @@ export default function Recommendations() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<'ALL' | 'COST' | 'SECURITY' | 'PERFORMANCE'>('ALL');
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   useEffect(() => {
     loadConnections();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
       if (selectedConnectionId) {
@@ -58,11 +62,13 @@ export default function Recommendations() {
       } else {
           setRecommendations([]);
       }
-  }, [selectedConnectionId]);
+  }, [selectedConnectionId, user]);
 
   const loadConnections = async () => {
+    if (!user) return;
     try {
-        const conns = await fetchConnections();
+        const token = await getToken();
+        const conns = await fetchConnections(token);
         setConnections(conns);
         if (conns.length > 0) {
             setSelectedConnectionId(conns[0].id);
@@ -75,8 +81,10 @@ export default function Recommendations() {
   };
 
   const loadRecommendations = async (connId: string) => {
+      if (!user) return;
       try {
-          const recs = await fetchRecommendations(connId);
+          const token = await getToken();
+          const recs = await fetchRecommendations(connId, token);
           setRecommendations(recs);
       } catch (err) {
           console.error("Failed to fetch recommendations", err);
@@ -84,13 +92,14 @@ export default function Recommendations() {
   };
 
   const handleAnalyze = async () => {
-      if (!selectedConnectionId) return;
+      if (!selectedConnectionId || !user) return;
       setIsAnalyzing(true);
       try {
+          const token = await getToken();
           // First sync resources from selected region, then generate recommendations
-          await syncConnection(selectedConnectionId, selectedRegion);
+          await syncConnection(selectedConnectionId, selectedRegion, token);
           const [recs] = await Promise.all([
-              generateRecommendations(selectedConnectionId),
+              generateRecommendations(selectedConnectionId, token),
               new Promise(resolve => setTimeout(resolve, 1000))
           ]);
           setRecommendations(recs);

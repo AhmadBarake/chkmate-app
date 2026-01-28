@@ -12,10 +12,13 @@ import { SecurityBadge, Severity } from '../components/SecurityBadge';
 import { staggerContainer, staggerItem, fadeInUp } from '../lib/animations';
 import { formatRelativeTime, cn } from '../lib/utils';
 
+import { useAuth } from '@clerk/clerk-react';
+
 export default function ProjectDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToastActions();
+  const { getToken } = useAuth();
 
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,7 +28,8 @@ export default function ProjectDetails() {
     if (!id) return;
     setLoading(true);
     try {
-      const data = await fetchProject(id);
+      const token = await getToken();
+      const data = await fetchProject(id, token);
       setProject(data);
     } catch (err) {
       const error = parseError(err);
@@ -49,7 +53,8 @@ export default function ProjectDetails() {
 
     setDeletingId(templateId);
     try {
-      await deleteTemplate(templateId);
+      const token = await getToken();
+      await deleteTemplate(templateId, token);
       toast.success('Template deleted successfully');
       loadProject();
     } catch (err) {

@@ -48,10 +48,14 @@ const STAGE_MESSAGES: Record<GenerationStage, string> = {
   complete: 'Generation complete!',
 };
 
+import { useUser, useAuth } from '@clerk/clerk-react';
+
 export default function Builder() {
   const { projectId, templateId } = useParams();
   const navigate = useNavigate();
   const toast = useToastActions();
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   const [step, setStep] = useState<'provider' | 'design' | 'review' | 'code'>('provider');
   const [selectedProvider, setSelectedProvider] = useState<string>('');
@@ -77,76 +81,89 @@ export default function Builder() {
 
   // Load connections
   useEffect(() => {
-    fetchConnections().then(setConnections).catch(console.error);
-  }, []);
+    const loadConnections = async () => {
+      if (!user) return;
+      try {
+        const token = await getToken();
+        // Since api.ts is updated, fetchConnections now accepts a token
+        const data = await fetchConnections(token); 
+        setConnections(data);
+      } catch (e) {
+        console.error("Failed to load connections", e);
+      }
+    };
+    loadConnections();
+  }, [user]);
 
   // Load template if editing
   useEffect(() => {
-    if (templateId) {
+    const loadTemplate = async () => {
+      if (!templateId || !user) return;
       setLoadingTemplate(true);
-      fetchTemplate(templateId)
-        .then(template => {
-          setSelectedProvider(template.provider);
+      try {
+        const token = await getToken();
+        const template = await fetchTemplate(templateId, token);
+        
+        setSelectedProvider(template.provider);
 
-          try {
-            const content = JSON.parse(template.content);
+        try {
+          const content = JSON.parse(template.content);
 
-            let loadedFiles = {};
-            let loadedCost = null;
-            let loadedDiagram = null;
+          let loadedFiles = {};
+          let loadedCost = null;
+          let loadedDiagram = null;
 
-            if (content.files) {
-              loadedFiles = content.files;
-              loadedCost = content.cost;
-              loadedDiagram = content.diagram;
-            } else {
-              loadedFiles = content;
-            }
-
-            setGeneratedFiles(loadedFiles || {});
-            setOriginalFiles(loadedFiles || {});
-            setCostEstimate(loadedCost || null);
-
-            if (loadedDiagram) {
-              setNodes(loadedDiagram.nodes.map((n: any) => ({
-                ...n,
-                data: { label: n.label },
-                style: {
-                  background: '#1e1e1e',
-                  color: '#fff',
-                  border: '1px solid #333',
-                  borderRadius: '8px',
-                  padding: '10px',
-                  fontSize: '12px',
-                  width: 150,
-                }
-              })));
-              setEdges(loadedDiagram.edges.map((e: any) => ({
-                ...e,
-                type: 'smoothstep',
-                animated: true,
-                style: { stroke: "#0ea5e9" },
-                markerEnd: { type: MarkerType.ArrowClosed, color: "#0ea5e9" }
-              })));
-            }
-
-            setStep('review');
-            toast.success('Template loaded successfully');
-          } catch (e) {
-            console.error("Failed to parse template content", e);
-            toast.error('Failed to parse template content');
+          if (content.files) {
+            loadedFiles = content.files;
+            loadedCost = content.cost;
+            loadedDiagram = content.diagram;
+          } else {
+            loadedFiles = content;
           }
-        })
-        .catch(err => {
-          const error = parseError(err);
-          toast.error(error.message, 'Failed to load template');
-        })
-        .finally(() => {
-          setLoadingTemplate(false);
-        });
-    }
+
+          setGeneratedFiles(loadedFiles || {});
+          setOriginalFiles(loadedFiles || {});
+          setCostEstimate(loadedCost || null);
+
+          if (loadedDiagram) {
+            setNodes(loadedDiagram.nodes.map((n: any) => ({
+              ...n,
+              data: { label: n.label },
+              style: {
+                background: '#1e1e1e',
+                color: '#fff',
+                border: '1px solid #333',
+                borderRadius: '8px',
+                padding: '10px',
+                fontSize: '12px',
+                width: 150,
+              }
+            })));
+            setEdges(loadedDiagram.edges.map((e: any) => ({
+              ...e,
+              type: 'smoothstep',
+              animated: true,
+              style: { stroke: "#0ea5e9" },
+              markerEnd: { type: MarkerType.ArrowClosed, color: "#0ea5e9" }
+            })));
+          }
+
+          setStep('review');
+          toast.success('Template loaded successfully');
+        } catch (e) {
+          console.error("Failed to parse template content", e);
+          toast.error('Failed to parse template content');
+        }
+      } catch (err) {
+        const error = parseError(err);
+        toast.error(error.message, 'Failed to load template');
+      } finally {
+        setLoadingTemplate(false);
+      }
+    };
+    loadTemplate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [templateId, setNodes, setEdges]);
+  }, [templateId, user, setNodes, setEdges]);
 
   const simulateStages = async () => {
     setGenerationStage('analyzing');
@@ -167,7 +184,8 @@ export default function Builder() {
     simulateStages();
 
     try {
-      const data = await generateTemplate(designPrompt, selectedProvider, selectedConnectionId);
+      const token = await getToken();
+      const data = await generateTemplate(designPrompt, selectedProvider, selectedConnectionId, token);
 
       setGenerationStage('complete');
       setGeneratedFiles(data.files);
@@ -235,7 +253,9 @@ export default function Builder() {
       };
       const content = JSON.stringify(compositeContent);
       if (projectId) {
-        const template = await createTemplate(projectId, name, content, selectedProvider);
+        const token = await getToken();
+        // createTemplate now accepts token as 5th argument
+        const template = await createTemplate(projectId, name, content, selectedProvider, token);
         toast.success('Template saved successfully');
 
         // Track template save
@@ -280,7 +300,8 @@ export default function Builder() {
     try {
       // For accurate comparison, we send the current content of the selected file
       // Note: Backend currently compares strings, so we could send the full set if needed
-      const diff = await fetchTemplateDiff(templateId, generatedFiles[selectedFile]);
+      const token = await getToken();
+      const diff = await fetchTemplateDiff(templateId, generatedFiles[selectedFile], token);
       setDiffData(diff);
       setShowDiff(true);
     } catch (e) {

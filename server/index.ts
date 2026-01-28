@@ -22,6 +22,7 @@ import {
   ExternalServiceError,
 } from './lib/errors.js';
 import { errorHandler, asyncHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { clerkMiddleware, requireAuth } from './middleware/auth.js';
 
 // Import policy engine
 import {
@@ -101,62 +102,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware to check auth (placeholder for now, Clerk verification should be added)
-const requireAuth = asyncHandler(async (req: any, res: any, next: any) => {
-  // Hardcoded for user testing request: abarake56@gmail.com
-  // In production this would verify the token
-  const email = 'abarake56@gmail.com';
-  const clerkId = 'user_abarake56'; // Consistent ID for this user
-  
-  let user = await prisma.user.findUnique({ where: { email } });
-  
-  if (!user) {
-    // Try by clerkId
-    user = await prisma.user.findUnique({ where: { clerkId } });
-  }
+// Clerk Auth Middleware
+app.use(clerkMiddleware as any);
 
-  if (!user) {
-    console.log(`Creating user for ${email}...`);
-    try {
-      user = await prisma.user.create({
-        data: {
-          clerkId,
-          email,
-          name: 'Ahmad Barakeh',
-        },
-      });
-    } catch (e: any) {
-      // Race condition or constraint violation handling
-      console.error('User creation failed, trying fetch:', e.message);
-      user = await prisma.user.findUnique({ where: { email } });
-      if (!user) throw e;
-    }
-  }
-
-  // Ensure high credit balance (Infinite Credits)
-  // We use upsert here to ensure the record exists and has sufficient funds
-  // This bypasses the race condition in creditService.ts/getOrCreateCreditBalance
-  try {
-    await prisma.creditBalance.upsert({
-      where: { userId: user.id },
-      update: { 
-        balance: 1000000, // Reset to 1M if exists
-      },
-      create: {
-        userId: user.id,
-        balance: 1000000, // 1M credits
-      },
-    });
-  } catch (e: any) {
-    console.error('Failed to set infinite credits:', e.message);
-    // Continue anyway, maybe creditService will handle it or it already exists
-  }
-  
-  // Attach the INTERNAL UUID to the request so foreign keys work
-  req.userId = user.id;
-  console.log(`Authenticated as ${user.email} (${user.id})`);
-  next();
-});
+// Placeholder auth removed. Using imported requireAuth from middleware/auth.js
 
 // ============================================================================
 // PROJECTS ROUTES
@@ -203,7 +152,7 @@ app.get(
   '/api/projects/:id',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
 
     const project = await prisma.project.findUnique({
       where: { id },
@@ -231,7 +180,7 @@ app.delete(
   '/api/projects/:id',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
 
     // Check if project exists
     const existingProject = await prisma.project.findUnique({
@@ -281,7 +230,7 @@ app.get(
   '/api/templates/:id',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
 
     const template = await prisma.template.findUnique({
       where: { id },
@@ -351,7 +300,7 @@ app.put(
   '/api/templates/:id',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
     const { name, content, provider } = req.body;
 
     // Check if template exists
@@ -380,7 +329,7 @@ app.delete(
   '/api/templates/:id',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
 
     // Check if template exists
     const existingTemplate = await prisma.template.findUnique({
@@ -404,7 +353,7 @@ app.post(
   '/api/templates/:id/diff',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
     const { content } = req.body;
 
     if (!content) {
@@ -604,7 +553,7 @@ app.get(
   '/api/audit/:templateId',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { templateId } = req.params;
+    const { templateId } = req.params as { templateId: string };
 
     const report = await getLatestAuditReport(templateId);
 
@@ -631,7 +580,7 @@ app.put(
   '/api/policies/:id/toggle',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
     const { isActive } = req.body;
 
     if (typeof isActive !== 'boolean') {
@@ -902,7 +851,7 @@ app.post(
     // Note: Syncing consumes credits in the future, for now free or included in sub
     // We could add deductCredits here too
     const { region } = req.body || {};
-    const connection = await syncConnection(req.params.id, region);
+    const connection = await syncConnection((req.params as { id: string }).id, region);
     res.json(connection);
   })
 );
@@ -920,7 +869,7 @@ app.post(
     }
 
     const { region } = req.body || {};
-    const report = await scanSavedConnection(req.params.id, region);
+    const report = await scanSavedConnection((req.params as { id: string }).id, region);
     res.json({
       ...report,
       creditsRemaining: creditResult.remainingBalance
@@ -933,7 +882,7 @@ app.get(
   '/api/cloud/connections/:id/resources',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const resources = await getConnectionResources(req.params.id);
+    const resources = await getConnectionResources((req.params as { id: string }).id);
     res.json(resources);
   })
 );
@@ -946,7 +895,7 @@ app.post(
   requireAuth,
   asyncHandler(async (req, res) => {
     const { generateRecommendations } = await import('./services/recommendationService');
-    const recs = await generateRecommendations(req.params.id);
+    const recs = await generateRecommendations((req.params as { id: string }).id);
     res.json(recs);
   })
 );
@@ -957,7 +906,7 @@ app.get(
   requireAuth,
   asyncHandler(async (req, res) => {
     const { getRecommendations } = await import('./services/recommendationService');
-    const recs = await getRecommendations(req.params.id);
+    const recs = await getRecommendations((req.params as { id: string }).id);
     res.json(recs);
   })
 );
@@ -968,7 +917,7 @@ app.delete(
   requireAuth,
 
   asyncHandler(async (req, res) => {
-    await deleteConnection(req.params.id);
+    await deleteConnection((req.params as { id: string }).id);
     res.json({ success: true });
   })
 );
