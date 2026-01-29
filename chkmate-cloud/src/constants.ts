@@ -1,8 +1,6 @@
 import { Layers, Zap, Shield, TrendingUp, Users, Cpu, Code, Database, Cloud, ShoppingBag, GraduationCap, Bot, ArrowUpRight } from 'lucide-react';
 
 export const NAV_LINKS = [
-  { name: 'Features', href: '/#features' },
-  { name: 'How it Works', href: '/#how-it-works' },
   { name: 'Roadmap', href: '/docs' },
   { name: 'Pricing', href: '/pricing' },
 ];

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
-import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
+import { SignedIn, UserButton } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,14 +20,11 @@ const Navbar: React.FC = () => {
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setIsOpen(false);
-    
-    // Remove the # from the href to get the id
-    const targetId = href.substring(1);
-    const element = document.getElementById(targetId);
-    
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    navigate(href);
+  };
+
+  const handleLogoClick = () => {
+    navigate('/');
   };
 
   return (
@@ -34,7 +33,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center justify-between h-20">
           
           {/* Logo */}
-          <div className="flex-shrink-0 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <div className="flex-shrink-0 cursor-pointer" onClick={handleLogoClick}>
             <span className="text-2xl font-bold tracking-tighter text-white font-mono">
               chkmate<span className="text-gray-500">_</span>
             </span>
@@ -50,7 +49,7 @@ const Navbar: React.FC = () => {
                   onClick={(e) => handleLinkClick(e, link.href)}
                   className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:tracking-wide cursor-pointer"
                 >
-                  {link.name === 'Documentation' ? 'Roadmap' : link.name}
+                  {link.name}
                 </a>
               ))}
               
@@ -58,11 +57,6 @@ const Navbar: React.FC = () => {
                 <SignedIn>
                   <UserButton afterSignOutUrl="/" />
                 </SignedIn>
-                <SignedOut>
-                  <a href="/login" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer">
-                    Sign In
-                  </a>
-                </SignedOut>
               </div>
 
               <span 
@@ -104,11 +98,6 @@ const Navbar: React.FC = () => {
                  <UserButton afterSignOutUrl="/" />
                </div>
              </SignedIn>
-             <SignedOut>
-               <a href="/login" className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer">
-                 Sign In
-               </a>
-             </SignedOut>
              <div className="block w-full text-center mt-4 px-5 py-3 border border-white/20 text-white/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none">
                 v1.40 (Closed Beta)
              </div>
