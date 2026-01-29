@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Map, 
@@ -15,8 +15,8 @@ import {
   ChevronDown,
   ChevronRight,
   X,
-  Filter,
-  LucideIcon
+  List,
+  LayoutGrid
 } from 'lucide-react';
 import Button from '../components/Button';
 import { 
@@ -27,6 +27,17 @@ import {
   syncConnection 
 } from '../lib/api';
 import { cn } from '../lib/utils';
+import { 
+  ReactFlow, 
+  Background, 
+  Controls, 
+  useNodesState, 
+  useEdgesState,
+  Panel,
+  ReactFlowProvider
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { transformResourcesToGraph } from '../lib/layout';
 
 // Common AWS regions
 const AWS_REGIONS = [
@@ -44,7 +55,7 @@ const AWS_REGIONS = [
   { value: 'me-south-1', label: 'Middle East (Bahrain)' },
 ];
 
-const RESOURCE_CONFIG: Record<string, { icon: LucideIcon; color: string; label: string }> = {
+const RESOURCE_CONFIG: Record<string, { icon: any; color: string; label: string }> = {
   'vpc': { icon: Globe, color: 'text-purple-400', label: 'VPCs' },
   'subnet': { icon: Box, color: 'text-purple-300', label: 'Subnets' },
   'ec2_instance': { icon: Server, color: 'text-orange-400', label: 'EC2 Instances' },
@@ -175,78 +186,32 @@ function ResourceNode({ resource, isExpanded, onToggle, children, depth = 0 }: R
   );
 }
 
-interface ResourceGroupProps {
-  title: string;
-  icon: React.ElementType;
-  iconColor: string;
-  resources: CloudResource[];
-  defaultExpanded?: boolean;
-}
-
-function ResourceGroup({ title, icon: Icon, iconColor, resources, defaultExpanded = true }: ResourceGroupProps) {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-
-  if (resources.length === 0) return null;
-
-  return (
-    <div className="mb-4">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center gap-3 px-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl hover:bg-slate-800/50 transition-colors"
-      >
-        <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-          <Icon className={cn("w-5 h-5", iconColor)} />
-        </div>
-        <div className="flex-1 text-left">
-          <h3 className="font-bold text-white">{title}</h3>
-          <span className="text-xs text-slate-500">{resources.length} resources</span>
-        </div>
-        {isExpanded ? (
-          <ChevronDown className="w-5 h-5 text-slate-400" />
-        ) : (
-          <ChevronRight className="w-5 h-5 text-slate-400" />
-        )}
-      </button>
-
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mt-2 space-y-1"
-          >
-            {resources.map(resource => (
-              <ResourceNode key={resource.id} resource={resource} />
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
 import { useAuth, useUser } from '@clerk/clerk-react';
 
-export default function InfrastructureMap() {
+function InfrastructureMapContent() {
   const [connections, setConnections] = useState<CloudConnection[]>([]);
   const [selectedConnectionId, setSelectedConnectionId] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('us-east-1');
   const [resources, setResources] = useState<CloudResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const { user } = useUser();
   const { getToken } = useAuth();
+  
+  // React Flow State
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
     loadConnections();
-  }, [user]); // Add user dependency
+  }, [user]);
 
   useEffect(() => {
     if (selectedConnectionId) {
       loadResources();
     }
-  }, [selectedConnectionId, user]); // Add user dependency
+  }, [selectedConnectionId, user]);
 
   const loadConnections = async () => {
     if (!user) return;
@@ -271,6 +236,12 @@ export default function InfrastructureMap() {
       const token = await getToken();
       const data = await fetchConnectionResources(selectedConnectionId, token);
       setResources(data);
+      
+      // Update Graph
+      const { nodes: layoutedNodes, edges: layoutedEdges } = transformResourcesToGraph(data);
+      setNodes(layoutedNodes);
+      setEdges(layoutedEdges);
+
     } catch (err) {
       console.error('Failed to load resources', err);
     } finally {
@@ -292,7 +263,7 @@ export default function InfrastructureMap() {
     }
   };
 
-  // Build Hierarchy
+  // Build Hierarchy (for List View)
   const hierarchy = useMemo(() => {
     const vpcs = resources.filter(r => r.resourceType === 'vpc');
     const subnets = resources.filter(r => r.resourceType === 'subnet');
@@ -318,7 +289,6 @@ export default function InfrastructureMap() {
       };
     });
 
-    // Handle resources not in any VPC (rare for EC2 but possible for some RDS or if metadata missing)
     const orphanned = resources.filter(r => 
       ['ec2_instance', 'rds_instance', 'subnet', 'vpc'].includes(r.resourceType) && 
       !vpcs.some(v => v.id === r.id) && 
@@ -348,6 +318,7 @@ export default function InfrastructureMap() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-brand-500/30">
+      <style>{`.react-flow__attribution { display: none !important; }`}</style>
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -365,6 +336,30 @@ export default function InfrastructureMap() {
           </div>
 
           <div className="flex items-center gap-3 bg-slate-900/50 p-2 rounded-xl border border-slate-800">
+             {/* View Toggle */}
+            <div className="flex bg-slate-950/50 rounded-lg p-1 border border-slate-800 mr-2">
+                <button
+                    onClick={() => setViewMode('list')}
+                    className={cn(
+                        "p-1.5 rounded-md transition-all",
+                        viewMode === 'list' ? "bg-slate-800 text-white shadow-sm" : "text-slate-500 hover:text-slate-300"
+                    )}
+                    title="List View"
+                >
+                    <List size={16} />
+                </button>
+                <button
+                    onClick={() => setViewMode('map')}
+                    className={cn(
+                        "p-1.5 rounded-md transition-all",
+                        viewMode === 'map' ? "bg-brand-500 text-white shadow-sm" : "text-slate-500 hover:text-slate-300"
+                    )}
+                    title="Map View"
+                >
+                    <LayoutGrid size={16} />
+                </button>
+            </div>
+
             <select 
               value={selectedConnectionId}
               onChange={(e) => setSelectedConnectionId(e.target.value)}
@@ -434,7 +429,7 @@ export default function InfrastructureMap() {
           </div>
         </div>
 
-        {/* Map Content */}
+        {/* Main Content Area */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 space-y-4">
             <RefreshCw className="w-10 h-10 text-brand-500 animate-spin" />
@@ -459,79 +454,109 @@ export default function InfrastructureMap() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Main Tree (VPC Hierarcy) */}
-            <div className="lg:col-span-8 space-y-6">
-              <div className="flex items-center justify-between">
-                 <h2 className="text-sm font-black text-slate-500 uppercase tracking-[0.2em]">Network Hierarchy</h2>
-                 <div className="text-[10px] text-slate-600 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                    {hierarchy.tree.length} VPCs
-                 </div>
+          <>
+            {viewMode === 'list' ? (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Main Tree (VPC Hierarcy) */}
+                <div className="lg:col-span-8 space-y-6">
+                  <div className="flex items-center justify-between">
+                     <h2 className="text-sm font-black text-slate-500 uppercase tracking-[0.2em]">Network Hierarchy</h2>
+                     <div className="text-[10px] text-slate-600 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                        {hierarchy.tree.length} VPCs
+                     </div>
+                  </div>
+
+                  {hierarchy.tree.map(vpc => (
+                    <div key={vpc.id} className="bg-slate-900/30 border border-slate-800/50 rounded-2xl overflow-hidden shadow-sm">
+                       <ResourceNode 
+                          resource={vpc} 
+                          isExpanded={expandedIds.has(vpc.id)} 
+                          onToggle={() => toggleExpand(vpc.id)}
+                          depth={0}
+                       >
+                          {vpc.children.map(subnet => (
+                            <ResourceNode 
+                               key={subnet.id} 
+                               resource={subnet} 
+                               isExpanded={expandedIds.has(subnet.id)} 
+                               onToggle={() => toggleExpand(subnet.id)}
+                               depth={1}
+                            >
+                               {subnet.children.map(instance => (
+                                 <ResourceNode key={instance.id} resource={instance} depth={2} />
+                               ))}
+                            </ResourceNode>
+                          ))}
+                       </ResourceNode>
+                    </div>
+                  ))}
+
+                  {hierarchy.tree.length === 0 && (
+                    <div className="p-12 text-center bg-slate-900/20 border border-slate-800/40 rounded-2xl">
+                       <p className="text-slate-600 text-sm">No VPCs found in this region.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Sidebar Column (Global & Serverless) */}
+                <div className="lg:col-span-4 space-y-8">
+                  {/* Regional Serverless */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-sm font-black text-slate-500 uppercase tracking-[0.2em]">Serverless & Managed</h2>
+                    </div>
+                    <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 space-y-2">
+                        {hierarchy.regionalServerless.map(res => (
+                            <ResourceNode key={res.id} resource={res} />
+                        ))}
+                        {hierarchy.regionalServerless.length === 0 && <p className="text-[10px] text-slate-700 text-center py-4">None found</p>}
+                    </div>
+                  </div>
+
+                  {/* Global Resources */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-sm font-black text-slate-500 uppercase tracking-[0.2em]">Global Resources</h2>
+                        <span className="text-[10px] text-brand-500 font-bold bg-brand-500/10 px-2 py-0.5 rounded border border-brand-500/20">AWS GLOBAL</span>
+                    </div>
+                    <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 space-y-2">
+                        {hierarchy.globalResources.map(res => (
+                            <ResourceNode key={res.id} resource={res} />
+                        ))}
+                    </div>
+                  </div>
+                </div>
               </div>
-
-              {hierarchy.tree.map(vpc => (
-                <div key={vpc.id} className="bg-slate-900/30 border border-slate-800/50 rounded-2xl overflow-hidden shadow-sm">
-                   <ResourceNode 
-                      resource={vpc} 
-                      isExpanded={expandedIds.has(vpc.id)} 
-                      onToggle={() => toggleExpand(vpc.id)}
-                      depth={0}
-                   >
-                      {vpc.children.map(subnet => (
-                        <ResourceNode 
-                           key={subnet.id} 
-                           resource={subnet} 
-                           isExpanded={expandedIds.has(subnet.id)} 
-                           onToggle={() => toggleExpand(subnet.id)}
-                           depth={1}
-                        >
-                           {subnet.children.map(instance => (
-                             <ResourceNode key={instance.id} resource={instance} depth={2} />
-                           ))}
-                        </ResourceNode>
-                      ))}
-                   </ResourceNode>
+            ) : (
+                <div className="h-[70vh] w-full bg-slate-900/30 rounded-2xl border border-slate-800/50 overflow-hidden relative">
+                    <ReactFlow
+                        nodes={nodes}
+                        edges={edges}
+                        onNodesChange={onNodesChange}
+                        onEdgesChange={onEdgesChange}
+                        fitView
+                        minZoom={0.1}
+                    >
+                        <Background color="#333" gap={20} />
+                        <Controls className="bg-slate-900 border-slate-800 text-white" />
+                        <Panel position="top-right" className="bg-slate-950/80 backdrop-blur border border-slate-800 p-2 rounded-lg text-xs text-slate-400">
+                             {nodes.length} Resources Visualized
+                        </Panel>
+                    </ReactFlow>
                 </div>
-              ))}
-
-              {hierarchy.tree.length === 0 && (
-                <div className="p-12 text-center bg-slate-900/20 border border-slate-800/40 rounded-2xl">
-                   <p className="text-slate-600 text-sm">No VPCs found in this region.</p>
-                </div>
-              )}
-            </div>
-
-            {/* Sidebar Column (Global & Serverless) */}
-            <div className="lg:col-span-4 space-y-8">
-              {/* Regional Serverless */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-black text-slate-500 uppercase tracking-[0.2em]">Serverless & Managed</h2>
-                </div>
-                <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 space-y-2">
-                    {hierarchy.regionalServerless.map(res => (
-                        <ResourceNode key={res.id} resource={res} />
-                    ))}
-                    {hierarchy.regionalServerless.length === 0 && <p className="text-[10px] text-slate-700 text-center py-4">None found</p>}
-                </div>
-              </div>
-
-              {/* Global Resources */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-black text-slate-500 uppercase tracking-[0.2em]">Global Resources</h2>
-                    <span className="text-[10px] text-brand-500 font-bold bg-brand-500/10 px-2 py-0.5 rounded border border-brand-500/20">AWS GLOBAL</span>
-                </div>
-                <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 space-y-2">
-                    {hierarchy.globalResources.map(res => (
-                        <ResourceNode key={res.id} resource={res} />
-                    ))}
-                </div>
-              </div>
-            </div>
-          </div>
+            )}
+          </>
         )}
       </main>
     </div>
   );
+}
+
+// Wrap with ReactFlowProvider to ensure context exists
+export default function InfrastructureMap() {
+    return (
+        <ReactFlowProvider>
+            <InfrastructureMapContent />
+        </ReactFlowProvider>
+    );
 }
