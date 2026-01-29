@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import RegisterInterestModal from '../components/RegisterInterestModal';
 import Newsletter from '../components/Newsletter';
+import TypewriterHero from '../components/TypewriterHero';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <div className="relative pt-40 pb-20 px-6 min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative pt-36 pb-10 px-6 min-h-screen flex flex-col items-center justify-center overflow-hidden">
         
         {/* Subtle Background */}
         <div className="absolute inset-0 z-0 opacity-80">
@@ -56,15 +57,20 @@ export default function LandingPage() {
                 v1.41 Closed Beta now live
             </div>
 
+            {/* Hero Visual: Typewriter Effect */}
+            <div className="w-full mb-8">
+               <TypewriterHero />
+            </div>
+
             {/* Headline */}
-            <h1 className="text-5xl md:text-8xl font-semibold tracking-tighter mb-6">
-                Infrastructure.<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Reimagined.</span>
+            <h1 className="text-3xl md:text-6xl font-semibold tracking-tighter mb-4">
+                Build Production-Ready <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Infra in Minutes.</span>
             </h1>
 
             {/* Subhead */}
-            <p className="text-xl md:text-2xl text-slate-300 mb-10 max-w-2xl leading-relaxed font-medium">
-                Describe your stack in plain English. We handle the Terraform, visualize the plan, and catch the cost leaks.
+            <p className="text-lg md:text-lg text-slate-300 mb-8 max-w-2xl leading-relaxed font-medium">
+                Stop wrestling with HCL and hidden costs. Describe your stack in plain English—Chkmate generates secure, cost-optimized Terraform with automated visual maps and instant budget audits.
             </p>
 
             {/* CTAs */}
@@ -77,17 +83,6 @@ export default function LandingPage() {
                 </button>
             </div>
 
-            {/* Hero Image / Placeholder */}
-            <div className="relative w-full max-w-5xl mt-8">
-               {/* Glow effect behind image */}
-               <div className="absolute -inset-4 bg-gradient-to-r from-brand-500/20 to-indigo-500/20 rounded-[2.5rem] blur-3xl opacity-50"></div>
-               
-                <img 
-                    src="/Hero.png" 
-                    alt="Chkmate Interface" 
-                    className="relative w-full rounded-[2rem] border border-slate-700/50 shadow-2xl bg-slate-950 z-10"
-                />
-            </div>
         </div>
       </div>
 
@@ -104,8 +99,8 @@ export default function LandingPage() {
                 <div className="md:col-span-2 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors">
                     <div className="relative z-10 max-w-lg">
                         <div className="mb-4 text-indigo-400"><Cloud size={32} /></div>
-                        <h3 className="text-3xl font-semibold mb-3">Natural Language to IaC</h3>
-                        <p className="text-slate-400 text-lg">Use plain English to define complex AWS, Azure, or GCP architectures. The AI handles the boilerplate.</p>
+                        <h3 className="text-3xl font-semibold mb-3">AI-Powered HCL Architect</h3>
+                        <p className="text-slate-400 text-lg">Positions it as an "Expert" in the room. You describe the intent, we generate the valid Terraform code.</p>
                     </div>
                     {/* Feature Image */}
                     <div className="mt-10 aspect-video rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
@@ -120,8 +115,8 @@ export default function LandingPage() {
                 {/* Tall Card 2 */}
                 <div className="md:col-span-1 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors">
                      <div className="mb-4 text-emerald-400"><DollarSign size={32} /></div>
-                     <h3 className="text-3xl font-semibold mb-3">Cost Aware</h3>
-                     <p className="text-slate-400 text-lg mb-8">Know the price before you deploy. Real-time estimation.</p>
+                     <h3 className="text-3xl font-semibold mb-3">Eliminate Sticker Shock</h3>
+                     <p className="text-slate-400 text-lg mb-8">Eliminate the "Surprise Bill". Know exactly what your infra costs before you deploy.</p>
                      
                      {/* Cost Graph */}
                     <div className="w-full h-[400px] md:h-auto md:aspect-[3/5] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
@@ -153,8 +148,8 @@ export default function LandingPage() {
                     <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
                         <div className="flex-1">
                             <div className="mb-4 text-rose-400"><Shield size={32} /></div>
-                            <h3 className="text-3xl font-semibold mb-3">Secure by Default</h3>
-                            <p className="text-slate-400 text-lg">Built-in checkov and tfsec integration. 50+ guardrails automatically applied to every generated line of code.</p>
+                            <h3 className="text-3xl font-semibold mb-3">Built-in Compliance Guardrails</h3>
+                            <p className="text-slate-400 text-lg">A "Safety Net" for your infrastructure. 50+ guardrails automatically applied to every generated line of code.</p>
                             
                             <ul className="mt-6 space-y-3">
                                 <li className="flex items-center gap-3 text-slate-300"><Check size={18} className="text-indigo-400"/> IAM Least Privilege</li>
@@ -194,37 +189,37 @@ export default function LandingPage() {
               <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold text-xl mb-6 border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-white transition-colors">
                 1
               </div>
-              <h3 className="text-xl font-semibold mb-3">Connect</h3>
+              <h3 className="text-xl font-semibold mb-3">Context-Aware Connection</h3>
               <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                Establish a secure, read-only connection to your AWS account.
+                Connect your AWS (Read-Only) so Chkmate understands your existing VPCs and Subnets.
               </p>
               <div className="mt-auto p-2 px-3 bg-slate-950/50 rounded-lg border border-slate-800/50 text-[10px] font-mono text-slate-500">
                 ReadOnlyAccess
               </div>
             </div>
 
-            {/* Step 2: Prompt */}
+            {/* Step 2: Blueprinting */}
             <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start">
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-xl mb-6 border border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                 2
               </div>
-              <h3 className="text-xl font-semibold mb-3">Prompt</h3>
+              <h3 className="text-xl font-semibold mb-3">Blueprinting</h3>
               <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                Describe your desired architecture in plain English.
+                 Describe your intent. Chkmate doesn't just "write code"—it architects based on AWS best practices.
               </p>
               <div className="mt-auto flex gap-1 items-center text-[10px] text-brand-400 font-bold uppercase tracking-wider">
                 <Sparkles className="w-3 h-3" /> AI Powered
               </div>
             </div>
 
-            {/* Step 3: Analyze */}
+            {/* Step 3: Pre-Fly Check */}
             <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start">
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-xl mb-6 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                 3
               </div>
-              <h3 className="text-xl font-semibold mb-3">Analyze</h3>
+              <h3 className="text-xl font-semibold mb-3">The 'Pre-Fly' Check</h3>
               <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                See visual diagrams, cost breakdowns, and security audits.
+                Get a visual map, a 12-month cost projection, and a security audit before you ever run terraform apply.
               </p>
               <div className="mt-auto flex items-center justify-between w-full">
                 <div className="h-1.5 flex-1 bg-slate-800 rounded-full overflow-hidden mr-2">
@@ -280,9 +275,9 @@ export default function LandingPage() {
                    </div>
                    <h3 className="text-3xl font-semibold mb-4 text-white">Developers</h3>
                    <ul className="space-y-4 text-slate-400 text-lg">
-                       <li className="flex gap-3"><span className="text-brand-500">•</span> Stop context switching between code and docs.</li>
-                       <li className="flex gap-3"><span className="text-brand-500">•</span> Generate boilerplate in seconds.</li>
-                       <li className="flex gap-3"><span className="text-brand-500">•</span> Focus on application logic, not HCL syntax.</li>
+                       <li className="flex gap-3"><span className="text-brand-500">•</span> Stop context-switching to documentation.</li>
+                       <li className="flex gap-3"><span className="text-brand-500">•</span> Write the logic, let Chkmate handle the syntax.</li>
+                       <li className="flex gap-3"><span className="text-brand-500">•</span> Ship infrastructure with your code, instantly.</li>
                    </ul>
                </div>
                <div className="bg-slate-900/50 p-10 rounded-[2rem] border border-slate-800 hover:border-brand-500/30 transition-colors group">
@@ -291,9 +286,9 @@ export default function LandingPage() {
                    </div>
                    <h3 className="text-3xl font-semibold mb-4 text-white">Architects</h3>
                    <ul className="space-y-4 text-slate-400 text-lg">
-                       <li className="flex gap-3"><span className="text-brand-500">•</span> Design systems visually.</li>
-                       <li className="flex gap-3"><span className="text-brand-500">•</span> Standardize patterns across teams.</li>
-                       <li className="flex gap-3"><span className="text-brand-500">•</span> Get instant cost estimates for proposals.</li>
+                       <li className="flex gap-3"><span className="text-brand-500">•</span> Standardize infrastructure patterns across your team.</li>
+                       <li className="flex gap-3"><span className="text-brand-500">•</span> Get instant cost estimates for client proposals.</li>
+                       <li className="flex gap-3"><span className="text-brand-500">•</span> Enforce security guardrails by default.</li>
                    </ul>
                </div>
            </div>
@@ -411,7 +406,7 @@ export default function LandingPage() {
                    <div className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col">
                        <h3 className="text-xl font-medium text-slate-300 mb-2">Hobby</h3>
                        <div className="text-4xl font-semibold mb-6">$9.99</div>
-                       <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Register Interest</button>
+                       <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Join Waitlist</button>
                        <ul className="space-y-4 flex-1">
                            <li className="text-slate-400 text-sm">5 Projects</li>
                            <li className="text-slate-400 text-sm">Basic Generators</li>
@@ -425,9 +420,10 @@ export default function LandingPage() {
                         <div className="absolute top-0 right-0 bg-brand-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">Most Popular</div>
                        <h3 className="text-xl font-medium text-white mb-2">Pro</h3>
                        <div className="text-4xl font-semibold mb-6">$49.99<span className="text-lg text-slate-400 font-normal">/mo</span></div>
-                       <button onClick={openModal} className="w-full py-3 rounded-full bg-brand-500 hover:bg-brand-400 text-white transition font-medium mb-8 shadow-lg shadow-brand-500/25">Register Interest</button>
+                       <div className="text-center text-xs text-brand-400 mb-2 font-bold uppercase tracking-wide">Limited Closed Beta</div>
+                       <button onClick={openModal} className="w-full py-3 rounded-full bg-brand-500 hover:bg-brand-400 text-white transition font-medium mb-8 shadow-lg shadow-brand-500/25">Lock in Lifetime Pricing</button>
                        <ul className="space-y-4 flex-1">
-                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Unlimited Projects</li>
+                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Join 200+ engineers</li>
                            <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Advanced AI Models</li>
                            <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Export to GitHub</li>
                            <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Security Auditing</li>
@@ -440,7 +436,7 @@ export default function LandingPage() {
                    <div className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col">
                        <h3 className="text-xl font-medium text-slate-300 mb-2">Team</h3>
                        <div className="text-4xl font-semibold mb-6">$99.99<span className="text-lg text-slate-400 font-normal">/mo</span></div>
-                       <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Register Interest</button>
+                       <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Join Waitlist</button>
                        <ul className="space-y-4 flex-1">
                            <li className="text-slate-400 text-sm">5 Team Members</li>
                            <li className="text-slate-400 text-sm">SSO & Audit Logs</li>
