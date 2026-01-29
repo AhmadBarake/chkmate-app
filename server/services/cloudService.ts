@@ -142,13 +142,11 @@ export async function createAWSConnection(
  * Trigger a sync (scan) for a connection
  * @param connectionId - The ID of the cloud connection to sync
  * @param region - Optional AWS region to scan (defaults to 'us-east-1')
+ * @param userId - The user ID for ownership verification
  */
-export async function syncConnection(connectionId: string, region?: string): Promise<CloudConnection> {
-  const connection = await prisma.cloudConnection.findUnique({
-    where: { id: connectionId }
-  });
-
-  if (!connection) throw new Error('Connection not found');
+export async function syncConnection(connectionId: string, region: string | undefined, userId: string): Promise<CloudConnection> {
+  // Verify ownership first
+  const connection = await verifyConnectionOwnership(connectionId, userId);
   if (connection.provider !== 'aws' || !connection.awsRoleArn || !connection.awsExternalId) {
     throw new Error('Invalid connection configuration');
   }
@@ -219,16 +217,44 @@ export async function listConnections(userId: string) {
 }
 
 /**
- * Delete connection
+ * Verify connection belongs to user
+ * @returns The connection if ownership verified, throws Error otherwise
  */
-export async function deleteConnection(id: string) {
+export async function verifyConnectionOwnership(connectionId: string, userId: string) {
+  const connection = await prisma.cloudConnection.findUnique({
+    where: { id: connectionId }
+  });
+
+  if (!connection) {
+    throw new Error('Connection not found');
+  }
+
+  if (connection.userId !== userId) {
+    throw new Error('Connection not found');
+  }
+
+  return connection;
+}
+
+/**
+ * Delete connection (with ownership verification)
+ */
+export async function deleteConnection(id: string, userId: string) {
+  // Verify ownership first
+  await verifyConnectionOwnership(id, userId);
   return prisma.cloudConnection.delete({ where: { id } });
 }
 
 /**
  * Get all resources for a connection to use as context
+ * @param connectionId - The connection ID
+ * @param userId - Optional user ID for ownership verification (if provided)
  */
-export async function getConnectionResources(connectionId: string) {
+export async function getConnectionResources(connectionId: string, userId?: string) {
+  // If userId provided, verify ownership
+  if (userId) {
+    await verifyConnectionOwnership(connectionId, userId);
+  }
   return prisma.cloudResource.findMany({
     where: { connectionId }
   });
@@ -239,13 +265,11 @@ export async function getConnectionResources(connectionId: string) {
  * Returns the report directly (does not save individual resources like sync does)
  * @param connectionId - The connection to scan
  * @param region - Optional AWS region to scan (defaults to 'us-east-1')
+ * @param userId - The user ID for ownership verification
  */
-export async function scanSavedConnection(connectionId: string, region?: string) {
-  const connection = await prisma.cloudConnection.findUnique({
-    where: { id: connectionId }
-  });
-
-  if (!connection) throw new Error('Connection not found');
+export async function scanSavedConnection(connectionId: string, region: string | undefined, userId: string) {
+  // Verify ownership first
+  const connection = await verifyConnectionOwnership(connectionId, userId);
   if (connection.provider !== 'aws' || !connection.awsRoleArn || !connection.awsExternalId) {
     throw new Error('Invalid connection configuration');
   }

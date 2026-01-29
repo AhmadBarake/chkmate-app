@@ -60,10 +60,10 @@ import {
   generateAWSSetupDetails,
   listConnections,
   syncConnection,
-
   deleteConnection,
   getConnectionResources,
   scanSavedConnection,
+  verifyConnectionOwnership,
 } from './services/cloudService.js';
 import { compareTemplates } from './lib/diff.js';
 import { verifyPaddleWebhook } from './services/paddleService.js';
@@ -115,7 +115,9 @@ app.get(
   '/api/projects',
   requireAuth,
   asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const projects = await prisma.project.findMany({
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
     res.json(projects);
@@ -153,6 +155,7 @@ app.get(
   requireAuth,
   asyncHandler(async (req, res) => {
     const { id } = req.params as { id: string };
+    const userId = (req as any).userId;
 
     const project = await prisma.project.findUnique({
       where: { id },
@@ -172,6 +175,11 @@ app.get(
       throw new NotFoundError('Project');
     }
 
+    // Verify ownership
+    if (project.userId !== userId) {
+      throw new NotFoundError('Project');
+    }
+
     res.json(project);
   })
 );
@@ -181,13 +189,19 @@ app.delete(
   requireAuth,
   asyncHandler(async (req, res) => {
     const { id } = req.params as { id: string };
+    const userId = (req as any).userId;
 
-    // Check if project exists
+    // Check if project exists and belongs to user
     const existingProject = await prisma.project.findUnique({
       where: { id },
     });
 
     if (!existingProject) {
+      throw new NotFoundError('Project');
+    }
+
+    // Verify ownership
+    if (existingProject.userId !== userId) {
       throw new NotFoundError('Project');
     }
 
@@ -212,7 +226,11 @@ app.get(
   '/api/templates',
   requireAuth,
   asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const templates = await prisma.template.findMany({
+      where: {
+        project: { userId }
+      },
       orderBy: { createdAt: 'desc' },
       include: { 
         project: true,
@@ -231,6 +249,7 @@ app.get(
   requireAuth,
   asyncHandler(async (req, res) => {
     const { id } = req.params as { id: string };
+    const userId = (req as any).userId;
 
     const template = await prisma.template.findUnique({
       where: { id },
@@ -244,6 +263,11 @@ app.get(
     });
 
     if (!template) {
+      throw new NotFoundError('Template');
+    }
+
+    // Verify ownership via project
+    if (template.project.userId !== userId) {
       throw new NotFoundError('Template');
     }
 
@@ -274,12 +298,19 @@ app.post(
       throw new ValidationError('Project ID is required');
     }
 
-    // Verify project exists
+    const userId = (req as any).userId;
+
+    // Verify project exists and belongs to user
     const project = await prisma.project.findUnique({
       where: { id: projectId },
     });
 
     if (!project) {
+      throw new NotFoundError('Project');
+    }
+
+    // Verify ownership
+    if (project.userId !== userId) {
       throw new NotFoundError('Project');
     }
 
@@ -302,13 +333,20 @@ app.put(
   asyncHandler(async (req, res) => {
     const { id } = req.params as { id: string };
     const { name, content, provider } = req.body;
+    const userId = (req as any).userId;
 
-    // Check if template exists
+    // Check if template exists with project info
     const existingTemplate = await prisma.template.findUnique({
       where: { id },
+      include: { project: true },
     });
 
     if (!existingTemplate) {
+      throw new NotFoundError('Template');
+    }
+
+    // Verify ownership via project
+    if (existingTemplate.project.userId !== userId) {
       throw new NotFoundError('Template');
     }
 
@@ -330,13 +368,20 @@ app.delete(
   requireAuth,
   asyncHandler(async (req, res) => {
     const { id } = req.params as { id: string };
+    const userId = (req as any).userId;
 
-    // Check if template exists
+    // Check if template exists with project info
     const existingTemplate = await prisma.template.findUnique({
       where: { id },
+      include: { project: true },
     });
 
     if (!existingTemplate) {
+      throw new NotFoundError('Template');
+    }
+
+    // Verify ownership via project
+    if (existingTemplate.project.userId !== userId) {
       throw new NotFoundError('Template');
     }
 
@@ -848,10 +893,10 @@ app.post(
   '/api/cloud/connections/:id/sync',
   requireAuth,
   asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     // Note: Syncing consumes credits in the future, for now free or included in sub
-    // We could add deductCredits here too
     const { region } = req.body || {};
-    const connection = await syncConnection((req.params as { id: string }).id, region);
+    const connection = await syncConnection((req.params as { id: string }).id, region, userId);
     res.json(connection);
   })
 );
@@ -869,7 +914,7 @@ app.post(
     }
 
     const { region } = req.body || {};
-    const report = await scanSavedConnection((req.params as { id: string }).id, region);
+    const report = await scanSavedConnection((req.params as { id: string }).id, region, userId);
     res.json({
       ...report,
       creditsRemaining: creditResult.remainingBalance
@@ -882,7 +927,8 @@ app.get(
   '/api/cloud/connections/:id/resources',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const resources = await getConnectionResources((req.params as { id: string }).id);
+    const userId = (req as any).userId;
+    const resources = await getConnectionResources((req.params as { id: string }).id, userId);
     res.json(resources);
   })
 );
@@ -894,6 +940,9 @@ app.post(
   '/api/cloud/connections/:id/recommendations',
   requireAuth,
   asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    // Verify ownership before generating recommendations
+    await verifyConnectionOwnership((req.params as { id: string }).id, userId);
     const { generateRecommendations } = await import('./services/recommendationService');
     const recs = await generateRecommendations((req.params as { id: string }).id);
     res.json(recs);
@@ -905,6 +954,9 @@ app.get(
   '/api/cloud/connections/:id/recommendations',
   requireAuth,
   asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    // Verify ownership before fetching recommendations
+    await verifyConnectionOwnership((req.params as { id: string }).id, userId);
     const { getRecommendations } = await import('./services/recommendationService');
     const recs = await getRecommendations((req.params as { id: string }).id);
     res.json(recs);
@@ -915,9 +967,9 @@ app.get(
 app.delete(
   '/api/cloud/connections/:id',
   requireAuth,
-
   asyncHandler(async (req, res) => {
-    await deleteConnection((req.params as { id: string }).id);
+    const userId = (req as any).userId;
+    await deleteConnection((req.params as { id: string }).id, userId);
     res.json({ success: true });
   })
 );
