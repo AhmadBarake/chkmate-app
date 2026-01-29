@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Cloud, Map, DollarSign, Rocket, Shield, Users, Code, Layout, Sparkles, GitCompare, FileCode as File, ArrowRight, Check } from 'lucide-react';
+import { Box, Cloud, Map, DollarSign, Rocket, Shield, Users, Code, Layout, Sparkles, GitCompare, FileCode as File, ArrowRight, Check, PieChart, ShieldCheck, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ThreeCloudBackground from '../components/ThreeCloudBackground';
 import Footer from '../components/Footer';
@@ -10,6 +10,30 @@ import Newsletter from '../components/Newsletter';
 export default function LandingPage() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
+
+  const faqs = [
+    {
+        question: "How does the 'Natural Language to IaC' work?",
+        answer: "We use advanced LLMs fine-tuned on Terraform and cloud architecture patterns. You describe your infrastructure in plain English, and our engine generates valid, secure-by-default Terraform code, which you can then visualize and refine."
+    },
+    {
+        question: "Can I import my existing AWS environment?",
+        answer: "Yes! Our 'Day 2' features allow you to connect your AWS account (via a read-only role). We scan your existing resources, generate a visual map, and provide cost and security insights immediately."
+    },
+    {
+        question: " Is it safe to give Chkmate access to my AWS account?",
+        answer: "We take security seriously. We only request ReadOnlyAccess to scan your resources. We never store your credentials directly; we use secure IAM roles with external IDs. You can revoke access at any time from your AWS console."
+    },
+    {
+        question: "What happens if the AI generates incorrect code?",
+        answer: "Chkmate includes a 'Diff Engine' and verification steps. You can review every line of code generated, see it visualized, and run automatic validation (terraform plan) before applying anything. We also integrate checkov and tfsec to catch misconfigurations."
+    }
+  ];
 
   const openModal = () => setIsModalOpen(true);
   const goToDocs = () => navigate('/docs');
@@ -88,13 +112,13 @@ export default function LandingPage() {
                         <img 
                             src="/iac.png" 
                             alt="Natural Language to IaC Interface" 
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                     </div>
                 </div>
 
                 {/* Tall Card 2 */}
-                <div className="md:col-span-1 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative border border-slate-800 hover:border-brand-500/30 transition-colors">
+                <div className="md:col-span-1 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors">
                      <div className="mb-4 text-emerald-400"><DollarSign size={32} /></div>
                      <h3 className="text-3xl font-semibold mb-3">Cost Aware</h3>
                      <p className="text-slate-400 text-lg mb-8">Know the price before you deploy. Real-time estimation.</p>
@@ -104,13 +128,13 @@ export default function LandingPage() {
                         <img 
                             src="/cost-aware.png" 
                             alt="Cost Estimation Graph" 
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                     </div>
                 </div>
 
                 {/* Medium Card 3 */}
-                <div className="md:col-span-1 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden border border-slate-800 hover:border-brand-500/30 transition-colors">
+                <div className="md:col-span-1 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden group border border-slate-800 hover:border-brand-500/30 transition-colors">
                     <div className="mb-4 text-blue-400"><Map size={32} /></div>
                     <h3 className="text-2xl font-semibold mb-3">Visual Maps</h3>
                     <p className="text-slate-400">Interactive diagrams of your entire stack.</p>
@@ -119,14 +143,14 @@ export default function LandingPage() {
                          <img 
                             src="/visualize.png" 
                             alt="Infrastructure Visualization" 
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                     </div>
                 </div>
 
                 {/* Large Card 4 */}
-                 <div className="md:col-span-2 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative border border-slate-800 hover:border-brand-500/30 transition-colors">
-                    <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start">
+                 <div className="md:col-span-2 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors">
+                    <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
                         <div className="flex-1">
                             <div className="mb-4 text-rose-400"><Shield size={32} /></div>
                             <h3 className="text-3xl font-semibold mb-3">Secure by Default</h3>
@@ -143,7 +167,7 @@ export default function LandingPage() {
                              <img 
                                 src="/explorer.png" 
                                 alt="Explorer UI" 
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                         </div>
                     </div>
@@ -275,6 +299,108 @@ export default function LandingPage() {
            </div>
       </div>
 
+      {/* Governance / Management Section */}
+      <div id="governance" className="py-32 px-6 bg-slate-950 relative overflow-hidden">
+        {/* Background Gradients */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+
+
+          <div className="max-w-[1400px] mx-auto relative z-10">
+               <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                   <div className="order-2 lg:order-1 lg:col-span-4 xl:col-span-5">
+                       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold tracking-wide mb-6 uppercase border border-emerald-500/20">
+                            Day 2 Operations
+                       </div>
+                       <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mb-6 leading-tight">
+                           Complete control over your <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">existing</span> fleet.
+                       </h2>
+                       <p className="text-xl text-slate-400 mb-10 leading-relaxed">
+                           Chkmate isn't just for new projects. Import your running AWS environments to instantly gain governance superpowers, from security auditing to cost optimization.
+                       </p>
+
+                       <div className="space-y-10">
+                           {/* Feature 1: Cost */}
+                           <div className="flex gap-5 group">
+                               <div className="mt-1 flex-shrink-0 w-14 h-14 rounded-2xl bg-orange-500/10 text-orange-400 flex items-center justify-center border border-orange-500/20 group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300 shadow-lg shadow-orange-900/20">
+                                   <PieChart size={28} />
+                               </div>
+                               <div>
+                                   <h3 className="text-xl font-semibold mb-2 text-white">Deep Cost Intelligence</h3>
+                                   <p className="text-slate-400 leading-relaxed mb-2">
+                                       Stop flying blind. Visualize spend by service, region, and team.
+                                   </p>
+                                   <ul className="text-sm text-slate-500 space-y-1">
+                                       <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-orange-400"/> Idle resource detection</li>
+                                       <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-orange-400"/> Rightsizing recommendations</li>
+                                       <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-orange-400"/> Anomaly alerts</li>
+                                   </ul>
+                               </div>
+                           </div>
+
+                           {/* Feature 2: Security */}
+                           <div className="flex gap-5 group">
+                               <div className="mt-1 flex-shrink-0 w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300 shadow-lg shadow-blue-900/20">
+                                   <ShieldCheck size={28} />
+                               </div>
+                               <div>
+                                   <h3 className="text-xl font-semibold mb-2 text-white">Continuous Security Auditing</h3>
+                                   <p className="text-slate-400 leading-relaxed mb-2">
+                                       Automated scanning against industry benchmarks (CIS, SOC2).
+                                   </p>
+                                    <ul className="text-sm text-slate-500 space-y-1">
+                                       <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-blue-400"/> Misconfiguration detection</li>
+                                       <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-blue-400"/> IAM privilege analysis</li>
+                                        <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-blue-400"/> Public exposure scanning</li>
+                                   </ul>
+                               </div>
+                           </div>
+
+                           {/* Feature 3: Policy */}
+                           <div className="flex gap-5 group">
+                               <div className="mt-1 flex-shrink-0 w-14 h-14 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20 group-hover:bg-purple-500 group-hover:text-white transition-colors duration-300 shadow-lg shadow-purple-900/20">
+                                   <FileText size={28} />
+                               </div>
+                               <div>
+                                   <h3 className="text-xl font-semibold mb-2 text-white">Policy Management</h3>
+                                   <p className="text-slate-400 leading-relaxed mb-2">
+                                       Define guardrails as code and prevent drift before it happens.
+                                   </p>
+                                    <ul className="text-sm text-slate-500 space-y-1">
+                                       <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-purple-400"/> Tagging enforcement</li>
+                                       <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-purple-400"/> Region & Service Allow-lists</li>
+                                        <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-purple-400"/> Auto-remediation</li>
+                                   </ul>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+
+                   {/* Image Side */}
+                   <div className="order-1 lg:order-2 lg:col-span-8 xl:col-span-7 relative group perspective-1000">
+                        {/* Decorative elements */}
+                        <div className="absolute -inset-1 bg-gradient-to-tr from-brand-500/40 to-indigo-500/40 rounded-[2rem] blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
+                        
+                        <div className="relative rounded-[2rem] bg-slate-900 overflow-hidden shadow-2xl transition-transform duration-700 md:rotate-y-[-5deg] md:group-hover:rotate-y-0 shadow-black/50">
+                             {/* Mac-style window controls */}
+                             <div className="h-12 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-6 gap-2">
+                                <div className="w-3 h-3 rounded-full bg-red-400/80"></div>
+                                <div className="w-3 h-3 rounded-full bg-amber-400/80"></div>
+                                <div className="w-3 h-3 rounded-full bg-emerald-400/80"></div>
+                            </div>
+                            <img 
+                                src="/Cost dashboard.png" 
+                                alt="Chkmate Governance Dashboard - Cost and Compliance" 
+                                className="w-full h-auto object-cover"
+                            />
+                        </div>
+                   </div>
+               </div>
+          </div>
+
+      </div>
+
       {/* Pricing Section (Clean Apple Style) */}
       <div id="pricing" className="py-32 px-6 bg-slate-950 border-t border-slate-800/50">
            <div className="max-w-5xl mx-auto">
@@ -284,12 +410,13 @@ export default function LandingPage() {
                    {/* Free */}
                    <div className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col">
                        <h3 className="text-xl font-medium text-slate-300 mb-2">Hobby</h3>
-                       <div className="text-4xl font-semibold mb-6">$10</div>
+                       <div className="text-4xl font-semibold mb-6">$9.99</div>
                        <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Register Interest</button>
                        <ul className="space-y-4 flex-1">
                            <li className="text-slate-400 text-sm">5 Projects</li>
                            <li className="text-slate-400 text-sm">Basic Generators</li>
                            <li className="text-slate-400 text-sm">Community Support</li>
+                           <li className="text-slate-400 text-sm">Basic Cost Estimation</li>
                        </ul>
                    </div>
 
@@ -297,24 +424,29 @@ export default function LandingPage() {
                     <div className="p-8 rounded-[2rem] bg-brand-600/10 border border-brand-500 flex flex-col relative overflow-hidden">
                         <div className="absolute top-0 right-0 bg-brand-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">Most Popular</div>
                        <h3 className="text-xl font-medium text-white mb-2">Pro</h3>
-                       <div className="text-4xl font-semibold mb-6">$50<span className="text-lg text-slate-400 font-normal">/mo</span></div>
+                       <div className="text-4xl font-semibold mb-6">$49.99<span className="text-lg text-slate-400 font-normal">/mo</span></div>
                        <button onClick={openModal} className="w-full py-3 rounded-full bg-brand-500 hover:bg-brand-400 text-white transition font-medium mb-8 shadow-lg shadow-brand-500/25">Register Interest</button>
                        <ul className="space-y-4 flex-1">
                            <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Unlimited Projects</li>
                            <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Advanced AI Models</li>
                            <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Export to GitHub</li>
+                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Security Auditing</li>
+                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Cost Intelligence</li>
+                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Policy Management</li>
                        </ul>
                    </div>
 
                    {/* Team */}
                    <div className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col">
                        <h3 className="text-xl font-medium text-slate-300 mb-2">Team</h3>
-                       <div className="text-4xl font-semibold mb-6">$150<span className="text-lg text-slate-400 font-normal">/mo</span></div>
+                       <div className="text-4xl font-semibold mb-6">$99.99<span className="text-lg text-slate-400 font-normal">/mo</span></div>
                        <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Register Interest</button>
                        <ul className="space-y-4 flex-1">
-                           <li className="text-slate-400 text-sm">10 Team Members</li>
+                           <li className="text-slate-400 text-sm">5 Team Members</li>
                            <li className="text-slate-400 text-sm">SSO & Audit Logs</li>
                            <li className="text-slate-400 text-sm">Dedicated Success Mgr</li>
+                           <li className="text-slate-400 text-sm">Team Governance</li>
+                           <li className="text-slate-400 text-sm">Custom Guardrails</li>
                        </ul>
                    </div>
                </div>
@@ -323,6 +455,31 @@ export default function LandingPage() {
 
     {/* Newsletter */}
     <Newsletter />
+
+    {/* FAQ Section */}
+    <div className="py-24 px-6 bg-slate-950 border-t border-slate-800/50">
+        <div className="max-w-3xl mx-auto">
+             <h2 className="text-3xl md:text-4xl font-semibold mb-12 text-center tracking-tight">Frequently Asked Questions</h2>
+             <div className="space-y-4">
+                {faqs.map((faq, index) => (
+                    <div key={index} className="border border-slate-800 rounded-2xl bg-slate-900/30 overflow-hidden transition-all hover:border-slate-700">
+                        <button 
+                            className="w-full flex items-center justify-between p-6 text-left cursor-pointer focus:outline-none"
+                            onClick={() => toggleFaq(index)}
+                        >
+                            <span className="font-semibold text-lg text-slate-200">{faq.question}</span>
+                            {openFaq === index ? <ChevronUp className="text-slate-400 w-5 h-5 flex-shrink-0"/> : <ChevronDown className="text-slate-400 w-5 h-5 flex-shrink-0"/>}
+                        </button>
+                        <div 
+                            className={`px-6 pb-6 text-slate-400 leading-relaxed overflow-hidden transition-all duration-300 ease-in-out ${openFaq === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 pb-0'}`}
+                        >
+                            {faq.answer}
+                        </div>
+                    </div>
+                ))}
+             </div>
+        </div>
+    </div>
 
     {/* Footer */}
     <Footer />

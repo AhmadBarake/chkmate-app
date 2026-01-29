@@ -37,7 +37,7 @@ export default function Newsletter() {
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[100px]" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-8 md:p-12 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-12 shadow-2xl shadow-brand-500/5">
           <div className="flex-1">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
