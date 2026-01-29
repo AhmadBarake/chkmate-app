@@ -11,6 +11,8 @@ import CodeArchitectAnimation from '../components/animations/CodeArchitectAnimat
 import CostChartAnimation from '../components/animations/CostChartAnimation';
 import VisualMapAnimation from '../components/animations/VisualMapAnimation';
 import SecurityScanAnimation from '../components/animations/SecurityScanAnimation';
+import FleetControlAnimation from '../components/animations/FleetControlAnimation';
+import { motion } from 'framer-motion';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -94,13 +96,35 @@ export default function LandingPage() {
       <div id="features" className="py-32 px-6 bg-slate-950">
         <div className="max-w-7xl mx-auto">
             <div className="mb-20">
-                <h2 className="text-4xl md:text-6xl font-semibold tracking-tight mb-6">Designed for scale.</h2>
-                <p className="text-2xl text-slate-400 max-w-3xl">Everything you need to build secure, cost-effective infrastructure without the headache.</p>
+                <motion.h2 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="text-4xl md:text-6xl font-semibold tracking-tight mb-6"
+                >
+                    Designed for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">scale.</span>
+                </motion.h2>
+                <motion.p 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    viewport={{ once: true }}
+                    className="text-2xl text-slate-400 max-w-3xl"
+                >
+                    Everything you need to build secure, cost-effective infrastructure without the headache.
+                </motion.p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Large Card 1 */}
-                <div className="md:col-span-2 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0 }}
+                    viewport={{ once: true }}
+                    className="md:col-span-2 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors"
+                >
                     <div className="relative z-10 max-w-lg">
                         <div className="mb-4 text-indigo-400"><Cloud size={32} /></div>
                         <h3 className="text-3xl font-semibold mb-3">AI-Powered HCL Architect</h3>
@@ -110,10 +134,16 @@ export default function LandingPage() {
                     <div className="mt-10 aspect-video rounded-xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950">
                         <CodeArchitectAnimation />
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Tall Card 2 */}
-                <div className="md:col-span-1 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    viewport={{ once: true }}
+                    className="md:col-span-1 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors"
+                >
                      <div className="mb-4 text-emerald-400"><DollarSign size={32} /></div>
                      <h3 className="text-3xl font-semibold mb-3">Eliminate Sticker Shock</h3>
                      <p className="text-slate-400 text-lg mb-8">Eliminate the "Surprise Bill". Know exactly what your infra costs before you deploy.</p>
@@ -122,10 +152,16 @@ export default function LandingPage() {
                     <div className="w-full h-[400px] md:h-auto md:aspect-[3/5] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
                         <CostChartAnimation />
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Medium Card 3 */}
-                <div className="md:col-span-1 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden group border border-slate-800 hover:border-brand-500/30 transition-colors">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    viewport={{ once: true }}
+                    className="md:col-span-1 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden group border border-slate-800 hover:border-brand-500/30 transition-colors"
+                >
                     <div className="mb-4 text-blue-400"><Map size={32} /></div>
                     <h3 className="text-2xl font-semibold mb-3">Visual Maps</h3>
                     <p className="text-slate-400">Interactive diagrams of your entire stack.</p>
@@ -133,10 +169,16 @@ export default function LandingPage() {
                     <div className="mt-8 h-64 rounded-xl overflow-hidden border border-slate-800 shadow-2xl relative">
                          <VisualMapAnimation />
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Large Card 4 */}
-                 <div className="md:col-span-2 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors">
+                 <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    viewport={{ once: true }}
+                    className="md:col-span-2 bg-slate-900/50 rounded-[2rem] p-10 overflow-hidden relative group border border-slate-800 hover:border-brand-500/30 transition-colors"
+                 >
                     <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
                         <div className="flex-1">
                             <div className="mb-4 text-rose-400"><Shield size={32} /></div>
@@ -154,7 +196,7 @@ export default function LandingPage() {
                              <SecurityScanAnimation />
                         </div>
                     </div>
-                </div>
+                </motion.div>
                 </div>
             </div>
         </div>
@@ -167,13 +209,35 @@ export default function LandingPage() {
         
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="mb-20">
-            <h2 className="text-4xl md:text-6xl font-semibold tracking-tight mb-6">Master your cloud.</h2>
-            <p className="text-2xl text-slate-400 max-w-3xl">From blank page to production-ready infrastructure in 5 simple steps.</p>
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-6xl font-semibold tracking-tight mb-6"
+            >
+              Master your <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">cloud.</span>
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-2xl text-slate-400 max-w-3xl"
+            >
+              From blank page to production-ready infrastructure in 5 simple steps.
+            </motion.p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
             {/* Step 1: Connect */}
-            <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0 }}
+              viewport={{ once: true }}
+              className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start"
+            >
               <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold text-xl mb-6 border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-white transition-colors">
                 1
               </div>
@@ -184,10 +248,16 @@ export default function LandingPage() {
               <div className="mt-auto p-2 px-3 bg-slate-950/50 rounded-lg border border-slate-800/50 text-[10px] font-mono text-slate-500">
                 ReadOnlyAccess
               </div>
-            </div>
+            </motion.div>
 
             {/* Step 2: Blueprinting */}
-            <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start"
+            >
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-xl mb-6 border border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                 2
               </div>
@@ -198,10 +268,16 @@ export default function LandingPage() {
               <div className="mt-auto flex gap-1 items-center text-[10px] text-brand-400 font-bold uppercase tracking-wider">
                 <Sparkles className="w-3 h-3" /> AI Powered
               </div>
-            </div>
+            </motion.div>
 
             {/* Step 3: Pre-Fly Check */}
-            <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start"
+            >
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-xl mb-6 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                 3
               </div>
@@ -215,10 +291,16 @@ export default function LandingPage() {
                 </div>
                 <span className="text-[10px] font-bold text-emerald-400">85%</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Step 4: Refine */}
-            <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start"
+            >
               <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-xl mb-6 border border-blue-500/20 group-hover:bg-blue-500 group-hover:text-white transition-colors">
                 4
               </div>
@@ -229,10 +311,16 @@ export default function LandingPage() {
               <div className="mt-auto flex items-center gap-2 text-blue-400 text-[10px] font-bold">
                 <GitCompare className="w-3 h-3" /> Diff View
               </div>
-            </div>
+            </motion.div>
 
             {/* Step 5: Sync */}
-            <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start">
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.95 }}
+               whileInView={{ opacity: 1, scale: 1 }}
+               transition={{ duration: 0.5, delay: 0.4 }}
+               viewport={{ once: true }}
+               className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] group hover:border-brand-500/30 transition-all flex flex-col items-start"
+            >
               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-xl mb-6 border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-white transition-colors">
                 5
               </div>
@@ -244,7 +332,7 @@ export default function LandingPage() {
                  <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400"><Code size={12}/></div>
                  <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400"><File size={12}/></div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -252,12 +340,34 @@ export default function LandingPage() {
       {/* Who is it for */}
       <div className="py-32 max-w-7xl mx-auto px-6 bg-slate-950">
            <div className="mb-20">
-                <h2 className="text-4xl md:text-6xl font-semibold tracking-tight mb-6">Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Builders.</span></h2>
-                <p className="text-2xl text-slate-400 max-w-3xl">Whether you are a solo developer shipping your first SaaS or an architect managing enterprise scale.</p>
+                <motion.h2 
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   transition={{ duration: 0.6 }}
+                   viewport={{ once: true }}
+                   className="text-4xl md:text-6xl font-semibold tracking-tight mb-6"
+                >
+                   Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Builders.</span>
+                </motion.h2>
+                <motion.p 
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   transition={{ duration: 0.6, delay: 0.2 }}
+                   viewport={{ once: true }}
+                   className="text-2xl text-slate-400 max-w-3xl"
+                >
+                   Whether you are a solo developer shipping your first SaaS or an architect managing enterprise scale.
+                </motion.p>
            </div>
            
            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-               <div className="bg-slate-900/50 p-10 rounded-[2rem] border border-slate-800 hover:border-brand-500/30 transition-colors group">
+               <motion.div 
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6 }}
+                  viewport={{ once: true }}
+                  className="bg-slate-900/50 p-10 rounded-[2rem] border border-slate-800 hover:border-brand-500/30 transition-colors group"
+               >
                    <div className="mb-6 w-14 h-14 rounded-2xl bg-slate-950 text-brand-400 border border-slate-800 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors duration-300">
                       <Code size={28} />
                    </div>
@@ -267,8 +377,14 @@ export default function LandingPage() {
                        <li className="flex gap-3"><span className="text-brand-500">•</span> Write the logic, let Chkmate handle the syntax.</li>
                        <li className="flex gap-3"><span className="text-brand-500">•</span> Ship infrastructure with your code, instantly.</li>
                    </ul>
-               </div>
-               <div className="bg-slate-900/50 p-10 rounded-[2rem] border border-slate-800 hover:border-brand-500/30 transition-colors group">
+               </motion.div>
+               <motion.div 
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6 }}
+                  viewport={{ once: true }}
+                  className="bg-slate-900/50 p-10 rounded-[2rem] border border-slate-800 hover:border-brand-500/30 transition-colors group"
+               >
                     <div className="mb-6 w-14 h-14 rounded-2xl bg-slate-950 text-brand-400 border border-slate-800 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors duration-300">
                       <Layout size={28} />
                    </div>
@@ -278,7 +394,7 @@ export default function LandingPage() {
                        <li className="flex gap-3"><span className="text-brand-500">•</span> Get instant cost estimates for client proposals.</li>
                        <li className="flex gap-3"><span className="text-brand-500">•</span> Enforce security guardrails by default.</li>
                    </ul>
-               </div>
+               </motion.div>
            </div>
       </div>
 
@@ -365,19 +481,9 @@ export default function LandingPage() {
                         {/* Decorative elements */}
                         <div className="absolute -inset-1 bg-gradient-to-tr from-brand-500/40 to-indigo-500/40 rounded-[2rem] blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
                         
-                        <div className="relative rounded-[2rem] bg-slate-900 overflow-hidden shadow-2xl transition-transform duration-700 md:rotate-y-[-5deg] md:group-hover:rotate-y-0 shadow-black/50">
-                             {/* Mac-style window controls */}
-                             <div className="h-12 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-6 gap-2">
-                                <div className="w-3 h-3 rounded-full bg-red-400/80"></div>
-                                <div className="w-3 h-3 rounded-full bg-amber-400/80"></div>
-                                <div className="w-3 h-3 rounded-full bg-emerald-400/80"></div>
-                            </div>
-                            <img 
-                                src="/Cost dashboard.png" 
-                                alt="Chkmate Governance Dashboard - Cost and Compliance" 
-                                className="w-full h-auto object-cover"
-                            />
-                        </div>
+                         <div className="relative rounded-[2rem] bg-slate-900 overflow-hidden shadow-2xl transition-transform duration-700 md:rotate-y-[-5deg] md:group-hover:rotate-y-0 shadow-black/50 h-[500px]">
+                              <FleetControlAnimation />
+                         </div>
                    </div>
                </div>
           </div>
