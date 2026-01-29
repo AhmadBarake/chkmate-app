@@ -7,6 +7,10 @@ import Navbar from '../components/Navbar';
 import RegisterInterestModal from '../components/RegisterInterestModal';
 import Newsletter from '../components/Newsletter';
 import TypewriterHero from '../components/TypewriterHero';
+import CodeArchitectAnimation from '../components/animations/CodeArchitectAnimation';
+import CostChartAnimation from '../components/animations/CostChartAnimation';
+import VisualMapAnimation from '../components/animations/VisualMapAnimation';
+import SecurityScanAnimation from '../components/animations/SecurityScanAnimation';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -103,12 +107,8 @@ export default function LandingPage() {
                         <p className="text-slate-400 text-lg">Positions it as an "Expert" in the room. You describe the intent, we generate the valid Terraform code.</p>
                     </div>
                     {/* Feature Image */}
-                    <div className="mt-10 aspect-video rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
-                        <img 
-                            src="/iac.png" 
-                            alt="Natural Language to IaC Interface" 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
+                    <div className="mt-10 aspect-video rounded-xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950">
+                        <CodeArchitectAnimation />
                     </div>
                 </div>
 
@@ -120,11 +120,7 @@ export default function LandingPage() {
                      
                      {/* Cost Graph */}
                     <div className="w-full h-[400px] md:h-auto md:aspect-[3/5] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
-                        <img 
-                            src="/cost-aware.png" 
-                            alt="Cost Estimation Graph" 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
+                        <CostChartAnimation />
                     </div>
                 </div>
 
@@ -134,12 +130,8 @@ export default function LandingPage() {
                     <h3 className="text-2xl font-semibold mb-3">Visual Maps</h3>
                     <p className="text-slate-400">Interactive diagrams of your entire stack.</p>
                     {/* Map UI */}
-                    <div className="mt-8 h-32 rounded-xl overflow-hidden border border-slate-800 shadow-2xl relative">
-                         <img 
-                            src="/visualize.png" 
-                            alt="Infrastructure Visualization" 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
+                    <div className="mt-8 h-64 rounded-xl overflow-hidden border border-slate-800 shadow-2xl relative">
+                         <VisualMapAnimation />
                     </div>
                 </div>
 
@@ -158,12 +150,8 @@ export default function LandingPage() {
                             </ul>
                         </div>
                         {/* Security Scan */}
-                         <div className="flex-1 w-full aspect-square md:aspect-auto h-full min-h-[200px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
-                             <img 
-                                src="/explorer.png" 
-                                alt="Explorer UI" 
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
+                         <div className="flex-1 w-full aspect-square md:aspect-auto h-full min-h-[200px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950">
+                             <SecurityScanAnimation />
                         </div>
                     </div>
                 </div>
