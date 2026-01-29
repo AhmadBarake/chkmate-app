@@ -29,7 +29,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto text-center relative z-10 flex flex-col items-center">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold tracking-wide mb-8 backdrop-blur-md uppercase">
-                v1.40 Closed Beta
+                v1.41 Closed Beta now live
             </div>
 
             {/* Headline */}
@@ -100,7 +100,7 @@ export default function LandingPage() {
                      <p className="text-slate-400 text-lg mb-8">Know the price before you deploy. Real-time estimation.</p>
                      
                      {/* Cost Graph */}
-                    <div className="w-full aspect-square rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                    <div className="w-full h-[400px] md:h-auto md:aspect-[3/5] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
                         <img 
                             src="/cost-aware.png" 
                             alt="Cost Estimation Graph" 
@@ -141,8 +141,8 @@ export default function LandingPage() {
                         {/* Security Scan */}
                          <div className="flex-1 w-full aspect-square md:aspect-auto h-full min-h-[200px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
                              <img 
-                                src="/security.png" 
-                                alt="Security Scan Results" 
+                                src="/explorer.png" 
+                                alt="Explorer UI" 
                                 className="w-full h-full object-cover"
                             />
                         </div>
@@ -284,7 +284,7 @@ export default function LandingPage() {
                    {/* Free */}
                    <div className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col">
                        <h3 className="text-xl font-medium text-slate-300 mb-2">Hobby</h3>
-                       <div className="text-4xl font-semibold mb-6">$0</div>
+                       <div className="text-4xl font-semibold mb-6">$10</div>
                        <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Register Interest</button>
                        <ul className="space-y-4 flex-1">
                            <li className="text-slate-400 text-sm">5 Projects</li>
@@ -297,7 +297,7 @@ export default function LandingPage() {
                     <div className="p-8 rounded-[2rem] bg-brand-600/10 border border-brand-500 flex flex-col relative overflow-hidden">
                         <div className="absolute top-0 right-0 bg-brand-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">Most Popular</div>
                        <h3 className="text-xl font-medium text-white mb-2">Pro</h3>
-                       <div className="text-4xl font-semibold mb-6">$29<span className="text-lg text-slate-400 font-normal">/mo</span></div>
+                       <div className="text-4xl font-semibold mb-6">$50<span className="text-lg text-slate-400 font-normal">/mo</span></div>
                        <button onClick={openModal} className="w-full py-3 rounded-full bg-brand-500 hover:bg-brand-400 text-white transition font-medium mb-8 shadow-lg shadow-brand-500/25">Register Interest</button>
                        <ul className="space-y-4 flex-1">
                            <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Unlimited Projects</li>
@@ -309,7 +309,7 @@ export default function LandingPage() {
                    {/* Team */}
                    <div className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col">
                        <h3 className="text-xl font-medium text-slate-300 mb-2">Team</h3>
-                       <div className="text-4xl font-semibold mb-6">$99<span className="text-lg text-slate-400 font-normal">/mo</span></div>
+                       <div className="text-4xl font-semibold mb-6">$150<span className="text-lg text-slate-400 font-normal">/mo</span></div>
                        <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Register Interest</button>
                        <ul className="space-y-4 flex-1">
                            <li className="text-slate-400 text-sm">10 Team Members</li>

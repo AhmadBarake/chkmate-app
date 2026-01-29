@@ -25,7 +25,7 @@ export default function Pricing() {
                <div className="p-8 rounded-3xl border border-slate-800 bg-slate-900/30 flex flex-col">
                   <div className="mb-4">
                       <h3 className="text-xl font-bold text-slate-300">Hobby</h3>
-                      <div className="text-4xl font-bold mt-2 mb-1">$0</div>
+                      <div className="text-4xl font-bold mt-2 mb-1">$10</div>
                       <p className="text-slate-500 text-sm">Forever free for individuals.</p>
                   </div>
                   <ul className="space-y-4 mb-8 flex-1">
@@ -47,7 +47,7 @@ export default function Pricing() {
                    </div>
                   <div className="mb-4">
                       <h3 className="text-xl font-bold text-white">Pro</h3>
-                      <div className="text-4xl font-bold mt-2 mb-1 text-brand-400">$29<span className="text-lg text-slate-500 font-normal">/mo</span></div>
+                      <div className="text-4xl font-bold mt-2 mb-1 text-brand-400">$50<span className="text-lg text-slate-500 font-normal">/mo</span></div>
                       <p className="text-slate-400 text-sm">For power users & freelancers.</p>
                   </div>
                   <ul className="space-y-4 mb-8 flex-1">
@@ -66,7 +66,7 @@ export default function Pricing() {
                <div className="p-8 rounded-3xl border border-slate-800 bg-slate-900/30 flex flex-col">
                   <div className="mb-4">
                       <h3 className="text-xl font-bold text-slate-300">Team</h3>
-                      <div className="text-4xl font-bold mt-2 mb-1">$99<span className="text-lg text-slate-500 font-normal">/mo</span></div>
+                      <div className="text-4xl font-bold mt-2 mb-1">$150<span className="text-lg text-slate-500 font-normal">/mo</span></div>
                       <p className="text-slate-500 text-sm">For startups & agencies.</p>
                   </div>
                   <ul className="space-y-4 mb-8 flex-1">

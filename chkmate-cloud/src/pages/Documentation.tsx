@@ -30,10 +30,42 @@ export default function Documentation() {
               </h2>
               
               <div className="relative pl-8 border-l border-slate-800 space-y-12">
+
+                {/* v1.41 */}
+                <div className="relative">
+                  <span className="absolute -left-[39px] top-1 h-5 w-5 rounded-full border-4 border-slate-950 bg-brand-500"></span>
+                  <div className="mb-2 flex items-center gap-3">
+                    <h3 className="text-xl font-bold text-white">v1.41</h3>
+                    <span className="text-xs text-slate-500 font-mono bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">Current</span>
+                  </div>
+                  <ul className="space-y-4 text-slate-400 mt-4">
+                    <li className="flex items-start gap-3">
+                      <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Feat</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Immersive Infrastructure Map</strong>
+                         Added an interactive, node-based visualization map for AWS resources with auto-layout and zoom capabilities.
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="bg-blue-500/10 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">UX</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Apple-Inspired Design Refresh</strong>
+                         Overhauled the Landing Page with a premium "slate-950" theme, glassmorphism effects, and refined typography.
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="bg-purple-500/10 text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase mt-1">Update</span>
+                      <span>
+                        <strong className="text-slate-200 block mb-1">Pricing & Assets Update</strong>
+                         Adjusted pricing tiers and updated feature visualization assets (Bento Grid) for better clarity and appeal.
+                      </span>
+                    </li>
+                  </ul>
+                </div>
                 
                 {/* v1.40 */}
                 <div className="relative">
-                  <span className="absolute -left-[39px] top-1 h-5 w-5 rounded-full border-4 border-slate-950 bg-brand-500"></span>
+                   <span className="absolute -left-[39px] top-1 h-5 w-5 rounded-full border-4 border-slate-950 bg-slate-700"></span>
                   <div className="mb-2 flex items-center gap-3">
                     <h3 className="text-xl font-bold text-white">v1.40 (Closed Beta)</h3>
                     <span className="text-xs text-slate-500 font-mono bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">Current</span>

@@ -62,7 +62,7 @@ const Navbar: React.FC = () => {
               <span 
                 className="ml-4 px-5 py-2 border border-white/20 text-white/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none"
               >
-                v1.40 (Closed Beta)
+                v1.41 (Closed Beta)
               </span>
             </div>
           </div>
@@ -99,7 +99,7 @@ const Navbar: React.FC = () => {
                </div>
              </SignedIn>
              <div className="block w-full text-center mt-4 px-5 py-3 border border-white/20 text-white/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none">
-                v1.40 (Closed Beta)
+                v1.41 (Closed Beta)
              </div>
           </div>
         </div>
