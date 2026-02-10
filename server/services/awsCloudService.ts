@@ -32,6 +32,15 @@ import {
 import { LambdaClient } from '@aws-sdk/client-lambda';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { AmplifyClient } from '@aws-sdk/client-amplify';
+import { ElasticLoadBalancingV2Client } from '@aws-sdk/client-elastic-load-balancing-v2';
+import { ECSClient } from '@aws-sdk/client-ecs';
+import { CloudFrontClient } from '@aws-sdk/client-cloudfront';
+import { Route53Client } from '@aws-sdk/client-route-53';
+import { SNSClient } from '@aws-sdk/client-sns';
+import { SQSClient } from '@aws-sdk/client-sqs';
+import { ElastiCacheClient } from '@aws-sdk/client-elasticache';
+import { APIGatewayClient } from '@aws-sdk/client-api-gateway';
+import { CloudWatchLogsClient } from '@aws-sdk/client-cloudwatch-logs';
 import {
   STSClient,
   GetCallerIdentityCommand,
@@ -114,12 +123,18 @@ export function createClients(credentials: AWSCredentials) {
     lambda: new LambdaClient(config),
     dynamodb: new DynamoDBClient(config),
     amplify: new AmplifyClient(config),
+    elbv2: new ElasticLoadBalancingV2Client(config),
+    ecs: new ECSClient(config),
+    cloudfront: new CloudFrontClient({ ...config, region: 'us-east-1' }), // CloudFront is global
+    route53: new Route53Client({ ...config, region: 'us-east-1' }), // Route 53 is global
+    sns: new SNSClient(config),
+    sqs: new SQSClient(config),
+    elasticache: new ElastiCacheClient(config),
+    apigateway: new APIGatewayClient(config),
+    cloudwatchlogs: new CloudWatchLogsClient(config),
   };
 }
 
-/**
- * Scan S3 buckets for security issues
- */
 /**
  * Scan S3 buckets for security issues
  */
@@ -142,13 +157,19 @@ async function scanS3Buckets(s3: S3Client): Promise<ScanResult<SecurityIssue>> {
         );
 
         const config = publicAccess.PublicAccessBlockConfiguration;
-        if (!config?.BlockPublicAcls || !config?.BlockPublicPolicy) {
+        const missingBlocks: string[] = [];
+        if (!config?.BlockPublicAcls) missingBlocks.push('BlockPublicAcls');
+        if (!config?.BlockPublicPolicy) missingBlocks.push('BlockPublicPolicy');
+        if (!config?.IgnorePublicAcls) missingBlocks.push('IgnorePublicAcls');
+        if (!config?.RestrictPublicBuckets) missingBlocks.push('RestrictPublicBuckets');
+
+        if (missingBlocks.length > 0) {
           issues.push({
             resourceType: 'S3 Bucket',
             resourceId: bucket.Name,
             severity: 'CRITICAL',
-            issue: 'Public access is not blocked',
-            recommendation: 'Enable BlockPublicAcls and BlockPublicPolicy',
+            issue: `Public access not fully blocked (missing: ${missingBlocks.join(', ')})`,
+            recommendation: 'Enable all four public access block settings: BlockPublicAcls, BlockPublicPolicy, IgnorePublicAcls, and RestrictPublicBuckets',
           });
         }
       } catch (err: any) {
@@ -190,9 +211,6 @@ async function scanS3Buckets(s3: S3Client): Promise<ScanResult<SecurityIssue>> {
 /**
  * Scan security groups for open ports
  */
-/**
- * Scan security groups for open ports
- */
 async function scanSecurityGroups(ec2: EC2Client): Promise<ScanResult<SecurityIssue>> {
   const issues: SecurityIssue[] = [];
   const dangerousPorts = [22, 3389, 3306, 5432, 27017, 6379, 9200];
@@ -208,27 +226,48 @@ async function scanSecurityGroups(ec2: EC2Client): Promise<ScanResult<SecurityIs
         const fromPort = permission.FromPort;
         const toPort = permission.ToPort;
 
-        // Check for 0.0.0.0/0 ingress on dangerous ports
-        for (const range of permission.IpRanges || []) {
-          if (range.CidrIp === '0.0.0.0/0') {
-            if (fromPort && dangerousPorts.includes(fromPort)) {
-              issues.push({
-                resourceType: 'Security Group',
-                resourceId: `${sg.GroupId} (${sg.GroupName})`,
-                severity: 'CRITICAL',
-                issue: `Port ${fromPort} is open to the world (0.0.0.0/0)`,
-                recommendation: 'Restrict CIDR to specific IP addresses or ranges',
-              });
-            }
+        // Check both IPv4 and IPv6 ranges for public access
+        const isPublicIPv4 = (permission.IpRanges || []).some((r: any) => r.CidrIp === '0.0.0.0/0');
+        const isPublicIPv6 = (permission.Ipv6Ranges || []).some((r: any) => r.CidrIpv6 === '::/0');
+        const isPublic = isPublicIPv4 || isPublicIPv6;
+        const publicCidr = isPublicIPv4 ? '0.0.0.0/0' : '::/0';
 
-            // Check for all ports open
-            if (fromPort === 0 && toPort === 65535) {
+        if (!isPublic) continue;
+
+        // Check for all traffic (protocol -1)
+        if (permission.IpProtocol === '-1') {
+          issues.push({
+            resourceType: 'Security Group',
+            resourceId: `${sg.GroupId} (${sg.GroupName})`,
+            severity: 'CRITICAL',
+            issue: `All traffic is open to the world (${publicCidr})`,
+            recommendation: 'Restrict to only necessary ports and IPs',
+          });
+          continue;
+        }
+
+        // Check for all ports open
+        if (fromPort === 0 && toPort === 65535) {
+          issues.push({
+            resourceType: 'Security Group',
+            resourceId: `${sg.GroupId} (${sg.GroupName})`,
+            severity: 'CRITICAL',
+            issue: `All ports (0-65535) are open to the world (${publicCidr})`,
+            recommendation: 'Restrict to only necessary ports and IPs',
+          });
+          continue;
+        }
+
+        // Check if any dangerous port falls within the port range
+        if (fromPort != null && toPort != null) {
+          for (const dangerousPort of dangerousPorts) {
+            if (fromPort <= dangerousPort && toPort >= dangerousPort) {
               issues.push({
                 resourceType: 'Security Group',
                 resourceId: `${sg.GroupId} (${sg.GroupName})`,
                 severity: 'CRITICAL',
-                issue: 'All ports are open to the world (0.0.0.0/0)',
-                recommendation: 'Restrict to only necessary ports and IPs',
+                issue: `Port ${dangerousPort} is open to the world (${publicCidr}) via range ${fromPort}-${toPort}`,
+                recommendation: 'Restrict CIDR to specific IP addresses or ranges',
               });
             }
           }
@@ -242,9 +281,6 @@ async function scanSecurityGroups(ec2: EC2Client): Promise<ScanResult<SecurityIs
   }
 }
 
-/**
- * Scan RDS instances for security issues
- */
 /**
  * Scan RDS instances for security issues
  */
@@ -295,9 +331,6 @@ async function scanRDSInstances(rds: RDSClient): Promise<ScanResult<SecurityIssu
   }
 }
 
-/**
- * Check for old/unused IAM access keys
- */
 /**
  * Check for old/unused IAM access keys
  */
@@ -356,9 +389,6 @@ async function scanIAMKeys(iam: IAMClient): Promise<ScanResult<SecurityIssue>> {
   }
 }
 
-/**
- * Find cost optimization opportunities
- */
 /**
  * Find cost optimization opportunities
  */
@@ -451,8 +481,8 @@ async function fetchHistoricalTrends(client: CostExplorerClient): Promise<Array<
   const end = new Date();
   end.setDate(1); // Start of current month
   const start = new Date();
-  start.setMonth(start.getMonth() - 5);
-  start.setDate(1); // 6 months ago
+  start.setDate(1); // Set day to 1 BEFORE subtracting months to avoid day-overflow
+  start.setMonth(start.getMonth() - 5); // 6 months ago
 
   try {
     const response = await client.send(new GetCostAndUsageCommand({
@@ -566,6 +596,7 @@ export async function validateCredentials(credentials: AWSCredentials): Promise<
       credentials: {
         accessKeyId: credentials.accessKeyId,
         secretAccessKey: credentials.secretAccessKey,
+        ...(credentials.sessionToken && { sessionToken: credentials.sessionToken }),
       },
     });
 
