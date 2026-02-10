@@ -68,6 +68,19 @@ import {
 import { compareTemplates } from './lib/diff.js';
 import { verifyPaddleWebhook } from './services/paddleService.js';
 
+// Import agent service
+import {
+  analyzeAndPlan,
+  applyChanges,
+  cancelSession,
+  getSession,
+  listSessions,
+  getTemplateVersions,
+  restoreTemplateVersion,
+  toggleAgenticMode,
+  getAgenticMode,
+} from './services/agentService.js';
+
 const app = express();
 const PORT = process.env.PORT || 3002;
 
@@ -995,6 +1008,158 @@ app.delete(
     const userId = (req as any).userId;
     await deleteConnection((req.params as { id: string }).id, userId);
     res.json({ success: true });
+  })
+);
+
+// ============================================================================
+// AGENTIC AUTOMATION ENDPOINTS
+// ============================================================================
+
+// Get agentic mode status
+app.get(
+  '/api/agent/mode',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const enabled = await getAgenticMode(userId);
+    res.json({ enabled });
+  })
+);
+
+// Toggle agentic mode
+app.post(
+  '/api/agent/mode',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const { enabled } = req.body;
+    if (typeof enabled !== 'boolean') {
+      throw new ValidationError('enabled must be a boolean');
+    }
+    const result = await toggleAgenticMode(userId, enabled);
+    res.json({ enabled: result });
+  })
+);
+
+// Run agent analysis and generate change plan
+app.post(
+  '/api/agent/analyze',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const { templateId, content, provider } = req.body;
+
+    if (!templateId || !content || !provider) {
+      throw new ValidationError('templateId, content, and provider are required');
+    }
+
+    // Verify template ownership
+    const template = await prisma.template.findUnique({
+      where: { id: templateId },
+      include: { project: { select: { userId: true } } },
+    });
+
+    if (!template || template.project.userId !== userId) {
+      throw new NotFoundError('Template not found');
+    }
+
+    // Check credits
+    const hasCredits = await hasEnoughCredits(userId, 'AGENT_ANALYSIS' as CreditAction);
+    if (!hasCredits) {
+      throw new AppError('Insufficient credits for agent analysis', 402);
+    }
+
+    // Deduct credits
+    await deductCredits(userId, 'AGENT_ANALYSIS' as CreditAction, templateId);
+
+    const changePlan = await analyzeAndPlan(userId, templateId, content, provider);
+    res.json(changePlan);
+  })
+);
+
+// Apply accepted changes from a change plan
+app.post(
+  '/api/agent/apply',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const { sessionId, acceptedChangeIds } = req.body;
+
+    if (!sessionId || !Array.isArray(acceptedChangeIds) || acceptedChangeIds.length === 0) {
+      throw new ValidationError('sessionId and non-empty acceptedChangeIds array are required');
+    }
+
+    const result = await applyChanges(userId, sessionId, acceptedChangeIds);
+    res.json(result);
+  })
+);
+
+// Get agent session details
+app.get(
+  '/api/agent/sessions/:id',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const session = await getSession(userId, (req.params as { id: string }).id);
+    res.json(session);
+  })
+);
+
+// List agent sessions
+app.get(
+  '/api/agent/sessions',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const templateId = req.query.templateId as string | undefined;
+    const sessions = await listSessions(userId, templateId);
+    res.json(sessions);
+  })
+);
+
+// Cancel an agent session
+app.post(
+  '/api/agent/sessions/:id/cancel',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    await cancelSession(userId, (req.params as { id: string }).id);
+    res.json({ success: true });
+  })
+);
+
+// Get template version history
+app.get(
+  '/api/templates/:id/versions',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const templateId = (req.params as { id: string }).id;
+    const userId = (req as any).userId;
+
+    // Verify ownership
+    const template = await prisma.template.findUnique({
+      where: { id: templateId },
+      include: { project: { select: { userId: true } } },
+    });
+
+    if (!template || template.project.userId !== userId) {
+      throw new NotFoundError('Template not found');
+    }
+
+    const versions = await getTemplateVersions(templateId);
+    res.json(versions);
+  })
+);
+
+// Restore a template version
+app.post(
+  '/api/templates/:id/versions/:versionId/restore',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const { id: templateId, versionId } = req.params as { id: string; versionId: string };
+    const content = await restoreTemplateVersion(userId, templateId, versionId);
+    res.json({ content });
   })
 );
 

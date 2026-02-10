@@ -373,6 +373,9 @@ export const CREDIT_COSTS = {
   COST_ANALYSIS: 5,
   CLOUD_SCAN: 20,
   RECOMMENDATION: 15,
+  AGENT_ANALYSIS: 25,
+  DEPLOY_PLAN: 15,
+  DEPLOY_APPLY: 30,
 } as const;
 
 export type CreditAction = keyof typeof CREDIT_COSTS;
@@ -605,5 +608,123 @@ export async function syncConnection(id: string, region?: string, token?: string
 export async function deleteConnection(id: string, token?: string | null): Promise<{ success: boolean }> {
   return apiRequest<{ success: boolean }>(`/cloud/connections/${id}`, {
     method: 'DELETE',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+// ============================================================================
+// AGENTIC AUTOMATION
+// ============================================================================
+
+export interface AgentChange {
+  id: string;
+  type: 'SECURITY_FIX' | 'COST_OPTIMIZATION' | 'BEST_PRACTICE';
+  policyCode: string;
+  title: string;
+  description: string;
+  severity: string;
+  resourceRef: string;
+  diff: { before: string; after: string };
+  impact: {
+    securityScoreChange: number;
+    monthlyCostChange: number;
+  };
+  status: 'proposed' | 'accepted' | 'rejected' | 'applied';
+}
+
+export interface ChangePlan {
+  sessionId: string;
+  templateId: string;
+  originalScore: { security: number; cost: number };
+  projectedScore: { security: number; cost: number };
+  changes: AgentChange[];
+  totalEstimatedSavings: number;
+  auditResult: AuditResult;
+}
+
+export interface AgentSession {
+  id: string;
+  userId: string;
+  templateId: string;
+  status: 'PLANNING' | 'REVIEWING' | 'APPLYING' | 'COMPLETED' | 'CANCELLED';
+  changePlan: AgentChange[] | null;
+  appliedChanges: string[] | null;
+  originalScore: { security: number; cost: number } | null;
+  projectedScore: { security: number; cost: number } | null;
+  totalSavings: number;
+  createdAt: string;
+  completedAt: string | null;
+  template?: { id: string; name: string; provider: string };
+}
+
+export interface TemplateVersion {
+  id: string;
+  templateId: string;
+  version: number;
+  content: string;
+  changeLog: string | null;
+  createdBy: string;
+  createdAt: string;
+}
+
+export async function getAgenticMode(token?: string | null): Promise<{ enabled: boolean }> {
+  return apiRequest<{ enabled: boolean }>('/agent/mode', {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function setAgenticMode(enabled: boolean, token?: string | null): Promise<{ enabled: boolean }> {
+  return apiRequest<{ enabled: boolean }>('/agent/mode', {
+    method: 'POST',
+    body: JSON.stringify({ enabled }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function runAgentAnalysis(
+  templateId: string,
+  content: string,
+  provider: string,
+  token?: string | null
+): Promise<ChangePlan> {
+  return apiRequest<ChangePlan>('/agent/analyze', {
+    method: 'POST',
+    body: JSON.stringify({ templateId, content, provider }),
+  }, GENERATION_TIMEOUT, token);
+}
+
+export async function applyAgentChanges(
+  sessionId: string,
+  acceptedChangeIds: string[],
+  token?: string | null
+): Promise<{ updatedContent: string; versionId: string; appliedCount: number }> {
+  return apiRequest<{ updatedContent: string; versionId: string; appliedCount: number }>('/agent/apply', {
+    method: 'POST',
+    body: JSON.stringify({ sessionId, acceptedChangeIds }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchAgentSessions(templateId?: string, token?: string | null): Promise<AgentSession[]> {
+  const query = templateId ? `?templateId=${templateId}` : '';
+  return apiRequest<AgentSession[]>(`/agent/sessions${query}`, {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchAgentSession(sessionId: string, token?: string | null): Promise<AgentSession> {
+  return apiRequest<AgentSession>(`/agent/sessions/${sessionId}`, {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function cancelAgentSession(sessionId: string, token?: string | null): Promise<{ success: boolean }> {
+  return apiRequest<{ success: boolean }>(`/agent/sessions/${sessionId}/cancel`, {
+    method: 'POST',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchTemplateVersions(templateId: string, token?: string | null): Promise<TemplateVersion[]> {
+  return apiRequest<TemplateVersion[]>(`/templates/${templateId}/versions`, {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function restoreTemplateVersion(
+  templateId: string,
+  versionId: string,
+  token?: string | null
+): Promise<{ content: string }> {
+  return apiRequest<{ content: string }>(`/templates/${templateId}/versions/${versionId}/restore`, {
+    method: 'POST',
   }, DEFAULT_TIMEOUT, token);
 }

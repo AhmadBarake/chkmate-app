@@ -14,6 +14,9 @@ export const CREDIT_COSTS = {
   COST_ANALYSIS: 5,
   CLOUD_SCAN: 20,
   RECOMMENDATION: 15,
+  AGENT_ANALYSIS: 25,
+  DEPLOY_PLAN: 15,
+  DEPLOY_APPLY: 30,
 } as const;
 
 // Credit pack definitions

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Save, Code2, Layout, Database, File, ChevronLeft, ChevronRight, PenTool, Sparkles, CheckCircle, Shield, PanelRightOpen, PanelRightClose, GitCompare } from 'lucide-react';
+import { Save, Code2, Layout, Database, File, ChevronLeft, ChevronRight, PenTool, Sparkles, CheckCircle, Shield, PanelRightOpen, PanelRightClose, GitCompare, Bot } from 'lucide-react';
 import { Editor } from '@monaco-editor/react';
 import { TemplateDiff } from '../components/TemplateDiff';
 import { generateTemplate, createTemplate, fetchTemplate, fetchTemplateDiff, DiffResult, CloudConnection, fetchConnections } from '../lib/api';
@@ -30,6 +30,7 @@ import Button from '../components/Button';
 import { SkeletonDiagram, SkeletonCode } from '../components/Skeleton';
 import { fadeInUp } from '../lib/animations';
 import AuditPanel from '../components/AuditPanel';
+import AgenticPanel from '../components/AgenticPanel';
 
 const PROVIDERS = [
   { id: 'aws', name: 'AWS', icon: '☁️', description: 'Amazon Web Services' },
@@ -70,6 +71,7 @@ export default function Builder() {
   const [saving, setSaving] = useState(false);
   const [loadingTemplate, setLoadingTemplate] = useState(false);
   const [showAuditPanel, setShowAuditPanel] = useState(false);
+  const [showAgenticPanel, setShowAgenticPanel] = useState(false);
   const [originalFiles, setOriginalFiles] = useState<{ [key: string]: string }>({});
   const [showDiff, setShowDiff] = useState(false);
   const [diffData, setDiffData] = useState<DiffResult | null>(null);
@@ -685,11 +687,24 @@ export default function Builder() {
                     variant={showAuditPanel ? 'secondary' : 'outline'}
                     onClick={() => {
                       setShowAuditPanel(!showAuditPanel);
+                      if (!showAuditPanel) setShowAgenticPanel(false);
                     }}
                     leftIcon={<Shield className="w-4 h-4" />}
                     rightIcon={showAuditPanel ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
                   >
                     Security Audit
+                  </Button>
+                  <Button
+                    variant={showAgenticPanel ? 'secondary' : 'outline'}
+                    onClick={() => {
+                      setShowAgenticPanel(!showAgenticPanel);
+                      if (!showAgenticPanel) setShowAuditPanel(false);
+                    }}
+                    leftIcon={<Bot className="w-4 h-4" />}
+                    rightIcon={showAgenticPanel ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
+                    className={showAgenticPanel ? '' : 'border-violet-500/30 text-violet-300 hover:bg-violet-500/10'}
+                  >
+                    Agent Fix
                   </Button>
                   <Button
                     variant="primary"
@@ -785,6 +800,31 @@ export default function Builder() {
                         provider={selectedProvider}
                         templateId={templateId}
                         onClose={() => setShowAuditPanel(false)}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Agentic Panel */}
+                <AnimatePresence>
+                  {showAgenticPanel && templateId && (
+                    <motion.div
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: '420px', opacity: 1 }}
+                      exit={{ width: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="border-l border-violet-500/20 overflow-hidden flex-shrink-0 h-full absolute right-0 top-0 bottom-0 z-20 bg-slate-950 shadow-xl"
+                      style={{ width: 420 }}
+                    >
+                      <AgenticPanel
+                        content={Object.values(generatedFiles).join('\n\n')}
+                        provider={selectedProvider}
+                        templateId={templateId}
+                        onContentUpdate={(newContent) => {
+                          // Update the main.tf with agent changes
+                          setGeneratedFiles(prev => ({ ...prev, 'main.tf': newContent }));
+                        }}
+                        onClose={() => setShowAgenticPanel(false)}
                       />
                     </motion.div>
                   )}
