@@ -36,6 +36,8 @@ import Recommendations from './pages/Recommendations';
 import InfrastructureMap from './pages/InfrastructureMap';
 import CostControl from './pages/CostControl';
 import AgentSessions from './pages/AgentSessions';
+import Deployments from './pages/Deployments';
+import DeploymentCredentials from './pages/DeploymentCredentials';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Refund from './pages/Refund';
@@ -155,6 +157,8 @@ function App() {
                   <Route path="/infrastructure-map" element={<InfrastructureMap />} />
                   <Route path="/cost-control" element={<CostControl />} />
                   <Route path="/agent/sessions" element={<AgentSessions />} />
+                  <Route path="/deploy" element={<Deployments />} />
+                  <Route path="/deploy/credentials" element={<DeploymentCredentials />} />
                   <Route path="/invoices" element={<Invoices />} />
                 </Route>
               </Routes>

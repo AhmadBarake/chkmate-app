@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useToastActions } from '../context/ToastContext';
 import { useClerk, useUser, useAuth } from '@clerk/clerk-react';
-import { LayoutDashboard, Folder, FileText, FileCode, LogOut, Box, Cloud, Server, Sparkles, Map, DollarSign, Bot, History } from 'lucide-react';
+import { LayoutDashboard, Folder, FileText, FileCode, LogOut, Box, Cloud, Server, Sparkles, Map, DollarSign, Bot, History, Rocket, KeyRound } from 'lucide-react';
 import clsx from 'clsx';
 import { CreditIndicator } from './CreditBalance';
 import { getAgenticMode, setAgenticMode } from '../lib/api';
@@ -17,6 +17,8 @@ const navItems = [
   { name: 'Connections', to: '/connections', icon: Server },
   { name: 'Smart Advice', to: '/recommendations', icon: Sparkles },
   { name: 'Agent History', to: '/agent/sessions', icon: History },
+  { name: 'Deployments', to: '/deploy', icon: Rocket },
+  { name: 'Deploy Keys', to: '/deploy/credentials', icon: KeyRound },
   { name: 'Invoices', to: '/invoices', icon: FileText },
 ];
 

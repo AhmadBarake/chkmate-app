@@ -728,3 +728,106 @@ export async function restoreTemplateVersion(
     method: 'POST',
   }, DEFAULT_TIMEOUT, token);
 }
+
+// ============================================================================
+// DEPLOYMENTS
+// ============================================================================
+
+export interface DeploymentCredential {
+  id: string;
+  name: string;
+  provider: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  _count?: { deployments: number };
+}
+
+export interface DeploymentPlanResult {
+  deploymentId: string;
+  planOutput: {
+    summary: { add: number; change: number; destroy: number };
+    output: string;
+  };
+  summary: { add: number; change: number; destroy: number };
+  estimatedCost: number | null;
+  auditScore: number;
+}
+
+export interface DeploymentRecord {
+  id: string;
+  userId: string;
+  templateId: string;
+  credentialId: string;
+  status: 'PLANNING' | 'PLAN_READY' | 'APPLYING' | 'SUCCEEDED' | 'FAILED' | 'DESTROYING' | 'DESTROYED';
+  planOutput: any;
+  applyOutput: string | null;
+  resourceCount: number;
+  estimatedCost: number | null;
+  errorMessage: string | null;
+  createdAt: string;
+  startedAt: string | null;
+  completedAt: string | null;
+  template?: { id: string; name: string; provider: string };
+  credential?: { id: string; name: string };
+}
+
+export async function getDeploymentSetup(token?: string | null): Promise<{ externalId: string; templateYaml: string }> {
+  return apiRequest<{ externalId: string; templateYaml: string }>('/deploy/setup', {
+    method: 'POST',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function createDeploymentCredential(
+  name: string,
+  roleArn: string,
+  token?: string | null
+): Promise<DeploymentCredential> {
+  return apiRequest<DeploymentCredential>('/deploy/credentials', {
+    method: 'POST',
+    body: JSON.stringify({ name, roleArn }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchDeploymentCredentials(token?: string | null): Promise<DeploymentCredential[]> {
+  return apiRequest<DeploymentCredential[]>('/deploy/credentials', {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function deleteDeploymentCredential(credentialId: string, token?: string | null): Promise<{ success: boolean }> {
+  return apiRequest<{ success: boolean }>(`/deploy/credentials/${credentialId}`, {
+    method: 'DELETE',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function runDeploymentPlan(
+  templateId: string,
+  credentialId: string,
+  region?: string,
+  token?: string | null
+): Promise<DeploymentPlanResult> {
+  return apiRequest<DeploymentPlanResult>('/deploy/plan', {
+    method: 'POST',
+    body: JSON.stringify({ templateId, credentialId, region }),
+  }, GENERATION_TIMEOUT, token);
+}
+
+export async function runDeploymentApply(deploymentId: string, token?: string | null): Promise<{ success: boolean; output: string; resourceCount: number }> {
+  return apiRequest<{ success: boolean; output: string; resourceCount: number }>(`/deploy/apply/${deploymentId}`, {
+    method: 'POST',
+  }, GENERATION_TIMEOUT, token);
+}
+
+export async function runDeploymentDestroy(deploymentId: string, token?: string | null): Promise<{ success: boolean; output: string }> {
+  return apiRequest<{ success: boolean; output: string }>(`/deploy/destroy/${deploymentId}`, {
+    method: 'POST',
+  }, GENERATION_TIMEOUT, token);
+}
+
+export async function fetchDeployment(deploymentId: string, token?: string | null): Promise<DeploymentRecord> {
+  return apiRequest<DeploymentRecord>(`/deploy/${deploymentId}`, {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchDeployments(templateId?: string, token?: string | null): Promise<DeploymentRecord[]> {
+  const query = templateId ? `?templateId=${templateId}` : '';
+  return apiRequest<DeploymentRecord[]>(`/deploy${query}`, {}, DEFAULT_TIMEOUT, token);
+}
