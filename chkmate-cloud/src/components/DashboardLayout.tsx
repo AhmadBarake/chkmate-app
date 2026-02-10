@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useToastActions } from '../context/ToastContext';
-import { useClerk, useUser } from '@clerk/clerk-react';
-import { LayoutDashboard, Folder, FileText, FileCode, LogOut, Box, Cloud, Server, Sparkles, Map, DollarSign } from 'lucide-react';
+import { useClerk, useUser, useAuth } from '@clerk/clerk-react';
+import { LayoutDashboard, Folder, FileText, FileCode, LogOut, Box, Cloud, Server, Sparkles, Map, DollarSign, Bot, History, Rocket, KeyRound } from 'lucide-react';
 import clsx from 'clsx';
 import { CreditIndicator } from './CreditBalance';
+import { getAgenticMode, setAgenticMode } from '../lib/api';
 
 const navItems = [
   { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, exact: true },
@@ -15,20 +16,54 @@ const navItems = [
   { name: 'Cost Control', to: '/cost-control', icon: DollarSign },
   { name: 'Connections', to: '/connections', icon: Server },
   { name: 'Smart Advice', to: '/recommendations', icon: Sparkles },
+  { name: 'Agent History', to: '/agent/sessions', icon: History },
+  { name: 'Deployments', to: '/deploy', icon: Rocket },
+  { name: 'Deploy Keys', to: '/deploy/credentials', icon: KeyRound },
   { name: 'Invoices', to: '/invoices', icon: FileText },
 ];
 
 export default function DashboardLayout() {
   const { signOut } = useClerk();
   const { user } = useUser();
+  const { getToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToastActions();
+  const [agenticEnabled, setAgenticEnabled] = useState(false);
+  const [togglingAgentic, setTogglingAgentic] = useState(false);
 
   // Get user display info
   const userName = user?.fullName || user?.primaryEmailAddress?.emailAddress?.split('@')[0] || 'User';
   const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   const userAvatar = user?.imageUrl;
+
+  // Load agentic mode status
+  useEffect(() => {
+    async function loadAgenticMode() {
+      try {
+        const token = await getToken();
+        const result = await getAgenticMode(token);
+        setAgenticEnabled(result.enabled);
+      } catch {
+        // Silently ignore - defaults to off
+      }
+    }
+    if (user) loadAgenticMode();
+  }, [user, getToken]);
+
+  const handleToggleAgentic = async () => {
+    setTogglingAgentic(true);
+    try {
+      const token = await getToken();
+      const result = await setAgenticMode(!agenticEnabled, token);
+      setAgenticEnabled(result.enabled);
+      toast.success(result.enabled ? 'Agentic Automation enabled' : 'Agentic Automation disabled');
+    } catch {
+      toast.error('Failed to toggle Agentic mode');
+    } finally {
+      setTogglingAgentic(false);
+    }
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -94,6 +129,38 @@ export default function DashboardLayout() {
             </NavLink>
           ))}
         </nav>
+
+        {/* Agentic Mode Toggle */}
+        <div className="px-4 py-3 border-t border-slate-800/50">
+          <button
+            onClick={handleToggleAgentic}
+            disabled={togglingAgentic}
+            className={clsx(
+              'w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all text-sm group',
+              agenticEnabled
+                ? 'bg-violet-500/10 border border-violet-500/30 text-violet-300'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
+            )}
+          >
+            <div className="flex items-center gap-2.5">
+              <Bot className={clsx('w-4 h-4', agenticEnabled ? 'text-violet-400' : 'text-slate-500')} />
+              <span className="font-medium">Agentic Mode</span>
+            </div>
+            <div
+              className={clsx(
+                'w-8 h-[18px] rounded-full transition-colors relative',
+                agenticEnabled ? 'bg-violet-500' : 'bg-slate-700'
+              )}
+            >
+              <div
+                className={clsx(
+                  'absolute top-[2px] w-[14px] h-[14px] rounded-full bg-white transition-all shadow-sm',
+                  agenticEnabled ? 'left-[15px]' : 'left-[2px]'
+                )}
+              />
+            </div>
+          </button>
+        </div>
 
         <div className="p-4 border-t border-slate-800/50">
           <button

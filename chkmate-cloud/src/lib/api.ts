@@ -373,6 +373,9 @@ export const CREDIT_COSTS = {
   COST_ANALYSIS: 5,
   CLOUD_SCAN: 20,
   RECOMMENDATION: 15,
+  AGENT_ANALYSIS: 25,
+  DEPLOY_PLAN: 15,
+  DEPLOY_APPLY: 30,
 } as const;
 
 export type CreditAction = keyof typeof CREDIT_COSTS;
@@ -606,4 +609,225 @@ export async function deleteConnection(id: string, token?: string | null): Promi
   return apiRequest<{ success: boolean }>(`/cloud/connections/${id}`, {
     method: 'DELETE',
   }, DEFAULT_TIMEOUT, token);
+}
+
+// ============================================================================
+// AGENTIC AUTOMATION
+// ============================================================================
+
+export interface AgentChange {
+  id: string;
+  type: 'SECURITY_FIX' | 'COST_OPTIMIZATION' | 'BEST_PRACTICE';
+  policyCode: string;
+  title: string;
+  description: string;
+  severity: string;
+  resourceRef: string;
+  diff: { before: string; after: string };
+  impact: {
+    securityScoreChange: number;
+    monthlyCostChange: number;
+  };
+  status: 'proposed' | 'accepted' | 'rejected' | 'applied';
+}
+
+export interface ChangePlan {
+  sessionId: string;
+  templateId: string;
+  originalScore: { security: number; cost: number };
+  projectedScore: { security: number; cost: number };
+  changes: AgentChange[];
+  totalEstimatedSavings: number;
+  auditResult: AuditResult;
+}
+
+export interface AgentSession {
+  id: string;
+  userId: string;
+  templateId: string;
+  status: 'PLANNING' | 'REVIEWING' | 'APPLYING' | 'COMPLETED' | 'CANCELLED';
+  changePlan: AgentChange[] | null;
+  appliedChanges: string[] | null;
+  originalScore: { security: number; cost: number } | null;
+  projectedScore: { security: number; cost: number } | null;
+  totalSavings: number;
+  createdAt: string;
+  completedAt: string | null;
+  template?: { id: string; name: string; provider: string };
+}
+
+export interface TemplateVersion {
+  id: string;
+  templateId: string;
+  version: number;
+  content: string;
+  changeLog: string | null;
+  createdBy: string;
+  createdAt: string;
+}
+
+export async function getAgenticMode(token?: string | null): Promise<{ enabled: boolean }> {
+  return apiRequest<{ enabled: boolean }>('/agent/mode', {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function setAgenticMode(enabled: boolean, token?: string | null): Promise<{ enabled: boolean }> {
+  return apiRequest<{ enabled: boolean }>('/agent/mode', {
+    method: 'POST',
+    body: JSON.stringify({ enabled }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function runAgentAnalysis(
+  templateId: string,
+  content: string,
+  provider: string,
+  token?: string | null
+): Promise<ChangePlan> {
+  return apiRequest<ChangePlan>('/agent/analyze', {
+    method: 'POST',
+    body: JSON.stringify({ templateId, content, provider }),
+  }, GENERATION_TIMEOUT, token);
+}
+
+export async function applyAgentChanges(
+  sessionId: string,
+  acceptedChangeIds: string[],
+  token?: string | null
+): Promise<{ updatedContent: string; versionId: string; appliedCount: number }> {
+  return apiRequest<{ updatedContent: string; versionId: string; appliedCount: number }>('/agent/apply', {
+    method: 'POST',
+    body: JSON.stringify({ sessionId, acceptedChangeIds }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchAgentSessions(templateId?: string, token?: string | null): Promise<AgentSession[]> {
+  const query = templateId ? `?templateId=${templateId}` : '';
+  return apiRequest<AgentSession[]>(`/agent/sessions${query}`, {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchAgentSession(sessionId: string, token?: string | null): Promise<AgentSession> {
+  return apiRequest<AgentSession>(`/agent/sessions/${sessionId}`, {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function cancelAgentSession(sessionId: string, token?: string | null): Promise<{ success: boolean }> {
+  return apiRequest<{ success: boolean }>(`/agent/sessions/${sessionId}/cancel`, {
+    method: 'POST',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchTemplateVersions(templateId: string, token?: string | null): Promise<TemplateVersion[]> {
+  return apiRequest<TemplateVersion[]>(`/templates/${templateId}/versions`, {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function restoreTemplateVersion(
+  templateId: string,
+  versionId: string,
+  token?: string | null
+): Promise<{ content: string }> {
+  return apiRequest<{ content: string }>(`/templates/${templateId}/versions/${versionId}/restore`, {
+    method: 'POST',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+// ============================================================================
+// DEPLOYMENTS
+// ============================================================================
+
+export interface DeploymentCredential {
+  id: string;
+  name: string;
+  provider: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  _count?: { deployments: number };
+}
+
+export interface DeploymentPlanResult {
+  deploymentId: string;
+  planOutput: {
+    summary: { add: number; change: number; destroy: number };
+    output: string;
+  };
+  summary: { add: number; change: number; destroy: number };
+  estimatedCost: number | null;
+  auditScore: number;
+}
+
+export interface DeploymentRecord {
+  id: string;
+  userId: string;
+  templateId: string;
+  credentialId: string;
+  status: 'PLANNING' | 'PLAN_READY' | 'APPLYING' | 'SUCCEEDED' | 'FAILED' | 'DESTROYING' | 'DESTROYED';
+  planOutput: any;
+  applyOutput: string | null;
+  resourceCount: number;
+  estimatedCost: number | null;
+  errorMessage: string | null;
+  createdAt: string;
+  startedAt: string | null;
+  completedAt: string | null;
+  template?: { id: string; name: string; provider: string };
+  credential?: { id: string; name: string };
+}
+
+export async function getDeploymentSetup(token?: string | null): Promise<{ externalId: string; templateYaml: string }> {
+  return apiRequest<{ externalId: string; templateYaml: string }>('/deploy/setup', {
+    method: 'POST',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function createDeploymentCredential(
+  name: string,
+  roleArn: string,
+  token?: string | null
+): Promise<DeploymentCredential> {
+  return apiRequest<DeploymentCredential>('/deploy/credentials', {
+    method: 'POST',
+    body: JSON.stringify({ name, roleArn }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchDeploymentCredentials(token?: string | null): Promise<DeploymentCredential[]> {
+  return apiRequest<DeploymentCredential[]>('/deploy/credentials', {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function deleteDeploymentCredential(credentialId: string, token?: string | null): Promise<{ success: boolean }> {
+  return apiRequest<{ success: boolean }>(`/deploy/credentials/${credentialId}`, {
+    method: 'DELETE',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+export async function runDeploymentPlan(
+  templateId: string,
+  credentialId: string,
+  region?: string,
+  token?: string | null
+): Promise<DeploymentPlanResult> {
+  return apiRequest<DeploymentPlanResult>('/deploy/plan', {
+    method: 'POST',
+    body: JSON.stringify({ templateId, credentialId, region }),
+  }, GENERATION_TIMEOUT, token);
+}
+
+export async function runDeploymentApply(deploymentId: string, token?: string | null): Promise<{ success: boolean; output: string; resourceCount: number }> {
+  return apiRequest<{ success: boolean; output: string; resourceCount: number }>(`/deploy/apply/${deploymentId}`, {
+    method: 'POST',
+  }, GENERATION_TIMEOUT, token);
+}
+
+export async function runDeploymentDestroy(deploymentId: string, token?: string | null): Promise<{ success: boolean; output: string }> {
+  return apiRequest<{ success: boolean; output: string }>(`/deploy/destroy/${deploymentId}`, {
+    method: 'POST',
+  }, GENERATION_TIMEOUT, token);
+}
+
+export async function fetchDeployment(deploymentId: string, token?: string | null): Promise<DeploymentRecord> {
+  return apiRequest<DeploymentRecord>(`/deploy/${deploymentId}`, {}, DEFAULT_TIMEOUT, token);
+}
+
+export async function fetchDeployments(templateId?: string, token?: string | null): Promise<DeploymentRecord[]> {
+  const query = templateId ? `?templateId=${templateId}` : '';
+  return apiRequest<DeploymentRecord[]>(`/deploy${query}`, {}, DEFAULT_TIMEOUT, token);
 }
