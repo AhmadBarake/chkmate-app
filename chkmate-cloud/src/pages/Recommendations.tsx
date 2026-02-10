@@ -13,13 +13,14 @@ import {
 } from 'lucide-react';
 import Button from '../components/Button';
 import RecommendationCard from '../components/RecommendationCard';
-import { 
-    CloudConnection, 
-    fetchConnections, 
-    fetchRecommendations, 
+import {
+    CloudConnection,
+    fetchConnections,
+    fetchRecommendations,
     generateRecommendations,
+    dismissRecommendation as dismissRecommendationAPI,
     syncConnection,
-    Recommendation 
+    Recommendation
 } from '../lib/api';
 import { cn } from '../lib/utils';
 
@@ -48,7 +49,7 @@ export default function Recommendations() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<'ALL' | 'COST' | 'SECURITY' | 'PERFORMANCE'>('ALL');
+  const [filter, setFilter] = useState<'ALL' | 'COST' | 'SECURITY' | 'RELIABILITY'>('ALL');
   const { user } = useUser();
   const { getToken } = useAuth();
 
@@ -98,10 +99,7 @@ export default function Recommendations() {
           const token = await getToken();
           // First sync resources from selected region, then generate recommendations
           await syncConnection(selectedConnectionId, selectedRegion, token);
-          const [recs] = await Promise.all([
-              generateRecommendations(selectedConnectionId, token),
-              new Promise(resolve => setTimeout(resolve, 1000))
-          ]);
+          const recs = await generateRecommendations(selectedConnectionId, token);
           setRecommendations(recs);
       } catch (err) {
           console.error("Analysis failed", err);
@@ -110,10 +108,17 @@ export default function Recommendations() {
       }
   };
 
-  const handleDismiss = (id: string) => {
+  const handleDismiss = async (id: string) => {
       // Optimistic update
       setRecommendations(prev => prev.filter(r => r.id !== id));
-      // Call API (TODO: add API call)
+      try {
+          const token = await getToken();
+          await dismissRecommendationAPI(selectedConnectionId, id, token);
+      } catch (err) {
+          console.error("Failed to dismiss recommendation", err);
+          // Reload to restore if the API call failed
+          if (selectedConnectionId) loadRecommendations(selectedConnectionId);
+      }
   };
 
   const filteredRecs = recommendations.filter(r => {
@@ -124,7 +129,7 @@ export default function Recommendations() {
 
   const stats = {
       savings: recommendations.reduce((acc, r) => acc + (r.impact.savings || 0), 0),
-      critical: recommendations.filter(r => r.impact.risk === 'high').length,
+      critical: recommendations.filter(r => r.impact.risk === 'high' || r.impact.risk === 'critical').length,
       total: recommendations.length,
   };
 
@@ -213,7 +218,7 @@ export default function Recommendations() {
                 { id: 'ALL', label: 'All Items' },
                 { id: 'COST', label: 'Cost Savings', icon: DollarSign },
                 { id: 'SECURITY', label: 'Security', icon: Shield },
-                { id: 'PERFORMANCE', label: 'Performance', icon: Zap },
+                { id: 'RELIABILITY', label: 'Reliability', icon: Zap },
             ].map(f => {
                 const Icon = f.icon;
                 return (

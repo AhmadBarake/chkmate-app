@@ -71,20 +71,17 @@ import { verifyPaddleWebhook } from './services/paddleService.js';
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-console.log('DATABASE_URL:', process.env.DATABASE_URL);
-
 const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
+  log: process.env.NODE_ENV === 'production' ? ['warn', 'error'] : ['query', 'info', 'warn', 'error'],
 });
 
 // Gemini setup
-const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '';
+const apiKey = process.env.GEMINI_API_KEY || '';
 if (!apiKey) {
   console.warn('Warning: GEMINI_API_KEY is not set.');
 }
 const genAI = new GoogleGenerativeAI(apiKey);
 
-app.use(cors());
 app.use(cors());
 
 // Use JSON parser for all routes EXCEPT webhook which needs raw body
@@ -455,7 +452,7 @@ app.post(
         let contextInstruction = '';
         if (connectionId) {
              try {
-                const resources = await getConnectionResources(connectionId);
+                const resources = await getConnectionResources(connectionId, userId);
                 if (resources && resources.length > 0) {
                     const resourceSummary = resources.map((r: any) => 
                        `- ${r.resourceType}: ${r.name || r.resourceId} (${r.region}) ${JSON.stringify(r.metadata)}`
@@ -599,6 +596,17 @@ app.get(
   requireAuth,
   asyncHandler(async (req, res) => {
     const { templateId } = req.params as { templateId: string };
+    const userId = (req as any).userId;
+
+    // Verify ownership via template -> project -> userId
+    const template = await prisma.template.findUnique({
+      where: { id: templateId },
+      include: { project: true },
+    });
+
+    if (!template || template.project.userId !== userId) {
+      throw new NotFoundError('Audit report');
+    }
 
     const report = await getLatestAuditReport(templateId);
 
@@ -815,26 +823,29 @@ app.post(
       region: credentials.region.trim(),
     };
 
-    // Deduct credits for scan
+    // Validate credentials BEFORE deducting credits
+    const isValid = await validateCredentials(sanitizedCredentials);
+    if (!isValid) {
+      throw new ValidationError('Invalid AWS credentials or insufficient permissions');
+    }
+
+    // Deduct credits only after validation succeeds
     const creditResult = await deductCredits(userId, 'CLOUD_SCAN');
     if (!creditResult.success) {
       throw new ValidationError(creditResult.error || 'Insufficient credits');
     }
 
     try {
-      // Validate first using STS
-      const isValid = await validateCredentials(sanitizedCredentials);
-      if (!isValid) {
-        throw new ValidationError('Invalid AWS credentials or insufficient permissions');
-      }
-
       const scanResult = await scanAWSAccount(sanitizedCredentials);
-      
+
       res.json({
         ...scanResult,
         creditsRemaining: creditResult.remainingBalance
       });
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
       console.error('Cloud scan failed:', error);
       throw new ExternalServiceError('Failed to scan cloud account. Please check permissions.');
     }
@@ -867,9 +878,9 @@ app.post(
       throw new ValidationError('Missing required fields: name, roleArn, externalId');
     }
     
-    // Validate ARN format
-    if (!roleArn.startsWith('arn:aws:iam::') || !roleArn.includes(':role/')) {
-       throw new ValidationError('Invalid Role ARN format');
+    // Validate ARN format: arn:aws:iam::<12-digit-account-id>:role/<role-name>
+    if (!/^arn:aws:iam::\d{12}:role\/[\w+=,.@\-/]+$/.test(roleArn)) {
+       throw new ValidationError('Invalid Role ARN format. Expected: arn:aws:iam::<account-id>:role/<role-name>');
     }
 
     const connection = await createAWSConnection(userId, name, roleArn, externalId);
@@ -960,6 +971,19 @@ app.get(
     const { getRecommendations } = await import('./services/recommendationService');
     const recs = await getRecommendations((req.params as { id: string }).id);
     res.json(recs);
+  })
+);
+
+// Dismiss a Recommendation
+app.patch(
+  '/api/cloud/connections/:id/recommendations/:recId/dismiss',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    await verifyConnectionOwnership((req.params as { id: string }).id, userId);
+    const { dismissRecommendation } = await import('./services/recommendationService');
+    const rec = await dismissRecommendation((req.params as { id: string; recId: string }).recId);
+    res.json(rec);
   })
 );
 

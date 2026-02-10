@@ -60,11 +60,36 @@ Resources:
                   - 'rds:Describe*'
                   - 's3:ListAllMyBuckets'
                   - 's3:GetBucketLocation'
+                  - 's3:GetBucketVersioning'
+                  - 's3:GetPublicAccessBlock'
+                  - 's3:GetBucketEncryption'
                   - 's3:ListBucket'
                   - 'iam:ListUsers'
                   - 'iam:ListRoles'
                   - 'iam:ListAccessKeys'
                   - 'iam:GetAccessKeyLastUsed'
+                  - 'iam:GetLoginProfile'
+                  - 'iam:ListMFADevices'
+                  - 'lambda:ListFunctions'
+                  - 'lambda:GetFunction'
+                  - 'dynamodb:ListTables'
+                  - 'dynamodb:DescribeTable'
+                  - 'amplify:ListApps'
+                  - 'amplify:ListBranches'
+                  - 'elasticloadbalancing:Describe*'
+                  - 'ecs:List*'
+                  - 'ecs:Describe*'
+                  - 'cloudfront:ListDistributions'
+                  - 'route53:ListHostedZones'
+                  - 'route53:ListResourceRecordSets'
+                  - 'sns:ListTopics'
+                  - 'sqs:ListQueues'
+                  - 'sqs:GetQueueAttributes'
+                  - 'elasticache:Describe*'
+                  - 'apigateway:GET'
+                  - 'ce:GetCostAndUsage'
+                  - 'cloudwatch:DescribeAlarms'
+                  - 'logs:DescribeLogGroups'
                 Resource: '*'
 Outputs:
   RoleArn:
@@ -164,30 +189,32 @@ export async function syncConnection(connectionId: string, region: string | unde
 
     // 3. Save Resources
     // Clear existing resources and recreate
-    await prisma.$transaction([
-      prisma.cloudResource.deleteMany({ where: { connectionId } }),
-      
-      prisma.cloudResource.createMany({
-        data: discoveredResources.map(r => ({
-          connectionId,
-          resourceType: r.resourceType,
-          resourceId: r.resourceId,
-          name: r.name,
-          region: r.region,
-          metadata: r.metadata
-        }))
-      }),
-      
-      prisma.cloudConnection.update({
+    const updatedConnection = await prisma.$transaction(async (tx) => {
+      await tx.cloudResource.deleteMany({ where: { connectionId } });
+
+      if (discoveredResources.length > 0) {
+        await tx.cloudResource.createMany({
+          data: discoveredResources.map(r => ({
+            connectionId,
+            resourceType: r.resourceType,
+            resourceId: r.resourceId,
+            name: r.name,
+            region: r.region,
+            metadata: r.metadata
+          }))
+        });
+      }
+
+      return tx.cloudConnection.update({
         where: { id: connectionId },
         data: {
           lastSyncAt: new Date(),
           status: 'ACTIVE'
         }
-      })
-    ]);
+      });
+    });
 
-    return connection;
+    return updatedConnection;
 
   } catch (error: any) {
     console.error('Sync failed:', error);

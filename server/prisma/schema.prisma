@@ -83,21 +83,24 @@ model Policy {
 }
 
 model Violation {
-  id          String   @id @default(uuid())
-  templateId  String
-  policyId    String
-  resourceRef String   // e.g., "aws_s3_bucket.main"
-  resourceType String? // e.g., "aws_s3_bucket"
-  line        Int?
-  message     String
-  suggestion  String?
-  autoFixable Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id            String   @id @default(uuid())
+  templateId    String
+  auditReportId String?
+  policyId      String
+  resourceRef   String   // e.g., "aws_s3_bucket.main"
+  resourceType  String?  // e.g., "aws_s3_bucket"
+  line          Int?
+  message       String
+  suggestion    String?
+  autoFixable   Boolean  @default(false)
+  createdAt     DateTime @default(now())
 
-  template    Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  policy      Policy   @relation(fields: [policyId], references: [id])
+  template      Template    @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  auditReport   AuditReport? @relation(fields: [auditReportId], references: [id], onDelete: Cascade)
+  policy        Policy      @relation(fields: [policyId], references: [id])
 
   @@index([templateId])
+  @@index([auditReportId])
   @@index([policyId])
 }
 
@@ -114,7 +117,8 @@ model AuditReport {
   summary       String?  // AI-generated summary
   createdAt     DateTime @default(now())
 
-  template      Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  template      Template    @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  violations    Violation[]
 
   @@index([templateId])
 }

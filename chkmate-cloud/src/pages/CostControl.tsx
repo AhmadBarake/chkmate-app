@@ -48,9 +48,14 @@ const AWS_REGIONS = [
   { value: 'us-east-2', label: 'US East (Ohio)' },
   { value: 'us-west-1', label: 'US West (N. California)' },
   { value: 'us-west-2', label: 'US West (Oregon)' },
-  { value: 'eu-central-1', label: 'Europe (Frankfurt)' },
   { value: 'eu-west-1', label: 'Europe (Ireland)' },
+  { value: 'eu-west-2', label: 'Europe (London)' },
+  { value: 'eu-central-1', label: 'Europe (Frankfurt)' },
   { value: 'ap-southeast-1', label: 'Asia Pacific (Singapore)' },
+  { value: 'ap-southeast-2', label: 'Asia Pacific (Sydney)' },
+  { value: 'ap-northeast-1', label: 'Asia Pacific (Tokyo)' },
+  { value: 'ap-south-1', label: 'Asia Pacific (Mumbai)' },
+  { value: 'me-south-1', label: 'Middle East (Bahrain)' },
 ];
 
 import { useAuth, useUser } from '@clerk/clerk-react';
@@ -113,15 +118,12 @@ export default function CostControl() {
     })).sort((a, b) => b.value - a.value);
   }, [scanResult]);
 
-  // Mock historical data fallback if real data is missing
-  const mockTrendData = [
-    { name: 'Jan', cost: (scanResult?.costBreakdown?.totalMonthly || 100) * 0.8 },
-    { name: 'Feb', cost: (scanResult?.costBreakdown?.totalMonthly || 100) * 0.85 },
-    { name: 'Mar', cost: (scanResult?.costBreakdown?.totalMonthly || 100) * 0.92 },
-    { name: 'Apr', cost: (scanResult?.costBreakdown?.totalMonthly || 100) },
-  ];
-
-  const trendData = scanResult?.costTrend || mockTrendData;
+  // Use real cost trend data from Cost Explorer, or show current month only
+  const trendData = scanResult?.costTrend && scanResult.costTrend.length > 0
+    ? scanResult.costTrend
+    : scanResult?.costBreakdown?.totalMonthly
+      ? [{ name: 'Current', cost: scanResult.costBreakdown.totalMonthly }]
+      : [];
 
   const getServiceIcon = (name: string) => {
     const n = name.toLowerCase();
@@ -187,17 +189,25 @@ export default function CostControl() {
         <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
           <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Monthly Forecast</div>
           <div className="text-3xl font-bold text-white mb-2">
-            ${scanResult?.costBreakdown?.totalMonthly.toFixed(2) || '0.00'}
+            ${scanResult?.costBreakdown?.totalMonthly?.toFixed(2) || '0.00'}
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-red-400">
-            <TrendingUp className="w-3.5 h-3.5" /> +12% from last month
-          </div>
+          {scanResult?.costTrend && scanResult.costTrend.length >= 2 && (() => {
+            const latest = scanResult.costTrend[scanResult.costTrend.length - 1].cost;
+            const prev = scanResult.costTrend[scanResult.costTrend.length - 2].cost;
+            const change = prev > 0 ? ((latest - prev) / prev * 100) : 0;
+            return (
+              <div className={cn("flex items-center gap-1.5 text-xs", change > 0 ? "text-red-400" : "text-emerald-400")}>
+                {change > 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                {change > 0 ? '+' : ''}{change.toFixed(1)}% from last month
+              </div>
+            );
+          })()}
         </div>
 
         <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
           <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Total Savings</div>
           <div className="text-3xl font-bold text-emerald-400 mb-2">
-            ${scanResult?.summary.estimatedMonthlySavings.toFixed(2) || '0.00'}
+            ${scanResult?.summary?.estimatedMonthlySavings?.toFixed(2) || '0.00'}
           </div>
           <div className="flex items-center gap-1.5 text-xs text-emerald-400">
             <TrendingDown className="w-3.5 h-3.5" /> Potential optimization
@@ -368,7 +378,7 @@ export default function CostControl() {
                     />
                  </div>
                  <div className="flex justify-between mt-2 text-[10px] text-slate-500">
-                    <span>${scanResult?.costBreakdown?.totalMonthly.toFixed(2) || '0.00'} used</span>
+                    <span>${scanResult?.costBreakdown?.totalMonthly?.toFixed(2) || '0.00'} used</span>
                     <span>{((scanResult?.costBreakdown?.totalMonthly || 0) / 500 * 100).toFixed(1)}%</span>
                  </div>
               </div>
@@ -380,7 +390,7 @@ export default function CostControl() {
                     </div>
                     <div>
                        <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Next Review</div>
-                       <div className="text-xs font-bold">Feb 01, 2026</div>
+                       <div className="text-xs font-bold">{new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</div>
                     </div>
                  </div>
                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center gap-3">

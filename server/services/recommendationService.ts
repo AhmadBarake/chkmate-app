@@ -136,8 +136,8 @@ interface LambdaMetadata {
 }
 
 const DEPRECATED_RUNTIMES = [
-    'nodejs12.x', 'nodejs14.x', 'python3.6', 'python3.7', 'python2.7',
-    'dotnetcore2.1', 'dotnetcore3.1', 'ruby2.5', 'ruby2.7', 'go1.x'
+    'nodejs12.x', 'nodejs14.x', 'nodejs16.x', 'python3.6', 'python3.7', 'python3.8', 'python2.7',
+    'dotnetcore2.1', 'dotnetcore3.1', 'dotnet6', 'ruby2.5', 'ruby2.7', 'go1.x'
 ];
 
 export const IAMMFACheck: OptimizationCheck = {
@@ -226,9 +226,10 @@ export const SGOpenSSHCheck: OptimizationCheck = {
             const rules = metadata.inboundRules || [];
             
             const isOpenSSH = rules.some((rule: any) => {
-                const isSSH = (rule.FromPort <= 22 && rule.ToPort >= 22) || rule.IpProtocol === '-1';
-                const isPublic = (rule.IpRanges || []).some((range: any) => range.CidrIp === '0.0.0.0/0');
-                return isSSH && isPublic;
+                const isSSH = (rule.FromPort != null && rule.ToPort != null && rule.FromPort <= 22 && rule.ToPort >= 22) || rule.IpProtocol === '-1';
+                const isPublicIPv4 = (rule.IpRanges || []).some((range: any) => range.CidrIp === '0.0.0.0/0');
+                const isPublicIPv6 = (rule.Ipv6Ranges || []).some((range: any) => range.CidrIpv6 === '::/0');
+                return isSSH && (isPublicIPv4 || isPublicIPv6);
             });
 
             if (isOpenSSH) {
@@ -325,11 +326,19 @@ export async function getRecommendations(connectionId: string) {
         orderBy: { type: 'asc' }
     });
     
-    // Parse impact JSON
-    return recs.map(r => ({
-        ...r,
-        impact: JSON.parse(r.impact)
-    }));
+    // Parse impact JSON safely
+    return recs.map(r => {
+        let parsedImpact;
+        try {
+            parsedImpact = JSON.parse(r.impact);
+        } catch {
+            parsedImpact = { savings: 0, risk: 'unknown' };
+        }
+        return {
+            ...r,
+            impact: parsedImpact,
+        };
+    });
 }
 
 export async function dismissRecommendation(id: string) {

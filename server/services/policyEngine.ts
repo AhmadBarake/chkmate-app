@@ -205,7 +205,7 @@ export async function saveAuditReport(
     },
   });
 
-  // Save violations
+  // Save violations linked to this specific audit report
   for (const violation of result.violations) {
     const dbPolicy = await prisma.policy.findUnique({
       where: { code: violation.policyCode },
@@ -216,6 +216,7 @@ export async function saveAuditReport(
         await prisma.violation.create({
           data: {
             templateId,
+            auditReportId: report.id,
             policyId: dbPolicy.id,
             resourceRef: v.resourceRef,
             resourceType: v.resourceType,
@@ -244,7 +245,10 @@ export async function getLatestAuditReport(templateId: string) {
   if (!report) return null;
 
   const violations = await prisma.violation.findMany({
-    where: { templateId },
+    where: {
+      templateId,
+      auditReportId: report.id,
+    },
     include: { policy: true },
     orderBy: [
       { policy: { severity: 'asc' } },

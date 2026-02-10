@@ -572,6 +572,12 @@ export async function fetchRecommendations(connectionId: string, token?: string 
     return apiRequest<Recommendation[]>(`/cloud/connections/${connectionId}/recommendations`, {}, DEFAULT_TIMEOUT, token);
 }
 
+export async function dismissRecommendation(connectionId: string, recId: string, token?: string | null): Promise<Recommendation> {
+    return apiRequest<Recommendation>(`/cloud/connections/${connectionId}/recommendations/${recId}/dismiss`, {
+        method: 'PATCH',
+    }, DEFAULT_TIMEOUT, token);
+}
+
 export async function getAWSSetupDetails(token?: string | null): Promise<{ externalId: string; setupUrl: string; hostAccountId: string; templateYaml: string }> {
   return apiRequest<{ externalId: string; setupUrl: string; hostAccountId: string; templateYaml: string }>('/cloud/aws/setup', {
     method: 'POST',

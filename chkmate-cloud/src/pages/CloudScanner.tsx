@@ -79,7 +79,7 @@ export default function CloudScanner() {
       const { isValid } = await validateCloudCredentials(sanitized, token);
       if (isValid) {
         toast.success('Credentials validated successfully');
-        handleScan();
+        await handleScan();
       } else {
         toast.error('Invalid AWS credentials');
       }
@@ -95,9 +95,6 @@ export default function CloudScanner() {
     setScanning(true);
 
     try {
-      // Add artificial delay for UX (scanning feels better if it takes a moment)
-      await new Promise(r => setTimeout(r, 2000));
-      
       let scanResults;
       const token = await getToken();
       
@@ -132,6 +129,10 @@ export default function CloudScanner() {
       setStep('connect');
     } finally {
       setScanning(false);
+      // Clear sensitive credentials from memory
+      if (scanMode === 'manual') {
+        setCredentials({ accessKeyId: '', secretAccessKey: '', region: credentials.region });
+      }
     }
   };
 
