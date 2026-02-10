@@ -35,6 +35,7 @@ import CaseStudyAEMENA from './pages/CaseStudyAEMENA';
 import Recommendations from './pages/Recommendations';
 import InfrastructureMap from './pages/InfrastructureMap';
 import CostControl from './pages/CostControl';
+import AgentSessions from './pages/AgentSessions';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Refund from './pages/Refund';
@@ -153,6 +154,7 @@ function App() {
                   <Route path="/recommendations" element={<Recommendations />} />
                   <Route path="/infrastructure-map" element={<InfrastructureMap />} />
                   <Route path="/cost-control" element={<CostControl />} />
+                  <Route path="/agent/sessions" element={<AgentSessions />} />
                   <Route path="/invoices" element={<Invoices />} />
                 </Route>
               </Routes>
