@@ -1357,8 +1357,13 @@ async function startServer() {
   try {
     // Seed built-in policies
     console.log('Seeding built-in policies...');
-    await seedBuiltInPolicies();
-    console.log('Policies seeded successfully');
+    try {
+        await seedBuiltInPolicies();
+        console.log('Policies seeded successfully');
+    } catch (dbError) {
+        console.warn('Warning: Failed to seed policies (Database might be unreachable). Server will start anyway.');
+        console.warn(dbError);
+    }
 
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);

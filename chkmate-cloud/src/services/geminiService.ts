@@ -2,7 +2,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { CloudProvider, InfrastructurePlan } from "../types";
 
 // Initialize the API client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 export const generateInfrastructurePlan = async (
   prompt: string,
@@ -111,5 +111,66 @@ export const generateInfrastructurePlan = async (
   } catch (error) {
     console.error("Gemini API Error:", error);
     throw new Error("Failed to generate infrastructure plan. Please try again.");
+  }
+};
+
+export interface ChatMessage {
+  role: 'user' | 'model';
+  content: string;
+}
+
+export const chatWithAI = async (
+  history: ChatMessage[],
+  newMessage: string,
+  context?: { projectName?: string; templateName?: string; provider?: string }
+): Promise<string> => {
+  const modelId = "gemini-3-pro-preview";
+  
+  const systemInstruction = `
+    You are Chkmate AI, an expert Cloud Infrastructure Assistant.
+    You help users design, debug, and optimize their cloud infrastructure.
+    
+    Context:
+    ${context?.projectName ? `Project: ${context.projectName}` : ''}
+    ${context?.templateName ? `Blueprint: ${context.templateName}` : ''}
+    ${context?.provider ? `Provider: ${context.provider}` : ''}
+    
+    Guidelines:
+    - Be concise and technical.
+    - Provide Terraform/IaC snippets when relevant.
+    - Focus on security and cost optimization.
+    - If you don't know something, ask for clarification.
+  `;
+
+  try {
+    const chatSession = await ai.models.generateContentStream({
+        model: modelId,
+        config: {
+            systemInstruction,
+        },
+        contents: [
+            ...history.map(msg => ({
+                role: msg.role,
+                parts: [{ text: msg.content }]
+            })),
+            {
+                role: 'user',
+                parts: [{ text: newMessage }]
+            }
+        ]
+    });
+
+    // For simplicity in this implementation, we wait for the full response. 
+    // Ideally we would stream it.
+    let fullResponse = "";
+    for await (const chunk of chatSession) {
+        fullResponse += chunk.text;
+    }
+    
+    return fullResponse;
+
+  } catch (error) {
+    console.error("Gemini Chat Error:", error);
+    throw new Error("Failed to get response from AI assistant.");
   }
 };

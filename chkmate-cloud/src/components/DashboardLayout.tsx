@@ -283,7 +283,7 @@ export default function DashboardLayout() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-brand-500 shadow-[0_0_8px_rgba(14,165,233,0.8)]" />
             <h1 className="text-sm font-bold tracking-widest text-slate-400 uppercase">
-              Operational Environment
+              Overview
             </h1>
           </div>
           <div className="flex items-center gap-6">
