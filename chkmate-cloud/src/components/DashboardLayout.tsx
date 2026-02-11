@@ -1,25 +1,105 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useToastActions } from '../context/ToastContext';
+import { useDashboardMode } from '../context/DashboardModeContext';
 import { useClerk, useUser, useAuth } from '@clerk/clerk-react';
-import { LayoutDashboard, Folder, FileText, FileCode, LogOut, Box, Cloud, Server, Sparkles, Map, DollarSign, Bot, History, Rocket, KeyRound } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Folder,
+  FileText,
+  FileCode,
+  LogOut,
+  Cloud,
+  Server,
+  Sparkles,
+  Map,
+  DollarSign,
+  Bot,
+  History,
+  Rocket,
+  KeyRound,
+  BookOpen,
+  Link,
+  Monitor,
+  ChevronRight,
+} from 'lucide-react';
 import clsx from 'clsx';
 import { CreditIndicator } from './CreditBalance';
 import { getAgenticMode, setAgenticMode } from '../lib/api';
 
-const navItems = [
-  { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, exact: true },
-  { name: 'Projects', to: '/projects', icon: Folder },
-  { name: 'Templates', to: '/templates', icon: FileCode },
-  { name: 'Cloud Scanner', to: '/cloud-scanner', icon: Cloud },
-  { name: 'Visualize', to: '/infrastructure-map', icon: Map },
-  { name: 'Cost Control', to: '/cost-control', icon: DollarSign },
-  { name: 'Connections', to: '/connections', icon: Server },
-  { name: 'Smart Advice', to: '/recommendations', icon: Sparkles },
-  { name: 'Agent History', to: '/agent/sessions', icon: History },
-  { name: 'Deployments', to: '/deploy', icon: Rocket },
-  { name: 'Deploy Keys', to: '/deploy/credentials', icon: KeyRound },
-  { name: 'Invoices', to: '/invoices', icon: FileText },
+// ── Sidebar section types ──────────────────────────────
+interface NavItem {
+  name: string;
+  to: string;
+  icon: React.ComponentType<{ className?: string }>;
+  exact?: boolean;
+}
+
+interface NavSection {
+  label: string;
+  items: NavItem[];
+}
+
+// ── Full mode sections ─────────────────────────────────
+const fullSections: NavSection[] = [
+  {
+    label: 'Plan',
+    items: [
+      { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, exact: true },
+      { name: 'Projects', to: '/projects', icon: Folder },
+      { name: 'Templates', to: '/templates', icon: FileCode },
+      { name: 'Smart Advice', to: '/recommendations', icon: Sparkles },
+    ],
+  },
+  {
+    label: 'Deploy',
+    items: [
+      { name: 'Deployments', to: '/deploy', icon: Rocket },
+      { name: 'Agent History', to: '/agent/sessions', icon: History },
+      { name: 'Deploy Keys', to: '/deploy/credentials', icon: KeyRound },
+    ],
+  },
+  {
+    label: 'Monitor',
+    items: [
+      { name: 'Cloud Scanner', to: '/cloud-scanner', icon: Cloud },
+      { name: 'Visualize', to: '/infrastructure-map', icon: Map },
+      { name: 'Cost Control', to: '/cost-control', icon: DollarSign },
+    ],
+  },
+  {
+    label: 'Connect',
+    items: [
+      { name: 'Connections', to: '/connections', icon: Server },
+      { name: 'Invoices', to: '/invoices', icon: FileText },
+    ],
+  },
+];
+
+// ── Simplified mode sections ───────────────────────────
+const simplifiedSections: NavSection[] = [
+  {
+    label: 'Quick Start',
+    items: [
+      { name: 'Overview', to: '/dashboard', icon: LayoutDashboard, exact: true },
+      { name: 'Deploy App', to: '/simple/deploy', icon: Rocket },
+      { name: 'Guides', to: '/simple/guides', icon: BookOpen },
+    ],
+  },
+  {
+    label: 'Insights',
+    items: [
+      { name: 'My Resources', to: '/simple/resources', icon: Monitor },
+      { name: 'Cost Overview', to: '/simple/costs', icon: DollarSign },
+      { name: 'Connections', to: '/connections', icon: Link },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      { name: 'Invoices', to: '/invoices', icon: FileText },
+    ],
+  },
 ];
 
 export default function DashboardLayout() {
@@ -29,6 +109,7 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToastActions();
+  const { mode, setMode } = useDashboardMode();
   const [agenticEnabled, setAgenticEnabled] = useState(false);
   const [togglingAgentic, setTogglingAgentic] = useState(false);
 
@@ -72,10 +153,7 @@ export default function DashboardLayout() {
 
     if (paymentStatus === 'success') {
       toast.success(`Complete! ${packId ? packId + ' pack' : 'Credits'} added to your balance.`);
-      // Trigger balance refresh across components
-      window.dispatchEvent(new CustomEvent('balanceUpdated', { detail: null })); // null triggers re-fetch
-      
-      // Clean up URL
+      window.dispatchEvent(new CustomEvent('balanceUpdated', { detail: null }));
       navigate(location.pathname, { replace: true });
     } else if (paymentStatus === 'cancelled') {
       toast.error('Payment cancelled. No credits were deducted.');
@@ -85,9 +163,10 @@ export default function DashboardLayout() {
 
   const handleLogout = async () => {
     await signOut();
-    // Navigate after sign out completes
     window.location.href = '/';
   };
+
+  const sections = mode === 'full' ? fullSections : simplifiedSections;
 
   return (
     <div className="flex h-screen bg-slate-950 text-slate-100 font-sans overflow-hidden relative">
@@ -105,62 +184,87 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        <nav className="flex-1 px-4 py-2 space-y-1.5 overflow-y-auto custom-scrollbar">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.to}
-              end={item.exact}
-              className={({ isActive }) =>
-                clsx(
-                  'w-full flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-all duration-300 group relative overflow-hidden',
-                  isActive
-                    ? 'bg-brand-500/10 text-brand-400 font-bold shadow-[0_0_20px_rgba(14,165,233,0.15)] border border-brand-500/20'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
-                )
-              }
-            >
-              <item.icon className={clsx(
-                "w-4 h-4 transition-transform group-hover:scale-110",
-                "group-[.isActive]:text-brand-400"
-              )} />
-              {item.name}
-              <div className="absolute inset-y-0 left-0 w-1 bg-brand-500 opacity-0 group-[.isActive]:opacity-100 transition-opacity" />
-            </NavLink>
+        <nav className="flex-1 px-4 py-2 space-y-5 overflow-y-auto custom-scrollbar">
+          {sections.map((section) => (
+            <div key={section.label}>
+              <div className="px-3 mb-2 flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
+                  {section.label}
+                </span>
+                <div className="flex-1 h-px bg-slate-800/60" />
+              </div>
+              <div className="space-y-1">
+                {section.items.map((item) => (
+                  <NavLink
+                    key={item.name}
+                    to={item.to}
+                    end={item.exact}
+                    className={({ isActive }) =>
+                      clsx(
+                        'w-full flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-all duration-300 group relative overflow-hidden',
+                        isActive
+                          ? 'bg-brand-500/10 text-brand-400 font-bold shadow-[0_0_20px_rgba(14,165,233,0.15)] border border-brand-500/20'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
+                      )
+                    }
+                  >
+                    <item.icon className={clsx(
+                      "w-4 h-4 transition-transform group-hover:scale-110",
+                    )} />
+                    {item.name}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 
-        {/* Agentic Mode Toggle */}
-        <div className="px-4 py-3 border-t border-slate-800/50">
-          <button
-            onClick={handleToggleAgentic}
-            disabled={togglingAgentic}
-            className={clsx(
-              'w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all text-sm group',
-              agenticEnabled
-                ? 'bg-violet-500/10 border border-violet-500/30 text-violet-300'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
-            )}
-          >
-            <div className="flex items-center gap-2.5">
-              <Bot className={clsx('w-4 h-4', agenticEnabled ? 'text-violet-400' : 'text-slate-500')} />
-              <span className="font-medium">Agentic Mode</span>
-            </div>
-            <div
+        {/* Agentic Mode Toggle — only in Full mode */}
+        {mode === 'full' && (
+          <div className="px-4 py-3 border-t border-slate-800/50">
+            <button
+              onClick={handleToggleAgentic}
+              disabled={togglingAgentic}
               className={clsx(
-                'w-8 h-[18px] rounded-full transition-colors relative',
-                agenticEnabled ? 'bg-violet-500' : 'bg-slate-700'
+                'w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all text-sm group',
+                agenticEnabled
+                  ? 'bg-violet-500/10 border border-violet-500/30 text-violet-300'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
               )}
             >
+              <div className="flex items-center gap-2.5">
+                <Bot className={clsx('w-4 h-4', agenticEnabled ? 'text-violet-400' : 'text-slate-500')} />
+                <span className="font-medium">Agentic Mode</span>
+              </div>
               <div
                 className={clsx(
-                  'absolute top-[2px] w-[14px] h-[14px] rounded-full bg-white transition-all shadow-sm',
-                  agenticEnabled ? 'left-[15px]' : 'left-[2px]'
+                  'w-8 h-[18px] rounded-full transition-colors relative',
+                  agenticEnabled ? 'bg-violet-500' : 'bg-slate-700'
                 )}
-              />
-            </div>
-          </button>
-        </div>
+              >
+                <div
+                  className={clsx(
+                    'absolute top-[2px] w-[14px] h-[14px] rounded-full bg-white transition-all shadow-sm',
+                    agenticEnabled ? 'left-[15px]' : 'left-[2px]'
+                  )}
+                />
+              </div>
+            </button>
+          </div>
+        )}
+
+        {/* Simplified mode: link to switch to Full */}
+        {mode === 'simplified' && (
+          <div className="px-4 py-3 border-t border-slate-800/50">
+            <button
+              onClick={() => setMode('full')}
+              className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm text-slate-400 hover:text-brand-400 hover:bg-brand-500/5 transition-all group"
+            >
+              <span className="font-medium">Switch to Full</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
+        )}
 
         <div className="p-4 border-t border-slate-800/50">
           <button
@@ -183,6 +287,35 @@ export default function DashboardLayout() {
             </h1>
           </div>
           <div className="flex items-center gap-6">
+            {/* Full/Simplified Toggle */}
+            <div className="flex items-center bg-slate-900 rounded-xl border border-slate-800 p-0.5">
+              <button
+                onClick={() => setMode('full')}
+                className={clsx(
+                  'px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-all',
+                  mode === 'full'
+                    ? 'bg-brand-500/20 text-brand-400 border border-brand-500/30'
+                    : 'text-slate-500 hover:text-slate-300'
+                )}
+              >
+                Full
+              </button>
+              <button
+                onClick={() => {
+                  setMode('simplified');
+                  navigate('/dashboard');
+                }}
+                className={clsx(
+                  'px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-all',
+                  mode === 'simplified'
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    : 'text-slate-500 hover:text-slate-300'
+                )}
+              >
+                Simple
+              </button>
+            </div>
+
             <div className="h-8 w-[1px] bg-slate-800 mx-2" />
             <CreditIndicator />
             <div className="flex items-center gap-3 pl-2 group cursor-pointer">
@@ -191,8 +324,8 @@ export default function DashboardLayout() {
                 <span className="text-xs font-bold text-white group-hover:text-brand-400 transition-colors">{userName}</span>
               </div>
               {userAvatar ? (
-                <img 
-                  src={userAvatar} 
+                <img
+                  src={userAvatar}
                   alt={userName}
                   className="h-9 w-9 rounded-xl object-cover shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform border border-white/10"
                 />
