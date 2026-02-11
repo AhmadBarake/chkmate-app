@@ -4,6 +4,7 @@ import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, useUser } from '@
 
 // Context Providers
 import { ToastProvider } from './context/ToastContext';
+import { DashboardModeProvider, useDashboardMode } from './context/DashboardModeContext';
 
 // Components
 import DashboardLayout from './components/DashboardLayout';
@@ -44,6 +45,11 @@ import Privacy from './pages/Privacy';
 import Refund from './pages/Refund';
 import Documentation from './pages/Documentation';
 import Pricing from './pages/Pricing';
+import SimplifiedDashboard from './pages/SimplifiedDashboard';
+import SimpleDeployWizard from './pages/SimpleDeployWizard';
+import SimpleResources from './pages/SimpleResources';
+import SimpleCosts from './pages/SimpleCosts';
+import SimpleGuides from './pages/SimpleGuides';
 
 // Initialize analytics on app load
 initAnalytics();
@@ -84,6 +90,14 @@ function AnalyticsIdentifier() {
   }, [isSignedIn, user]);
 
   return null;
+}
+
+/**
+ * Dashboard route that switches between Full and Simplified views
+ */
+function DashboardRouter() {
+  const { mode } = useDashboardMode();
+  return mode === 'simplified' ? <SimplifiedDashboard /> : <Dashboard />;
 }
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -138,7 +152,9 @@ function App() {
                   element={
                     <>
                       <SignedIn>
-                        <DashboardLayout />
+                        <DashboardModeProvider>
+                          <DashboardLayout />
+                        </DashboardModeProvider>
                       </SignedIn>
                       <SignedOut>
                         <RedirectToSignIn />
@@ -146,7 +162,10 @@ function App() {
                     </>
                   }
                 >
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  {/* Dashboard — mode-aware */}
+                  <Route path="/dashboard" element={<DashboardRouter />} />
+
+                  {/* Full mode routes */}
                   <Route path="/projects" element={<Projects />} />
                   <Route path="/projects/:id" element={<ProjectDetails />} />
                   <Route path="/projects/:projectId/new-template" element={<Builder />} />
@@ -162,6 +181,12 @@ function App() {
                   <Route path="/deploy" element={<Deployments />} />
                   <Route path="/deploy/credentials" element={<DeploymentCredentials />} />
                   <Route path="/invoices" element={<Invoices />} />
+
+                  {/* Simplified mode routes */}
+                  <Route path="/simple/deploy" element={<SimpleDeployWizard />} />
+                  <Route path="/simple/resources" element={<SimpleResources />} />
+                  <Route path="/simple/costs" element={<SimpleCosts />} />
+                  <Route path="/simple/guides" element={<SimpleGuides />} />
                 </Route>
               </Routes>
 
