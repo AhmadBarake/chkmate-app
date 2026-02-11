@@ -79,14 +79,14 @@ export default function AgenticPanel({
 
   const handleAcceptAll = () => {
     if (!changePlan) return;
-    const states: Record<string, 'accepted'> = {};
+    const states: Record<string, 'proposed' | 'accepted' | 'rejected'> = {};
     changePlan.changes.forEach(c => { states[c.id] = 'accepted'; });
     setChangeStates(states);
   };
 
   const handleRejectAll = () => {
     if (!changePlan) return;
-    const states: Record<string, 'rejected'> = {};
+    const states: Record<string, 'proposed' | 'accepted' | 'rejected'> = {};
     changePlan.changes.forEach(c => { states[c.id] = 'rejected'; });
     setChangeStates(states);
   };

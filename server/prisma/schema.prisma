@@ -362,6 +362,7 @@ model Deployment {
   userId          String
   templateId      String
   credentialId    String
+  region          String           @default("us-east-1")
   status          DeploymentStatus @default(PLANNING)
   planOutput      Json?            // Parsed plan summary
   applyOutput     String?          // Apply logs
