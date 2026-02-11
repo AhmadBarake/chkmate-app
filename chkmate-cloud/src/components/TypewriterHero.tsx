@@ -10,10 +10,10 @@ const examples = [
         resourceType: "aws_ecs_cluster",
         code: [
             { text: 'module "ecs_cluster" {', color: "text-pink-400" },
-            { text: '  source  = "terraform-aws-modules/ecs/aws"', color: "text-slate-400", highlight: "text-green-400" },
-            { text: '  version = "~> 5.0"', color: "text-slate-400", highlight: "text-green-400" },
+            { text: '  source  = "terraform-aws-modules/ecs/aws"', color: "text-green-400" },
+            { text: '  version = "~> 5.0"', color: "text-green-400" },
             { text: '', color: "" },
-            { text: '  cluster_name = "prod-cluster"', color: "text-slate-400", highlight: "text-green-400" },
+            { text: '  cluster_name = "prod-cluster"', color: "text-green-400" },
             { text: '  fargate_capacity_providers = {', color: "text-slate-400" },
             { text: '    FARGATE = {}', color: "text-slate-400" },
             { text: '  }', color: "text-slate-100" },
@@ -27,13 +27,13 @@ const examples = [
         resourceType: "google_cloud_run_service",
         code: [
             { text: 'resource "google_cloud_run_service" "app" {', color: "text-pink-400" },
-            { text: '  name     = "main-service"', color: "text-slate-400", highlight: "text-green-400" },
-            { text: '  location = "us-central1"', color: "text-slate-400", highlight: "text-green-400" },
+            { text: '  name     = "main-service"', color: "text-green-400" },
+            { text: '  location = "us-central1"', color: "text-green-400" },
             { text: '', color: "" },
             { text: '  template {', color: "text-slate-100" },
             { text: '    spec {', color: "text-slate-100" },
             { text: '      containers {', color: "text-slate-100" },
-            { text: '        image = "gcr.io/proj/app:latest"', color: "text-slate-400", highlight: "text-green-400" },
+            { text: '        image = "gcr.io/proj/app:latest"', color: "text-green-400" },
             { text: '      }', color: "text-slate-100" },
             { text: '    }', color: "text-slate-100" },
             { text: '  }', color: "text-slate-100" },
@@ -47,13 +47,13 @@ const examples = [
         resourceType: "aws_s3_bucket",
         code: [
             { text: 'module "s3_bucket" {', color: "text-pink-400" },
-            { text: '  source = "terraform-aws-modules/s3-bucket/aws"', color: "text-slate-400", highlight: "text-green-400" },
+            { text: '  source = "terraform-aws-modules/s3-bucket/aws"', color: "text-green-400" },
             { text: '', color: "" },
-            { text: '  bucket = "secure-assets-prod"', color: "text-slate-400", highlight: "text-green-400" },
-            { text: '  acl    = "private"', color: "text-slate-400", highlight: "text-green-400" },
+            { text: '  bucket = "secure-assets-prod"', color: "text-green-400" },
+            { text: '  acl    = "private"', color: "text-green-400" },
             { text: '', color: "" },
             { text: '  versioning = {', color: "text-slate-100" },
-            { text: '    enabled = true', color: "text-slate-400", highlight: "text-yellow-300" },
+            { text: '    enabled = true', color: "text-yellow-300" },
             { text: '  }', color: "text-slate-100" },
             { text: '}', color: "text-slate-100" }
         ]
@@ -99,7 +99,7 @@ const TypewriterHero = () => {
             }, 500);
         }
       };
-      
+
       typeChar();
     };
 
@@ -117,28 +117,27 @@ const TypewriterHero = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand-500/10 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 items-center h-[380px]">
-        
-        {/* Input Card (User) */}
-        <motion.div 
-            layout
+
+        {/* Input Card (User) — Fixed height, text truncates/wraps within */}
+        <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="lg:col-span-4 w-full h-[280px] bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-3xl p-6 shadow-2xl flex flex-col relative z-20"
+            className="lg:col-span-4 w-full h-[280px] bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-3xl p-6 shadow-2xl flex flex-col relative z-20 overflow-hidden"
         >
-            <div className="flex items-center gap-2 mb-4 text-slate-400 text-xs font-medium uppercase tracking-wider">
+            <div className="flex items-center gap-2 mb-4 text-slate-400 text-xs font-medium uppercase tracking-wider flex-shrink-0">
                 <div className="w-2 h-2 rounded-full bg-brand-400 animate-pulse" />
                 User Intent
             </div>
-            
-            <div className="font-mono text-base md:text-lg text-slate-100 leading-normal mb-6 flex-1">
+
+            <div className="font-mono text-base md:text-lg text-slate-100 leading-normal flex-1 overflow-hidden">
                 <span className="text-brand-400 mr-2">{'>'}</span>
-                {displayText}
+                <span className="break-words">{displayText}</span>
                 {isTyping && (
                     <span className="inline-block w-2.5 h-5 ml-1 bg-brand-400 animate-pulse align-middle" />
                 )}
             </div>
 
-             <div className="flex items-center gap-2 mt-auto">
+             <div className="flex items-center gap-2 mt-auto flex-shrink-0 pt-4">
                  <div className="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded-full border border-slate-700">Plain English</div>
                  <div className="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded-full border border-slate-700">NLP</div>
              </div>
@@ -149,7 +148,7 @@ const TypewriterHero = () => {
             <div className="lg:col-span-8 relative w-full h-[380px]">
          <AnimatePresence mode='wait'>
             {showResult ? (
-                <motion.div 
+                <motion.div
                     key={exampleIndex} // Re-animate on change
                     initial={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
                     animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
@@ -158,7 +157,7 @@ const TypewriterHero = () => {
                     className="w-full h-full bg-slate-950/90 backdrop-blur-xl border border-brand-500/30 rounded-3xl p-0 shadow-2xl overflow-hidden relative z-10 flex flex-col"
                 >
                     {/* Header */}
-                    <div className="h-12 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between px-6">
+                    <div className="h-12 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between px-6 flex-shrink-0">
                         <div className="flex gap-2">
                             <div className="w-3 h-3 rounded-full bg-slate-700" />
                             <div className="w-3 h-3 rounded-full bg-slate-700" />
@@ -170,7 +169,7 @@ const TypewriterHero = () => {
                     {/* Code Content */}
                     <div className="p-6 font-mono text-xs overflow-hidden relative flex-1">
                         <div className="absolute top-6 right-6 z-20">
-                             <motion.div 
+                             <motion.div
                                 initial={{ scale: 0.8, opacity: 0, y: -10 }}
                                 animate={{ scale: 1, opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
@@ -180,42 +179,24 @@ const TypewriterHero = () => {
                                 <span className="font-bold text-sm">{currentExample.cost}</span>
                             </motion.div>
                         </div>
-                        
+
                         <div className="space-y-1.5 text-slate-300">
                              {currentExample.code.map((line, idx) => (
-                                 <motion.div 
+                                 <motion.div
                                     key={idx}
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.1 + idx * 0.05 }}
                                     className={line.color}
                                 >
-                                    {/* Simple highlighting logic for demo purposes */}
-                                     {line.highlight ? (
-                                         <>
-                                            {line.text.split('=').map((part, i, arr) => (
-                                                <span key={i}>
-                                                    {part}
-                                                    {i < arr.length -1 && ' = '}
-                                                </span>
-                                            ))}
-                                            {/* Not perfect parsing but works for these static snippets if needed, 
-                                                actually let's just use the hardcoded text for now or simple replace.
-                                                Simpler approach: just render text, color whole line or specific spans if refined.
-                                                For now standard rendering with the class passed.
-                                            */}
-                                            {line.text} 
-                                         </>
-                                     ) : (
-                                         line.text
-                                     )}
+                                    {line.text}
                                 </motion.div>
                              ))}
                         </div>
                     </div>
-                    
+
                     {/* Status Bar */}
-                     <div className="bg-slate-900 border-t border-slate-800 p-3 px-6 flex items-center justify-between text-xs text-slate-500 font-mono">
+                     <div className="bg-slate-900 border-t border-slate-800 p-3 px-6 flex items-center justify-between text-xs text-slate-500 font-mono flex-shrink-0">
                         <div className="flex items-center gap-4">
                              <span className="flex items-center gap-1.5 text-emerald-400"><Check size={12} /> Valid HCL</span>
                              <span className="flex items-center gap-1.5"><Server size={12} /> {currentExample.resourceType}</span>

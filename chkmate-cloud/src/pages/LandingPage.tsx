@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Cloud, Map, DollarSign, Rocket, Shield, Users, Code, Layout, Sparkles, GitCompare, FileCode as File, ArrowRight, Check, PieChart, ShieldCheck, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { Box, Cloud, Map, DollarSign, Rocket, Shield, Users, Code, Layout, Sparkles, GitCompare, FileCode as File, ArrowRight, Check, PieChart, ShieldCheck, FileText, ChevronDown, ChevronUp, Zap, Building, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ThreeCloudBackground from '../components/ThreeCloudBackground';
 import Footer from '../components/Footer';
@@ -12,12 +12,15 @@ import CostChartAnimation from '../components/animations/CostChartAnimation';
 import VisualMapAnimation from '../components/animations/VisualMapAnimation';
 import SecurityScanAnimation from '../components/animations/SecurityScanAnimation';
 import FleetControlAnimation from '../components/animations/FleetControlAnimation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+
+type BillingCycle = 'monthly' | 'annual';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -60,7 +63,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto text-center relative z-10 flex flex-col items-center">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold tracking-wide mb-8 backdrop-blur-md uppercase">
-                v1.41 Closed Beta now live
+                v0.22-beta now live
             </div>
 
             {/* Hero Visual: Typewriter Effect */}
@@ -201,7 +204,6 @@ export default function LandingPage() {
             </div>
         </div>
 
-      {/* Quick Start Guide: How it Works */}
       {/* Quick Start Guide: How it Works */}
       <div id="how-it-works" className="mt-32 py-24 relative overflow-hidden bg-slate-950">
         {/* Background glow */}
@@ -490,56 +492,169 @@ export default function LandingPage() {
 
       </div>
 
-      {/* Pricing Section (Clean Apple Style) */}
+      {/* Pricing Section */}
       <div id="pricing" className="py-32 px-6 bg-slate-950 border-t border-slate-800/50">
-           <div className="max-w-5xl mx-auto">
-               <h2 className="text-4xl md:text-5xl font-semibold text-center mb-16 tracking-tight">Simple, transparent pricing.</h2>
-               
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                   {/* Free */}
-                   <div className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col">
-                       <h3 className="text-xl font-medium text-slate-300 mb-2">Hobby</h3>
-                       <div className="text-4xl font-semibold mb-6">$9.99</div>
-                       <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Join Waitlist</button>
-                       <ul className="space-y-4 flex-1">
-                           <li className="text-slate-400 text-sm">5 Projects</li>
-                           <li className="text-slate-400 text-sm">Basic Generators</li>
-                           <li className="text-slate-400 text-sm">Community Support</li>
-                           <li className="text-slate-400 text-sm">Basic Cost Estimation</li>
+           <div className="max-w-6xl mx-auto">
+               <motion.div
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 0.6 }}
+                 viewport={{ once: true }}
+                 className="text-center mb-16"
+               >
+                 <h2 className="text-4xl md:text-6xl font-semibold tracking-tight mb-4">Simple, transparent pricing.</h2>
+                 <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-8">Start free. Scale when you're ready.</p>
+
+                 {/* Billing Toggle */}
+                 <div className="inline-flex items-center gap-1 bg-slate-900/80 border border-slate-800 rounded-full p-1">
+                   <button
+                     onClick={() => setBillingCycle('monthly')}
+                     className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                       billingCycle === 'monthly'
+                         ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25'
+                         : 'text-slate-400 hover:text-white'
+                     }`}
+                   >
+                     Monthly
+                   </button>
+                   <button
+                     onClick={() => setBillingCycle('annual')}
+                     className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                       billingCycle === 'annual'
+                         ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25'
+                         : 'text-slate-400 hover:text-white'
+                     }`}
+                   >
+                     Annual <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full font-bold">-20%</span>
+                   </button>
+                 </div>
+               </motion.div>
+
+               <AnimatePresence mode="wait">
+                 <motion.div
+                   key={billingCycle}
+                   initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                   exit={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
+                   transition={{ duration: 0.4 }}
+                   className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                 >
+                   {/* Starter */}
+                   <motion.div
+                     initial={{ opacity: 0, y: 30 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.5, delay: 0 }}
+                     viewport={{ once: true }}
+                     className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col hover:border-slate-700 transition-colors"
+                   >
+                       <div className="mb-6">
+                         <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center mb-4">
+                           <Zap className="w-5 h-5 text-slate-400" />
+                         </div>
+                         <h3 className="text-xl font-semibold text-slate-200 mb-1">Starter</h3>
+                         <p className="text-slate-500 text-sm">For individuals getting started.</p>
+                       </div>
+                       <div className="mb-6">
+                         <span className="text-4xl font-bold">Free</span>
+                       </div>
+                       <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8 text-sm">Get Started</button>
+                       <ul className="space-y-3.5 flex-1">
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> 3 Projects</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> 50 credits/month</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> AI Terraform generation</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> Basic cost estimation</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> Community support</li>
                        </ul>
-                   </div>
+                   </motion.div>
 
                    {/* Pro (Highlighted) */}
-                    <div className="p-8 rounded-[2rem] bg-brand-600/10 border border-brand-500 flex flex-col relative overflow-hidden">
-                        <div className="absolute top-0 right-0 bg-brand-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">Most Popular</div>
-                       <h3 className="text-xl font-medium text-white mb-2">Pro</h3>
-                       <div className="text-4xl font-semibold mb-6">$49.99<span className="text-lg text-slate-400 font-normal">/mo</span></div>
-                       <div className="text-center text-xs text-brand-400 mb-2 font-bold uppercase tracking-wide">Limited Closed Beta</div>
-                       <button onClick={openModal} className="w-full py-3 rounded-full bg-brand-500 hover:bg-brand-400 text-white transition font-medium mb-8 shadow-lg shadow-brand-500/25">Lock in Lifetime Pricing</button>
-                       <ul className="space-y-4 flex-1">
-                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Join 200+ engineers</li>
-                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Advanced AI Models</li>
-                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Export to GitHub</li>
-                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Security Auditing</li>
-                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Cost Intelligence</li>
-                           <li className="text-slate-300 text-sm flex gap-2"><Check size={16} className="text-brand-400"/> Policy Management</li>
+                   <motion.div
+                     initial={{ opacity: 0, y: 30 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.5, delay: 0.1 }}
+                     viewport={{ once: true }}
+                     className="p-8 rounded-[2rem] bg-brand-600/10 border border-brand-500 flex flex-col relative overflow-hidden shadow-2xl shadow-brand-500/10"
+                   >
+                       <div className="absolute top-0 right-0 bg-brand-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">Most Popular</div>
+                       <div className="mb-6">
+                         <div className="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center mb-4">
+                           <Rocket className="w-5 h-5 text-brand-400" />
+                         </div>
+                         <h3 className="text-xl font-semibold text-white mb-1">Pro</h3>
+                         <p className="text-slate-400 text-sm">For professionals & power users.</p>
+                       </div>
+                       <div className="mb-2">
+                         <span className="text-4xl font-bold text-brand-400">${billingCycle === 'monthly' ? '49' : '39'}</span>
+                         <span className="text-lg text-slate-400 font-normal">/mo</span>
+                       </div>
+                       {billingCycle === 'annual' && (
+                         <p className="text-xs text-emerald-400 mb-4">Billed $468/year (save $120)</p>
+                       )}
+                       {billingCycle === 'monthly' && <div className="mb-4" />}
+                       <div className="text-center text-[10px] text-brand-400 mb-3 font-bold uppercase tracking-widest">Beta Pricing - Lock in Forever</div>
+                       <button onClick={openModal} className="w-full py-3 rounded-full bg-brand-500 hover:bg-brand-400 text-white transition font-medium mb-8 shadow-lg shadow-brand-500/25 text-sm">Start Free Trial</button>
+                       <ul className="space-y-3.5 flex-1">
+                           <li className="text-slate-300 text-sm flex items-center gap-2.5"><div className="bg-brand-500/20 p-0.5 rounded-full flex-shrink-0"><Check size={12} className="text-brand-400"/></div> Unlimited projects</li>
+                           <li className="text-slate-300 text-sm flex items-center gap-2.5"><div className="bg-brand-500/20 p-0.5 rounded-full flex-shrink-0"><Check size={12} className="text-brand-400"/></div> 500 credits/month</li>
+                           <li className="text-slate-300 text-sm flex items-center gap-2.5"><div className="bg-brand-500/20 p-0.5 rounded-full flex-shrink-0"><Check size={12} className="text-brand-400"/></div> Agentic auto-fix mode</li>
+                           <li className="text-slate-300 text-sm flex items-center gap-2.5"><div className="bg-brand-500/20 p-0.5 rounded-full flex-shrink-0"><Check size={12} className="text-brand-400"/></div> Cloud scanner (19 services)</li>
+                           <li className="text-slate-300 text-sm flex items-center gap-2.5"><div className="bg-brand-500/20 p-0.5 rounded-full flex-shrink-0"><Check size={12} className="text-brand-400"/></div> Security audits & cost intel</li>
+                           <li className="text-slate-300 text-sm flex items-center gap-2.5"><div className="bg-brand-500/20 p-0.5 rounded-full flex-shrink-0"><Check size={12} className="text-brand-400"/></div> GitHub export & diff engine</li>
+                           <li className="text-slate-300 text-sm flex items-center gap-2.5"><div className="bg-brand-500/20 p-0.5 rounded-full flex-shrink-0"><Check size={12} className="text-brand-400"/></div> Deploy to AWS (sandboxed)</li>
+                           <li className="text-slate-300 text-sm flex items-center gap-2.5"><div className="bg-brand-500/20 p-0.5 rounded-full flex-shrink-0"><Check size={12} className="text-brand-400"/></div> Priority support</li>
                        </ul>
-                   </div>
+                   </motion.div>
 
                    {/* Team */}
-                   <div className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col">
-                       <h3 className="text-xl font-medium text-slate-300 mb-2">Team</h3>
-                       <div className="text-4xl font-semibold mb-6">$99.99<span className="text-lg text-slate-400 font-normal">/mo</span></div>
-                       <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8">Join Waitlist</button>
-                       <ul className="space-y-4 flex-1">
-                           <li className="text-slate-400 text-sm">5 Team Members</li>
-                           <li className="text-slate-400 text-sm">SSO & Audit Logs</li>
-                           <li className="text-slate-400 text-sm">Dedicated Success Mgr</li>
-                           <li className="text-slate-400 text-sm">Team Governance</li>
-                           <li className="text-slate-400 text-sm">Custom Guardrails</li>
+                   <motion.div
+                     initial={{ opacity: 0, y: 30 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.5, delay: 0.2 }}
+                     viewport={{ once: true }}
+                     className="p-8 rounded-[2rem] bg-slate-900/30 border border-slate-800 flex flex-col hover:border-slate-700 transition-colors"
+                   >
+                       <div className="mb-6">
+                         <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center mb-4">
+                           <Building className="w-5 h-5 text-indigo-400" />
+                         </div>
+                         <h3 className="text-xl font-semibold text-slate-200 mb-1">Team</h3>
+                         <p className="text-slate-500 text-sm">For teams & organizations.</p>
+                       </div>
+                       <div className="mb-2">
+                         <span className="text-4xl font-bold">${billingCycle === 'monthly' ? '149' : '119'}</span>
+                         <span className="text-lg text-slate-400 font-normal">/mo</span>
+                       </div>
+                       {billingCycle === 'annual' && (
+                         <p className="text-xs text-emerald-400 mb-4">Billed $1,428/year (save $360)</p>
+                       )}
+                       {billingCycle === 'monthly' && <div className="mb-4" />}
+                       <button onClick={openModal} className="w-full py-3 rounded-full border border-slate-700 hover:bg-slate-800 transition font-medium mb-8 text-sm">Contact Sales</button>
+                       <ul className="space-y-3.5 flex-1">
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> Everything in Pro</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> 10 team members</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> 2,000 credits/month</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> SSO & audit logs</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> Team governance & RBAC</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> Custom guardrails</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> Dedicated success manager</li>
+                           <li className="text-slate-400 text-sm flex items-center gap-2.5"><Check size={14} className="text-slate-600 flex-shrink-0"/> API access</li>
                        </ul>
-                   </div>
-               </div>
+                   </motion.div>
+                 </motion.div>
+               </AnimatePresence>
+
+               {/* Credit packs teaser */}
+               <motion.div
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 0.5, delay: 0.3 }}
+                 viewport={{ once: true }}
+                 className="mt-12 text-center"
+               >
+                 <p className="text-slate-500 text-sm">
+                   Need more credits? <button onClick={() => navigate('/pricing')} className="text-brand-400 hover:text-brand-300 font-medium transition-colors">View credit packs</button>
+                 </p>
+               </motion.div>
            </div>
       </div>
 
