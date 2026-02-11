@@ -1084,7 +1084,10 @@ app.post(
     }
 
     // Deduct credits
-    await deductCredits(userId, 'AGENT_ANALYSIS' as CreditAction, templateId);
+    const creditResult = await deductCredits(userId, 'AGENT_ANALYSIS' as CreditAction, templateId);
+    if (!creditResult.success) {
+      throw new AppError(creditResult.error || 'Failed to deduct credits', 402);
+    }
 
     const changePlan = await analyzeAndPlan(userId, templateId, content, provider);
     res.json(changePlan);
@@ -1239,6 +1242,9 @@ app.patch(
   asyncHandler(async (req, res) => {
     const userId = (req as any).userId;
     const { isActive } = req.body;
+    if (typeof isActive !== 'boolean') {
+      throw new ValidationError('isActive must be a boolean');
+    }
     const result = await toggleDeploymentCredential(userId, (req.params as { id: string }).id, isActive);
     res.json(result);
   })
@@ -1262,7 +1268,10 @@ app.post(
       throw new AppError('Insufficient credits for deployment plan', 402);
     }
 
-    await deductCredits(userId, 'DEPLOY_PLAN' as CreditAction, templateId);
+    const creditResult = await deductCredits(userId, 'DEPLOY_PLAN' as CreditAction, templateId);
+    if (!creditResult.success) {
+      throw new AppError(creditResult.error || 'Failed to deduct credits', 402);
+    }
 
     const result = await planDeployment(userId, templateId, credentialId, region);
     res.json(result);
@@ -1283,7 +1292,10 @@ app.post(
       throw new AppError('Insufficient credits for deployment apply', 402);
     }
 
-    await deductCredits(userId, 'DEPLOY_APPLY' as CreditAction, deploymentId);
+    const creditResult = await deductCredits(userId, 'DEPLOY_APPLY' as CreditAction, deploymentId);
+    if (!creditResult.success) {
+      throw new AppError(creditResult.error || 'Failed to deduct credits', 402);
+    }
 
     const result = await applyDeployment(userId, deploymentId);
     res.json(result);

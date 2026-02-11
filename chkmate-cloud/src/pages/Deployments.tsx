@@ -353,7 +353,7 @@ export default function Deployments() {
                           <div className="flex items-center gap-2 text-xs text-slate-400">
                             <Shield className="w-3.5 h-3.5 text-violet-400" />
                             Security Score: <span className="text-white font-medium">{dep.planOutput.auditScore}</span>/100
-                            {dep.planOutput.auditIssues > 0 && (
+                            {dep.planOutput?.auditIssues > 0 && (
                               <span className="text-amber-400">({dep.planOutput.auditIssues} issues)</span>
                             )}
                           </div>

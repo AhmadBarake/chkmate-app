@@ -9,8 +9,11 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Server-side master key for encryption (should be in env)
-const MASTER_KEY = process.env.STATE_ENCRYPTION_KEY || process.env.GEMINI_API_KEY || 'chkmate-default-key-change-in-production';
+// Server-side master key for encryption (MUST be set in env for production)
+const MASTER_KEY = process.env.STATE_ENCRYPTION_KEY || '';
+if (!MASTER_KEY) {
+  console.warn('Warning: STATE_ENCRYPTION_KEY is not set. Encryption will use an empty key — set this in production!');
+}
 
 /**
  * Derive a per-deployment encryption key from master key + deployment ID
@@ -41,17 +44,25 @@ function encrypt(data: string, deploymentId: string): string {
  */
 function decrypt(encryptedData: string, deploymentId: string): string {
   const key = deriveKey(deploymentId);
-  const [ivHex, authTagHex, ciphertext] = encryptedData.split(':');
+  const parts = encryptedData.split(':');
+  if (parts.length !== 3) {
+    throw new Error('Invalid encrypted data format: expected iv:authTag:ciphertext');
+  }
+  const [ivHex, authTagHex, ciphertext] = parts;
 
-  const iv = Buffer.from(ivHex, 'hex');
-  const authTag = Buffer.from(authTagHex, 'hex');
-  const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
-  decipher.setAuthTag(authTag);
+  try {
+    const iv = Buffer.from(ivHex, 'hex');
+    const authTag = Buffer.from(authTagHex, 'hex');
+    const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+    decipher.setAuthTag(authTag);
 
-  let decrypted = decipher.update(ciphertext, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
+    let decrypted = decipher.update(ciphertext, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
 
-  return decrypted;
+    return decrypted;
+  } catch (error: any) {
+    throw new Error(`Decryption failed: ${error.message || 'unknown error'}`);
+  }
 }
 
 /**
@@ -77,7 +88,12 @@ export async function retrieveState(deploymentId: string): Promise<string | null
 
   if (!deployment?.stateFile) return null;
 
-  return decrypt(deployment.stateFile, deploymentId);
+  try {
+    return decrypt(deployment.stateFile, deploymentId);
+  } catch (error: any) {
+    console.error(`Failed to decrypt state for deployment ${deploymentId}:`, error.message);
+    return null;
+  }
 }
 
 /**

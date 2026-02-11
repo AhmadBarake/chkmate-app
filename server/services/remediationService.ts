@@ -8,7 +8,11 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { parseTerraform } from '../lib/terraformParser.js';
 import { PolicyResult } from '../lib/policies/types.js';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const apiKey = process.env.GEMINI_API_KEY || '';
+if (!apiKey) {
+  console.warn('Warning: GEMINI_API_KEY is not set. AI-powered remediation will not work.');
+}
+const genAI = new GoogleGenerativeAI(apiKey);
 
 export interface RemediationRequest {
   templateContent: string;
@@ -42,7 +46,8 @@ export interface Remediation {
 const STATIC_FIXES: Record<string, (violation: PolicyResult, templateContent: string) => { before: string; after: string } | null> = {
   SEC001: (violation, content) => {
     // S3 public access block - add new resource after the bucket
-    const bucketName = violation.resourceRef.split('.')[1];
+    const parts = violation.resourceRef.split('.');
+    const bucketName = parts.length > 1 ? parts[1] : parts[0];
     const before = '';
     const after = `
 resource "aws_s3_bucket_public_access_block" "${bucketName}_public_access" {
@@ -228,7 +233,7 @@ Rules:
     const text = result.response.text();
 
     // Extract JSON from the response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const jsonMatch = text.match(/\{[\s\S]*?\}(?=[^}]*$)/) || text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error('No JSON found in AI response');
     }

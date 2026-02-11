@@ -11,7 +11,6 @@ import {
   generateBatchFixes,
   validateFix,
   applyFix,
-  Remediation,
 } from './remediationService.js';
 import { AuditResult } from '../lib/policies/types.js';
 

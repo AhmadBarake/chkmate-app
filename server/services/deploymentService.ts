@@ -185,6 +185,7 @@ export async function planDeployment(
       userId,
       templateId,
       credentialId,
+      region: region || 'us-east-1',
       status: 'PLANNING',
       startedAt: new Date(),
     },
@@ -307,7 +308,7 @@ export async function applyDeployment(
     const creds = await assumeDeploymentRole(
       roleArn,
       deployment.credential.externalId,
-      'us-east-1'
+      deployment.region || 'us-east-1'
     );
 
     // Re-write files and re-init (workspace may have been cleaned)
@@ -409,7 +410,7 @@ export async function destroyDeployment(
   try {
     // Assume role
     const roleArn = decryptRoleArn(deployment.credential.roleArn, deployment.credential.id);
-    const creds = await assumeDeploymentRole(roleArn, deployment.credential.externalId);
+    const creds = await assumeDeploymentRole(roleArn, deployment.credential.externalId, deployment.region || 'us-east-1');
 
     // Write template files
     await writeTemplateFiles(workDir, deployment.template.content, creds);
