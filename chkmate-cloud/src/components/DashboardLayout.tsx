@@ -2,24 +2,45 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useToastActions } from '../context/ToastContext';
 import { useClerk, useUser, useAuth } from '@clerk/clerk-react';
-import { LayoutDashboard, Folder, FileText, FileCode, LogOut, Box, Cloud, Server, Sparkles, Map, DollarSign, Bot, History, Rocket, KeyRound } from 'lucide-react';
+import { LayoutDashboard, Folder, FileText, FileCode, LogOut, Box, Cloud, Server, Sparkles, Map, DollarSign, MessageSquare, Bot, History, Rocket, KeyRound } from 'lucide-react';
 import clsx from 'clsx';
 import { CreditIndicator } from './CreditBalance';
 import { getAgenticMode, setAgenticMode } from '../lib/api';
 
-const navItems = [
-  { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, exact: true },
-  { name: 'Projects', to: '/projects', icon: Folder },
-  { name: 'Templates', to: '/templates', icon: FileCode },
-  { name: 'Cloud Scanner', to: '/cloud-scanner', icon: Cloud },
-  { name: 'Visualize', to: '/infrastructure-map', icon: Map },
-  { name: 'Cost Control', to: '/cost-control', icon: DollarSign },
-  { name: 'Connections', to: '/connections', icon: Server },
-  { name: 'Smart Advice', to: '/recommendations', icon: Sparkles },
-  { name: 'Agent History', to: '/agent/sessions', icon: History },
-  { name: 'Deployments', to: '/deploy', icon: Rocket },
-  { name: 'Deploy Keys', to: '/deploy/credentials', icon: KeyRound },
-  { name: 'Invoices', to: '/invoices', icon: FileText },
+const navGroups = [
+  {
+    title: '',
+    items: [
+      { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, exact: true },
+    ]
+  },
+  {
+    title: 'BUILD',
+    items: [
+      { name: 'Projects', to: '/projects', icon: Folder },
+      { name: 'Blueprints', to: '/blueprints', icon: FileCode },
+      { name: 'Deployments', to: '/deploy', icon: Rocket },
+      { name: 'Deploy Keys', to: '/deploy/credentials', icon: KeyRound },
+    ]
+  },
+  {
+    title: 'MONITOR',
+    items: [
+       { name: 'Infrastructure Map', to: '/infrastructure-map', icon: Map },
+       { name: 'Cost Control', to: '/cost-control', icon: DollarSign },
+       { name: 'Invoices', to: '/invoices', icon: FileText },
+       { name: 'Recommendations', to: '/recommendations', icon: Sparkles },
+    ]
+  },
+  {
+    title: 'CONNECT',
+    items: [
+       { name: 'Connections', to: '/connections', icon: Server },
+       { name: 'Cloud Scanner', to: '/cloud-scanner', icon: Cloud },
+       { name: 'Smart Chat', to: '/chat', icon: MessageSquare },
+       { name: 'Agent History', to: '/agent/sessions', icon: History },
+    ]
+  }
 ];
 
 export default function DashboardLayout() {
@@ -105,28 +126,39 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        <nav className="flex-1 px-4 py-2 space-y-1.5 overflow-y-auto custom-scrollbar">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.to}
-              end={item.exact}
-              className={({ isActive }) =>
-                clsx(
-                  'w-full flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-all duration-300 group relative overflow-hidden',
-                  isActive
-                    ? 'bg-brand-500/10 text-brand-400 font-bold shadow-[0_0_20px_rgba(14,165,233,0.15)] border border-brand-500/20'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
-                )
-              }
-            >
-              <item.icon className={clsx(
-                "w-4 h-4 transition-transform group-hover:scale-110",
-                "group-[.isActive]:text-brand-400"
-              )} />
-              {item.name}
-              <div className="absolute inset-y-0 left-0 w-1 bg-brand-500 opacity-0 group-[.isActive]:opacity-100 transition-opacity" />
-            </NavLink>
+        <nav className="flex-1 px-4 py-2 overflow-y-auto custom-scrollbar">
+          {navGroups.map((group, idx) => (
+            <div key={idx} className="mb-6">
+              {group.title && (
+                <h3 className="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  {group.title}
+                </h3>
+              )}
+              <div className="space-y-1.5">
+                {group.items.map((item) => (
+                  <NavLink
+                    key={item.name}
+                    to={item.to}
+                    end={item.exact}
+                    className={({ isActive }) =>
+                      clsx(
+                        'w-full flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-all duration-300 group relative overflow-hidden',
+                        isActive
+                          ? 'bg-brand-500/10 text-brand-400 font-bold shadow-[0_0_20px_rgba(14,165,233,0.15)] border border-brand-500/20'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
+                      )
+                    }
+                  >
+                    <item.icon className={clsx(
+                      "w-4 h-4 transition-transform group-hover:scale-110",
+                      "group-[.isActive]:text-brand-400"
+                    )} />
+                    {item.name}
+                    <div className="absolute inset-y-0 left-0 w-1 bg-brand-500 opacity-0 group-[.isActive]:opacity-100 transition-opacity" />
+                  </NavLink>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 
@@ -179,7 +211,7 @@ export default function DashboardLayout() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-brand-500 shadow-[0_0_8px_rgba(14,165,233,0.8)]" />
             <h1 className="text-sm font-bold tracking-widest text-slate-400 uppercase">
-              Operational Environment
+              Overview
             </h1>
           </div>
           <div className="flex items-center gap-6">

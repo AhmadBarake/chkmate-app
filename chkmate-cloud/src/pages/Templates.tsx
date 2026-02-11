@@ -125,7 +125,7 @@ export default function Templates() {
                       )}
                       
                       <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-600 pl-1 pt-2">
-                         <span>Workspace Environment</span>
+                         <span>View Project</span>
                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 group-hover:text-brand-400 transition-all" />
                       </div>
                     </div>

@@ -7,7 +7,6 @@ import {
   AlertTriangle, 
   CheckCircle,
   BarChart,
-  Lock,
   DollarSign,
   ChevronRight,
   Server,
@@ -16,15 +15,21 @@ import {
   HardDrive,
   Eye,
   EyeOff,
-  TrendingDown
+  TrendingDown,
+  LayoutDashboard,
+  Box,
+  BrainCircuit
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import Button from '../components/Button';
 import { fadeInUp } from '../lib/animations';
 import { validateCloudCredentials, scanCloudAccount, scanSavedConnection, fetchConnections, AWSCredentials, CloudScanResult, CloudConnection, CREDIT_COSTS } from '../lib/api';
 import { useToastActions } from '../context/ToastContext';
-
 import { useAuth, useUser } from '@clerk/clerk-react';
+
+import { IAMViewer } from '../components/scanner/IAMViewer';
+import { ResourcesViewer } from '../components/scanner/ResourcesViewer';
+import { Bar, BarChart as RechartsBarChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 export default function CloudScanner() {
   const [step, setStep] = useState<'connect' | 'scanning' | 'results'>('connect');
@@ -45,6 +50,9 @@ export default function CloudScanner() {
   const [connections, setConnections] = useState<CloudConnection[]>([]);
   const [selectedConnectionId, setSelectedConnectionId] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('us-east-1');
+
+  // Result Tabs
+  const [resultTab, setResultTab] = useState<'overview' | 'iam' | 'cost' | 'resources'>('overview');
 
   const toast = useToastActions();
 
@@ -93,6 +101,7 @@ export default function CloudScanner() {
   const handleScan = async () => {
     setStep('scanning');
     setScanning(true);
+    setResultTab('overview'); // Reset tab
 
     try {
       let scanResults;
@@ -120,10 +129,6 @@ export default function CloudScanner() {
       setResults(scanResults);
       setStep('results');
       toast.success('Scan completed successfully');
-      
-      if (scanResults.creditsRemaining !== undefined) {
-        // Optionally update global credit context
-      }
     } catch (err: any) {
       toast.error(err.message || 'Scan failed');
       setStep('connect');
@@ -151,15 +156,23 @@ export default function CloudScanner() {
     { value: 'me-south-1', label: 'Middle East (Bahrain)' },
   ];
 
+  // Prepare cost data for chart
+  const costData = results?.costBreakdown?.byService 
+    ? Object.entries(results.costBreakdown.byService)
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5) // Top 5
+    : [];
+
   return (
-    <div className="max-w-6xl mx-auto h-full flex flex-col">
+    <div className="max-w-7xl mx-auto h-full flex flex-col px-6 py-6">
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2 flex items-center gap-3">
           <Cloud className="text-brand-400" />
           Cloud Infrastructure Scanner
         </h1>
         <p className="text-slate-400">
-          Connect your AWS account to scan for security vulnerabilities and cost optimization opportunities.
+          Connect your AWS account to scan for security vulnerabilities, IAM risks, and cost efficiency.
         </p>
       </div>
 
@@ -168,26 +181,26 @@ export default function CloudScanner() {
           <motion.div
             key="connect"
             {...fadeInUp}
-            className="flex-1 flex items-center justify-center"
+            className="flex-1 flex items-center justify-center py-12"
           >
-            <div className="w-full max-w-md bg-slate-900/50 p-8 rounded-2xl border border-slate-800">
+            <div className="w-full max-w-md bg-slate-900/50 p-8 rounded-2xl border border-slate-800 shadow-2xl">
                <div className="text-center mb-6">
-                 <div className="w-16 h-16 bg-brand-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                 <div className="w-16 h-16 bg-brand-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand-500/20">
                    <Key className="w-8 h-8 text-brand-400" />
                  </div>
-                 <h2 className="text-xl font-bold mb-2">Connect AWS Account</h2>
+                 <h2 className="text-xl font-bold mb-2 text-white">Connect AWS Account</h2>
                  <p className="text-sm text-slate-400">
                    {scanMode === 'saved' ? 'Select a saved connection to scan.' : 'Enter credentials for a one-time scan.'}
                  </p>
                </div>
 
                {/* Toggle */}
-               <div className="flex bg-slate-950 p-1 rounded-lg mb-6 border border-slate-800">
+               <div className="flex bg-slate-950 p-1.5 rounded-xl mb-6 border border-slate-800">
                  <button
                     onClick={() => setScanMode('saved')}
                     className={cn(
-                       "flex-1 py-1.5 text-xs font-medium rounded-md transition-all",
-                       scanMode === 'saved' ? "bg-brand-500 text-white shadow" : "text-slate-400 hover:text-white"
+                       "flex-1 py-2 text-xs font-bold rounded-lg transition-all",
+                       scanMode === 'saved' ? "bg-slate-800 text-white shadow-sm" : "text-slate-400 hover:text-white"
                     )}
                  >
                     Saved Connection
@@ -195,8 +208,8 @@ export default function CloudScanner() {
                  <button
                     onClick={() => setScanMode('manual')}
                     className={cn(
-                       "flex-1 py-1.5 text-xs font-medium rounded-md transition-all",
-                       scanMode === 'manual' ? "bg-brand-500 text-white shadow" : "text-slate-400 hover:text-white"
+                       "flex-1 py-2 text-xs font-bold rounded-lg transition-all",
+                       scanMode === 'manual' ? "bg-slate-800 text-white shadow-sm" : "text-slate-400 hover:text-white"
                     )}
                  >
                     Manual Credentials
@@ -206,13 +219,13 @@ export default function CloudScanner() {
                {scanMode === 'saved' ? (
                   <div className="space-y-4">
                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
                            Select Connection
                         </label>
                         <select
                            value={selectedConnectionId}
                            onChange={(e) => setSelectedConnectionId(e.target.value)}
-                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:border-brand-500 outline-none"
+                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none appearance-none cursor-pointer hover:border-slate-700 transition-colors"
                         >
                            <option value="">-- Choose Connection --</option>
                            {connections
@@ -226,19 +239,19 @@ export default function CloudScanner() {
                         </select>
                         {connections.length === 0 && (
                            <p className="text-xs text-slate-500 mt-2">
-                              No saved AWS connections found. <a href="/connections" className="text-brand-400 hover:underline">Create one</a> or use manual mode.
+                               No saved AWS connections found. <a href="/connections" className="text-brand-400 hover:underline">Create one</a> or use manual mode.
                            </p>
                         )}
                      </div>
 
                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
                            Region to Scan
                         </label>
                         <select
                            value={selectedRegion}
                            onChange={(e) => setSelectedRegion(e.target.value)}
-                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:border-brand-500 outline-none"
+                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none appearance-none cursor-pointer hover:border-slate-700 transition-colors"
                         >
                            {regions.map(r => (
                               <option key={r.value} value={r.value}>{r.label}</option>
@@ -246,11 +259,11 @@ export default function CloudScanner() {
                         </select>
                      </div>
 
-                     <div className="bg-brand-500/10 border border-brand-500/20 rounded-lg p-3 flex gap-3 text-xs text-brand-200">
-                        <DollarSign className="w-5 h-5 flex-shrink-0" />
+                     <div className="bg-brand-500/5 border border-brand-500/10 rounded-lg p-3 flex gap-3 text-xs text-brand-200">
+                        <DollarSign className="w-5 h-5 flex-shrink-0 text-brand-400" />
                         <p>
-                           Scan Cost: <strong>{CREDIT_COSTS.CLOUD_SCAN} credits</strong>.
-                           Includes security audit and cost analysis.
+                           Scan Cost: <strong className="text-white">{CREDIT_COSTS.CLOUD_SCAN} credits</strong>.
+                           Includes full IAM audit, resource inventory, and cost analysis.
                         </p>
                      </div>
 
@@ -259,84 +272,64 @@ export default function CloudScanner() {
                         disabled={!selectedConnectionId}
                         variant="primary"
                         fullWidth
-                        loading={scanning} // Reusing scanning state for loading button
+                        loading={scanning} 
                         rightIcon={<ChevronRight className="w-4 h-4" />}
+                        className="h-12 text-sm"
                      >
-                        Start Scan
+                        Start Comprehensive Scan
                      </Button>
                   </div>
                ) : (
                   <form onSubmit={handleConnect} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                        Access Key ID
-                      </label>
-                      <input
-                        type="text"
-                        value={credentials.accessKeyId}
-                        onChange={e => setCredentials({ ...credentials, accessKeyId: e.target.value })}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:border-brand-500 outline-none transition-colors"
-                        placeholder="AKIA..."
-                        required
-                      />
-                    </div>
-    
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                        Secret Access Key
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showSecret ? 'text' : 'password'}
-                          value={credentials.secretAccessKey}
-                          onChange={e => setCredentials({ ...credentials, secretAccessKey: e.target.value })}
-                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:border-brand-500 outline-none transition-colors pr-10"
-                          placeholder="wJalr..."
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowSecret(!showSecret)}
-                          className="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300"
+                    {/* Manual Form fields omitted for brevity but would go here same as before */}
+                     <div>
+                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Access Key ID</label>
+                       <input
+                         type="text"
+                         value={credentials.accessKeyId}
+                         onChange={e => setCredentials({ ...credentials, accessKeyId: e.target.value })}
+                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none"
+                         placeholder="AKIA..."
+                         required
+                       />
+                     </div>
+                     <div>
+                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Secret Access Key</label>
+                       <div className="relative">
+                         <input
+                           type={showSecret ? 'text' : 'password'}
+                           value={credentials.secretAccessKey}
+                           onChange={e => setCredentials({ ...credentials, secretAccessKey: e.target.value })}
+                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none pr-10"
+                           placeholder="wJalr..."
+                           required
+                         />
+                         <button type="button" onClick={() => setShowSecret(!showSecret)} className="absolute right-3 top-3.5 text-slate-500 hover:text-white">
+                           {showSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                         </button>
+                       </div>
+                     </div>
+                     <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Region</label>
+                        <select
+                           value={credentials.region}
+                           onChange={e => setCredentials({ ...credentials, region: e.target.value })}
+                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none"
                         >
-                          {showSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-    
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                        Region
-                      </label>
-                      <select
-                        value={credentials.region}
-                        onChange={e => setCredentials({ ...credentials, region: e.target.value })}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:border-brand-500 outline-none transition-colors appearance-none"
-                      >
-                        {regions.map(r => (
-                          <option key={r.value} value={r.value}>{r.label}</option>
-                        ))}
-                      </select>
-                    </div>
-    
-                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 flex gap-3 text-xs text-blue-200">
-                      <ShieldCheck className="w-5 h-5 flex-shrink-0" />
-                      <p>
-                        We recommend using a temporary IAM user with 
-                        <code className="bg-blue-500/20 px-1 py-0.5 rounded mx-1">ReadOnlyAccess</code> 
-                        permission. Credentials are never stored.
-                      </p>
-                    </div>
-    
+                           {regions.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                        </select>
+                     </div>
+
                     <Button
                       type="submit"
                       variant="primary"
                       fullWidth
                       loading={validating}
-                      loadingText="Validating credentials..."
+                      loadingText="Validating..."
                       rightIcon={<ChevronRight className="w-4 h-4" />}
+                      className="h-12 text-sm"
                     >
-                      Start Scan
+                      Verify & Scan
                     </Button>
                   </form>
                )}
@@ -348,34 +341,42 @@ export default function CloudScanner() {
           <motion.div
             key="scanning"
             {...fadeInUp}
-            className="flex-1 flex flex-col items-center justify-center text-center"
+            className="flex-1 flex flex-col items-center justify-center text-center py-20"
           >
-            <div className="relative w-24 h-24 mb-6">
+            <div className="relative w-32 h-32 mb-8">
               <div className="absolute inset-0 rounded-full border-4 border-slate-800" />
               <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-brand-500 animate-spin" />
               <div className="absolute inset-4 rounded-full border-4 border-slate-800" />
               <div className="absolute inset-4 rounded-full border-4 border-transparent border-t-emerald-500 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-              <Cloud className="absolute inset-0 m-auto w-8 h-8 text-white animate-pulse" />
+              <Cloud className="absolute inset-0 m-auto w-10 h-10 text-white animate-pulse" />
             </div>
             
-            <h2 className="text-2xl font-bold mb-2">Scanning Environment</h2>
-            <p className="text-slate-400 max-w-md mx-auto mb-8">
-              Analyzing S3 buckets, EC2 instances, Security Groups, RDS databases, and IAM configurations...
+            <h2 className="text-3xl font-bold mb-3 text-white">Scanning Environment</h2>
+            <p className="text-slate-400 max-w-lg mx-auto mb-12 text-lg">
+              We are deeply analyzing your AWS account across multiple dimensions...
             </p>
 
-            <div className="flex gap-8 text-sm text-slate-500">
-              <div className="flex items-center gap-2">
-                <Server className="w-4 h-4" /> EC2 & Network
-              </div>
-              <div className="flex items-center gap-2">
-                <HardDrive className="w-4 h-4" /> Storage
-              </div>
-              <div className="flex items-center gap-2">
-                <Database className="w-4 h-4" /> Databases
-              </div>
-              <div className="flex items-center gap-2">
-                <Key className="w-4 h-4" /> IAM
-              </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-sm text-slate-500">
+               {[
+                   { icon: Server, label: "Resource Inventory" },
+                   { icon: Key, label: "IAM & Permissions" },
+                   { icon: DollarSign, label: "Cost & Usage" },
+                   { icon: ShieldCheck, label: "Security Groups" },
+                   { icon: Database, label: "Databases & Storage" },
+                   { icon: Globe, label: "Network & ELB" },
+                   { icon: BrainCircuit, label: "Lambda Functions" },
+                   { icon: Box, label: "EKS Clusters" }
+               ].map((item, idx) => (
+                   <motion.div 
+                        key={idx} 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="flex items-center gap-3 bg-slate-900/50 px-4 py-3 rounded-xl border border-slate-800"
+                    >
+                        <item.icon className="w-5 h-5 text-brand-500" /> {item.label}
+                   </motion.div>
+               ))}
             </div>
           </motion.div>
         )}
@@ -386,183 +387,229 @@ export default function CloudScanner() {
             {...fadeInUp}
             className="space-y-6 pb-12"
           >
-            {/* Scan Errors */}
-            {results.errors && results.errors.length > 0 && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 mb-6">
-                 <h3 className="text-red-400 font-bold mb-2 flex items-center gap-2">
-                   <AlertTriangle className="w-5 h-5" />
-                   Scan Completed with Errors
-                 </h3>
-                 <p className="text-red-200/60 text-sm mb-3">
-                   Some resources could not be scanned due to permission issues. The results below may be incomplete.
-                 </p>
-                 <ul className="list-disc list-inside text-red-200/80 text-sm space-y-1">
-                   {results.errors.map((err, i) => (
-                     <li key={i}>{err}</li>
-                   ))}
-                 </ul>
-              </div>
-            )}
-
-            {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                <div className="text-slate-400 text-sm mb-1">Total Resources</div>
-                <div className="text-3xl font-bold text-white mb-2">{results.summary.totalResources}</div>
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                  <Globe className="w-3.5 h-3.5" /> Scanned {results.scannedRegion ? `in ${results.scannedRegion}` : `Account`}
-                </div>
-                <div className="mt-2 text-[10px] text-slate-500 bg-slate-950 p-2 rounded border border-slate-800">
-                  <span className="font-bold text-slate-400">Note:</span> S3 and IAM results are global.
-                </div>
-              </div>
-
-              <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                <div className="text-slate-400 text-sm mb-1">Critical Issues</div>
-                <div className="text-3xl font-bold text-red-500 mb-2">{results.summary.criticalIssues}</div>
-                <div className="flex items-center gap-1.5 text-xs text-red-400/80">
-                  <AlertTriangle className="w-3.5 h-3.5" /> Immediate action required
-                </div>
-              </div>
-
-              <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                <div className="text-slate-400 text-sm mb-1">High Priority</div>
-                <div className="text-3xl font-bold text-orange-500 mb-2">{results.summary.highIssues}</div>
-                <div className="flex items-center gap-1.5 text-xs text-orange-400/80">
-                  <ShieldCheck className="w-3.5 h-3.5" /> Recommended fixes
-                </div>
-              </div>
-
-              <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                <div className="text-slate-400 text-sm mb-1">Monthly Cost</div>
-                <div className="text-3xl font-bold text-white mb-2">
-                  ${results.costBreakdown?.totalMonthly.toFixed(2) || '0.00'}
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                  <DollarSign className="w-3.5 h-3.5" /> Est. running cost
-                </div>
-              </div>
-
-              <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                <div className="text-slate-400 text-sm mb-1">Monthly Savings</div>
-                <div className="text-3xl font-bold text-emerald-500 mb-2">${results.summary.estimatedMonthlySavings.toFixed(2)}</div>
-                <div className="flex items-center gap-1.5 text-xs text-emerald-400/80">
-                  <TrendingDown className="w-3.5 h-3.5" /> Optimization potential
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Main Issues Feed */}
-              <div className="lg:col-span-2 space-y-6">
-                <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-brand-400" />
-                    Security Findings
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    {results.securityIssues.map((issue, i) => (
-                      <div key={i} className="bg-slate-950 border border-slate-800 rounded-xl p-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className={cn(
-                                "text-xs font-bold px-2 py-0.5 rounded uppercase",
-                                issue.severity === 'CRITICAL' ? "bg-red-500/20 text-red-400" :
-                                issue.severity === 'HIGH' ? "bg-orange-500/20 text-orange-400" :
-                                issue.severity === 'MEDIUM' ? "bg-yellow-500/20 text-yellow-400" :
-                                "bg-blue-500/20 text-blue-400"
-                              )}>
-                                {issue.severity}
-                              </span>
-                              <span className="text-slate-400 text-xs font-mono bg-slate-900 px-1.5 py-0.5 rounded">
-                                {issue.resourceType}
-                              </span>
-                            </div>
-                            <h4 className="font-medium text-slate-200">{issue.issue}</h4>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-start gap-3 bg-slate-900/50 p-3 rounded-lg text-sm">
-                          <AlertTriangle className="w-4 h-4 text-brand-400 mt-0.5 flex-shrink-0" />
-                          <div className="flex-1">
-                            <span className="text-slate-400">Resource: </span>
-                            <span className="text-white font-mono">{issue.resourceId}</span>
-                            <p className="text-slate-400 mt-1">
-                             <span className="text-brand-400 font-medium">Recommendation:</span> {issue.recommendation}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {results.securityIssues.length === 0 && (
-                      <div className="text-center py-8 text-slate-500">
-                        <CheckCircle className="w-12 h-12 mx-auto mb-2 text-emerald-500/50" />
-                        <p>No security issues found. Great job!</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-emerald-400" />
-                    Cost Optimization
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    {results.costOpportunities.map((opp, i) => (
-                      <div key={i} className="bg-slate-950 border border-slate-800 rounded-xl p-4 flex items-start justify-between">
-                        <div>
-                          <div className="text-xs text-slate-400 font-mono mb-1">{opp.resourceType} • {opp.resourceId}</div>
-                          <h4 className="font-medium text-slate-200 mb-1">{opp.recommendation}</h4>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-emerald-400 font-bold">+${opp.potentialSavings}/mo</div>
-                          <div className="text-xs text-slate-500">Potential Savings</div>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {results.costOpportunities.length === 0 && (
-                      <div className="text-center py-8 text-slate-500">
-                        <CheckCircle className="w-12 h-12 mx-auto mb-2 text-emerald-500/50" />
-                        <p>No blatant cost inefficiencies found.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Sidebar Actions */}
-              <div className="space-y-6">
-                <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 sticky top-4">
-                  <h3 className="font-bold mb-4">Export Report</h3>
-                  <p className="text-sm text-slate-400 mb-6">
-                    Download a detailed PDF report of these findings to share with your team.
-                  </p>
-                  <Button variant="secondary" fullWidth rightIcon={<BarChart className="w-4 h-4" />}>
-                    Download Report
-                  </Button>
-                  
-                  <div className="border-t border-slate-800 my-6 pt-6">
-                    <h4 className="font-bold mb-2 text-sm">Next Scan</h4>
-                    <p className="text-xs text-slate-500 mb-4">
-                      Schedule automated scans to keep your infrastructure secure.
+             {/* Header */}
+             <div className="flex justify-between items-start">
+                 <div>
+                    <h2 className="text-2xl font-bold text-white mb-1">Scan Results</h2>
+                    <p className="text-slate-400">
+                        Detailed analysis for <span className="font-mono text-white">{results.scannedRegion}</span>
+                        <span className="mx-2">•</span>
+                        {results.summary.totalResources} Resources Found
                     </p>
-                    <Button variant="outline" fullWidth>
-                      Configure Schedule
-                    </Button>
-                  </div>
-                  
-                  <Button variant="ghost" fullWidth onClick={() => setStep('connect')}>
-                    Scan Another Account
-                  </Button>
+                 </div>
+                 <div className="flex gap-3">
+                     <Button variant="outline" onClick={() => setStep('connect')}>New Scan</Button>
+                     <Button variant="primary" rightIcon={<BarChart className="w-4 h-4" />}>Export Report</Button>
+                 </div>
+             </div>
+
+             {/* Errors Alert */}
+             {results.errors && results.errors.length > 0 && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex gap-4">
+                    <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                    <div>
+                        <h4 className="font-bold text-red-400 mb-1">Partial Scan Failures</h4>
+                        <p className="text-sm text-red-200/80 mb-2">Some permissions were missing. Results may be incomplete.</p>
+                        <details className="text-xs text-red-300 cursor-pointer">
+                            <summary>View Errors</summary>
+                            <ul className="mt-2 list-disc list-inside space-y-1 pl-2">
+                                {results.errors.map((e, i) => <li key={i}>{e}</li>)}
+                            </ul>
+                        </details>
+                    </div>
                 </div>
-              </div>
-            </div>
+             )}
+
+             {/* Navigation Tabs */}
+             <div className="flex border-b border-slate-800">
+                {[
+                    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+                    { id: 'iam', label: 'IAM & Access', icon: Key },
+                    { id: 'cost', label: 'Cost Analysis', icon: DollarSign },
+                    { id: 'resources', label: 'Resources', icon: Box },
+                ].map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setResultTab(tab.id as any)}
+                        className={cn(
+                            "px-6 py-4 text-sm font-medium flex items-center gap-2 border-b-2 transition-all",
+                            resultTab === tab.id 
+                                ? "border-brand-500 text-white" 
+                                : "border-transparent text-slate-400 hover:text-white"
+                        )}
+                    >
+                        <tab.icon className={cn("w-4 h-4", resultTab === tab.id ? "text-brand-400" : "")} />
+                        {tab.label}
+                    </button>
+                ))}
+             </div>
+
+             {/* Tab Content */}
+             <div className="py-2">
+                 {resultTab === 'overview' && (
+                     <div className="space-y-6">
+                        {/* Summary Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                                <div className="text-slate-400 text-sm mb-1">Overall Score</div>
+                                <div className="text-3xl font-bold text-white mb-2">
+                                    {Math.max(0, 100 - (results.summary.criticalIssues * 10) - (results.summary.highIssues * 5))}
+                                    <span className="text-sm text-slate-500 font-normal ml-1">/100</span>
+                                </div>
+                                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <div 
+                                        className="h-full bg-gradient-to-r from-red-500 to-emerald-500" 
+                                        style={{ width: `${Math.max(0, 100 - (results.summary.criticalIssues * 10))}%` }} 
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                                <div className="text-slate-400 text-sm mb-1">Critical Issues</div>
+                                <div className="text-3xl font-bold text-red-500 mb-2">{results.summary.criticalIssues}</div>
+                                <div className="flex items-center gap-1.5 text-xs text-red-400/80">
+                                <AlertTriangle className="w-3.5 h-3.5" /> Immediate action required
+                                </div>
+                            </div>
+                            
+                            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                                <div className="text-slate-400 text-sm mb-1">Monthly Cost</div>
+                                <div className="text-3xl font-bold text-white mb-2">
+                                    ${results.costBreakdown?.totalMonthly.toFixed(2)}
+                                </div>
+                                <div className="text-xs text-slate-500">
+                                    Est. based on current usage
+                                </div>
+                            </div>
+
+                            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                                <div className="text-slate-400 text-sm mb-1">Potential Savings</div>
+                                <div className="text-3xl font-bold text-emerald-500 mb-2">
+                                    ${results.summary.estimatedMonthlySavings.toFixed(2)}
+                                </div>
+                                <div className="flex items-center gap-1.5 text-xs text-emerald-400/80">
+                                <TrendingDown className="w-3.5 h-3.5" /> Optimization available
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Security Feed */}
+                            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                                <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                                    <ShieldCheck className="w-5 h-5 text-brand-400" /> Top Security Risks
+                                </h3>
+                                <div className="space-y-3">
+                                    {results.securityIssues.slice(0, 5).map((issue, i) => (
+                                        <div key={i} className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                                            <div className="flex justify-between items-start mb-1">
+                                                <h4 className="text-sm font-bold text-slate-200">{issue.issue}</h4>
+                                                <span className={cn(
+                                                    "text-[10px] font-bold px-1.5 py-0.5 rounded uppercase",
+                                                    issue.severity === 'CRITICAL' ? "bg-red-500/20 text-red-400" :
+                                                    issue.severity === 'HIGH' ? "bg-orange-500/20 text-orange-400" : "bg-blue-500/20 text-blue-400"
+                                                )}>{issue.severity}</span>
+                                            </div>
+                                            <div className="flex justify-between items-end">
+                                                <div className="text-xs text-slate-500 font-mono">{issue.resourceType} • {issue.resourceId}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {results.securityIssues.length === 0 && <p className="text-slate-500 text-sm text-center">No major risks found.</p>}
+                                </div>
+                            </div>
+
+                            {/* Cost Chart Preview */}
+                            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                                 <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                                    <DollarSign className="w-5 h-5 text-emerald-400" /> Cost Distribution
+                                </h3>
+                                <div className="h-64">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <RechartsBarChart data={costData} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+                                            <XAxis type="number" hide />
+                                            <YAxis type="category" dataKey="name" width={100} tick={{fill: '#94a3b8', fontSize: 12}} />
+                                            <Tooltip 
+                                                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b' }}
+                                                itemStyle={{ color: '#fff' }}
+                                                formatter={(value: number) => [`$${value.toFixed(2)}`, 'Cost']}
+                                            />
+                                            <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                                                {costData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={index === 0 ? '#3b82f6' : '#64748b'} />
+                                                ))}
+                                            </Bar>
+                                        </RechartsBarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                 )}
+
+                 {resultTab === 'iam' && results.iamDetails && (
+                     <IAMViewer details={results.iamDetails} issues={results.securityIssues.filter(i => i.resourceType.includes('IAM'))} />
+                 )}
+
+                 {resultTab === 'cost' && (
+                     <div className="space-y-6">
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                                 <h3 className="font-bold text-white mb-2">Monthly Forecast</h3>
+                                 <div className="text-4xl font-bold text-white mb-1">
+                                    ${(results.costForecast || results.costBreakdown?.totalMonthly || 0).toFixed(2)}
+                                 </div>
+                                 <p className="text-sm text-slate-500">Projected cost for this month</p>
+                            </div>
+                            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                                 <h3 className="font-bold text-white mb-2">Potential Savings</h3>
+                                 <div className="text-4xl font-bold text-emerald-500 mb-1">
+                                    ${results.summary.estimatedMonthlySavings.toFixed(2)}
+                                 </div>
+                                 <p className="text-sm text-emerald-500/80">Identified optimization opportunities</p>
+                            </div>
+                         </div>
+
+                         <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                             <h3 className="font-bold text-white mb-6">Cost by Service</h3>
+                             <div className="h-80">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <RechartsBarChart data={costData}>
+                                        <XAxis dataKey="name" tick={{fill: '#94a3b8', fontSize: 12}} />
+                                        <YAxis tick={{fill: '#94a3b8', fontSize: 12}} />
+                                        <Tooltip 
+                                            contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b' }}
+                                            formatter={(value: number) => [`$${value.toFixed(2)}`, 'Cost']}
+                                        />
+                                        <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                    </RechartsBarChart>
+                                </ResponsiveContainer>
+                             </div>
+                         </div>
+                         
+                         <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                             <h3 className="font-bold text-white mb-4">Cost Issues & Recommendations</h3>
+                             {results.costOpportunities.map((opp, idx) => (
+                                 <div key={idx} className="flex justify-between items-center py-3 border-b border-slate-800 last:border-0">
+                                     <div>
+                                         <div className="font-bold text-slate-200">{opp.recommendation}</div>
+                                         <div className="text-xs text-slate-500 font-mono">{opp.resourceType} • {opp.resourceId}</div>
+                                     </div>
+                                     <div className="text-right">
+                                         <div className="font-bold text-emerald-400">+${opp.potentialSavings.toFixed(2)}</div>
+                                         <div className="text-xs text-slate-500">Savings</div>
+                                     </div>
+                                 </div>
+                             ))}
+                             {results.costOpportunities.length === 0 && <p className="text-slate-500">No cost issues found.</p>}
+                         </div>
+                     </div>
+                 )}
+
+                 {resultTab === 'resources' && (
+                     <ResourcesViewer results={results} />
+                 )}
+             </div>
           </motion.div>
         )}
       </AnimatePresence>

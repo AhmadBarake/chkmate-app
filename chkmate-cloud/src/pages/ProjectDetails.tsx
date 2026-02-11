@@ -90,7 +90,7 @@ export default function ProjectDetails() {
         <div className="animate-fade-in">
           <h2 className="text-4xl font-black tracking-tight flex items-center gap-3">
              <div className="w-2 h-8 bg-brand-500 rounded-full" />
-             Project Workspace
+             Project
           </h2>
           <div className="flex items-center gap-2 mt-1 px-4">
              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -136,12 +136,17 @@ export default function ProjectDetails() {
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           </Link>
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-widest">
+            <div className="flex items-center gap-2 mb-2 text-xs text-slate-500">
+              <Link to="/projects" className="hover:text-white transition-colors">Projects</Link>
+              <span className="text-slate-700">/</span>
+              <span className="text-white font-medium">{project.name}</span>
+            </div>
+            <div className="flex items-center gap-3 mb-1">
+               <h2 className="text-4xl font-black tracking-tight">{project.name}</h2>
+               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-widest">
                 Active Project
               </span>
             </div>
-            <h2 className="text-4xl font-black tracking-tight">{project.name}</h2>
             <p className="text-slate-500 mt-1 font-medium italic">{project.description || "Infrastructure blueprint orchestration."}</p>
           </div>
         </div>
@@ -224,7 +229,7 @@ export default function ProjectDetails() {
                            </div>
                         </div>
                         <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-600 pl-1">
-                           <span>Configuration State</span>
+                           <span>View Blueprint</span>
                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 group-hover:text-brand-400 transition-all" />
                         </div>
                       </div>

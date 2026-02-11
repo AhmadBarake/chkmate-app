@@ -24,6 +24,7 @@ import Invoices from './pages/Invoices';
 import LandingPage from './pages/LandingPage';
 import CloudScanner from './pages/CloudScanner';
 import CloudConnections from './pages/CloudConnections';
+import SmartChat from './pages/SmartChat';
 
 // Case Studies
 import CaseStudyADSG from './pages/CaseStudyADSG';
@@ -150,7 +151,8 @@ function App() {
                   <Route path="/projects/:id" element={<ProjectDetails />} />
                   <Route path="/projects/:projectId/new-template" element={<Builder />} />
                   <Route path="/projects/:projectId/templates/:templateId" element={<Builder />} />
-                  <Route path="/templates" element={<Templates />} />
+                  <Route path="/blueprints" element={<Templates />} />
+                  <Route path="/chat" element={<SmartChat />} />
                   <Route path="/cloud-scanner" element={<CloudScanner />} />
                   <Route path="/connections" element={<CloudConnections />} />
                   <Route path="/recommendations" element={<Recommendations />} />

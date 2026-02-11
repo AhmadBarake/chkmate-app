@@ -243,7 +243,7 @@ export default function Projects() {
               </p>
               
               <div className="flex items-center justify-between pt-4 border-t border-slate-800/50">
-                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Workspace</span>
+                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">View Details</span>
                 <ArrowRight className="w-4 h-4 text-slate-700 group-hover:text-brand-400 group-hover:translate-x-1 transition-all" />
               </div>
             </motion.div>

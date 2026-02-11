@@ -19,7 +19,8 @@ import {
   Globe,
   Smartphone,
   Server,
-  Box
+  Box,
+  Plus
 } from 'lucide-react';
 import { 
   PieChart, 
@@ -135,6 +136,8 @@ export default function CostControl() {
     return <Box className="w-4 h-4" />;
   };
 
+  const hasData = scanResult && connections.length > 0;
+
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
@@ -154,9 +157,9 @@ export default function CostControl() {
             value={selectedConnectionId}
             onChange={(e) => setSelectedConnectionId(e.target.value)}
             className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none focus:border-brand-500"
-            disabled={syncing}
+            disabled={syncing || connections.length === 0}
           >
-            {connections.map(c => (
+            {connections.length === 0 ? <option>No Connections</option> : connections.map(c => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
@@ -175,6 +178,7 @@ export default function CostControl() {
           <Button 
             onClick={handleSync} 
             loading={syncing}
+            disabled={connections.length === 0}
             variant="secondary"
             size="sm"
             leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
@@ -184,6 +188,41 @@ export default function CostControl() {
         </div>
       </div>
 
+      {!hasData && !loading ? (
+         <div className="flex flex-col items-center justify-center py-20 bg-slate-900/40 border border-slate-800 rounded-2xl border-dashed">
+            <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 relative">
+               <DollarSign className="w-8 h-8 text-slate-500" />
+               <div className="absolute -right-2 -bottom-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center border border-slate-900">
+                  <Plus className="w-3 h-3 text-white" />
+               </div>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">No Cost Data Available</h3>
+            <p className="text-slate-400 max-w-sm text-center mb-8">
+               {connections.length === 0 
+                 ? "Connect your cloud provider to start tracking costs and optimizing your spending." 
+                 : "Select a connection and region to view cost insights."}
+            </p>
+            
+            {connections.length === 0 && (
+               <Button
+                  onClick={() => window.location.href = '/connections'}
+                  leftIcon={<Zap className="w-4 h-4" />}
+               >
+                  Connect Cloud Account
+               </Button>
+            )}
+            
+            {connections.length > 0 && (
+               <Button
+                  onClick={handleSync}
+                  leftIcon={<RefreshCw className="w-4 h-4" />}
+               >
+                  Run Cost Analysis
+               </Button>
+            )}
+         </div>
+      ) : (
+      <>
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
@@ -419,6 +458,8 @@ export default function CostControl() {
            </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

@@ -470,10 +470,42 @@ export interface CostOpportunity {
   recommendation: string;
 }
 
+export interface IAMDetails {
+  users: Array<{ userName: string; createDate?: string; passwordLastUsed?: string }>;
+  roles: Array<{ roleName: string; createDate?: string }>;
+  policies: Array<{ policyName: string; attachmentCount?: number }>;
+}
+
+export interface LambdaIssue extends SecurityIssue {
+    functionName: string;
+    runtime: string;
+}
+
+export interface DynamoDBIssue extends SecurityIssue {
+    tableName: string;
+}
+
+export interface ELBIssue extends SecurityIssue {
+    loadBalancerName: string;
+}
+
+export interface EKSIssue extends SecurityIssue {
+    clusterName: string;
+}
+
 export interface CloudScanResult {
   scannedRegion?: string;
   securityIssues: SecurityIssue[];
   costOpportunities: CostOpportunity[];
+  
+  // New Detailed Fields
+  iamDetails?: IAMDetails;
+  lambdaIssues?: LambdaIssue[];
+  dynamoDBIssues?: DynamoDBIssue[];
+  elbIssues?: ELBIssue[];
+  eksIssues?: EKSIssue[];
+  costForecast?: number;
+
   costBreakdown?: {
     totalMonthly: number;
     byService: Record<string, number>;
