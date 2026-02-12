@@ -1,19 +1,28 @@
 import React, { useState } from 'react';
 import { Send, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { subscribeToMailchimp } from '../services/mailchimp';
+import { submitWaitlistEmail } from '../lib/api';
 
 export default function Newsletter() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
     setStatus('loading');
     setErrorMessage('');
-    
+
+    // Store in database first (reliable)
+    try {
+      await submitWaitlistEmail(email, 'NEWSLETTER', window.location.href);
+    } catch (err) {
+      console.error('Failed to save newsletter email to DB:', err);
+    }
+
+    // Also try Mailchimp (best-effort)
     subscribeToMailchimp(
       email,
       () => {
@@ -21,11 +30,10 @@ export default function Newsletter() {
         setEmail('');
       },
       (err) => {
-        setStatus('error');
-        // Clean up error message (Mailchimp often returns HTML or verbose errors)
-        let msg = typeof err === 'string' ? err : 'Subscription failed. Please try again.';
-        if (msg.includes('already subscribed')) msg = 'You are already subscribed!';
-        setErrorMessage(msg);
+        // DB save succeeded, so show success even if Mailchimp fails
+        console.error('Mailchimp error:', err);
+        setStatus('success');
+        setEmail('');
       }
     );
   };

@@ -1053,3 +1053,18 @@ export async function quickPushTemplateToGitHub(
     body: JSON.stringify({ connectionId, repoFullName, branch, filePath, commitMessage }),
   }, DEFAULT_TIMEOUT, token);
 }
+
+// ============================================================================
+// WAITLIST (Public — no auth)
+// ============================================================================
+
+export async function submitWaitlistEmail(
+  email: string,
+  source: 'WAITLIST' | 'NEWSLETTER',
+  referrer?: string,
+): Promise<{ success: boolean; id: string }> {
+  return apiRequest('/waitlist', {
+    method: 'POST',
+    body: JSON.stringify({ email, source, referrer }),
+  });
+}

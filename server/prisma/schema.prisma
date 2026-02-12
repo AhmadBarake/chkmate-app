@@ -475,3 +475,23 @@ enum SyncDirection {
   PULL          // GitHub → Chkmate
   BIDIRECTIONAL
 }
+
+// ============================================================================
+// WAITLIST / MARKETING MODELS
+// ============================================================================
+
+model WaitlistEmail {
+  id        String         @id @default(uuid())
+  email     String
+  source    WaitlistSource @default(WAITLIST)
+  referrer  String?        // Page URL or UTM source
+  createdAt DateTime       @default(now())
+
+  @@unique([email, source])
+  @@index([createdAt])
+}
+
+enum WaitlistSource {
+  WAITLIST     // Register Interest modal
+  NEWSLETTER   // Newsletter signup
+}

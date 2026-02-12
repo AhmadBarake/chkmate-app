@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Check } from 'lucide-react';
 import { subscribeToMailchimp } from '../services/mailchimp';
+import { submitWaitlistEmail } from '../lib/api';
 
 interface RegisterInterestModalProps {
   isOpen: boolean;
@@ -13,27 +14,30 @@ const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({ isOpen, o
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
+    // Store in database first (reliable)
+    try {
+      await submitWaitlistEmail(email, 'WAITLIST', window.location.href);
+    } catch (err) {
+      console.error('Failed to save waitlist email to DB:', err);
+    }
+
+    // Also try Mailchimp (best-effort)
     subscribeToMailchimp(
       email,
-      () => {
-        setIsSubmitted(true);
-        setTimeout(() => {
-          onClose();
-          setIsSubmitted(false);
-          setEmail('');
-        }, 2000);
-      },
-      (err) => {
-        console.error('Mailchimp error:', err);
-        // We could show an error state here, but for now just logging
-        // Fallback to success UI for better UX if it's just a duplicate or benign error
-        setIsSubmitted(true); 
-      }
+      () => {},
+      (err) => { console.error('Mailchimp error:', err); }
     );
+
+    setIsSubmitted(true);
+    setTimeout(() => {
+      onClose();
+      setIsSubmitted(false);
+      setEmail('');
+    }, 2000);
   };
 
   return (

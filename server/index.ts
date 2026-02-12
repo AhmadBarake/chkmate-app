@@ -1563,6 +1563,35 @@ app.post(
 );
 
 // ============================================================================
+// WAITLIST (PUBLIC — no auth required)
+// ============================================================================
+
+app.post(
+  '/api/waitlist',
+  asyncHandler(async (req: any, res: any) => {
+    const { email, source, referrer } = req.body;
+    if (!email || typeof email !== 'string') {
+      throw new ValidationError('Email is required');
+    }
+    const trimmed = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      throw new ValidationError('Invalid email format');
+    }
+    const validSource = source === 'NEWSLETTER' ? 'NEWSLETTER' : 'WAITLIST';
+    const entry = await prisma.waitlistEmail.upsert({
+      where: { email_source: { email: trimmed, source: validSource } },
+      update: {}, // Already exists, no-op
+      create: {
+        email: trimmed,
+        source: validSource,
+        referrer: referrer?.slice(0, 500) || null,
+      },
+    });
+    res.status(201).json({ success: true, id: entry.id });
+  })
+);
+
+// ============================================================================
 // ============================================================================
 // ERROR HANDLING
 // ============================================================================
