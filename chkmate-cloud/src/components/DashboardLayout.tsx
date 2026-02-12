@@ -22,6 +22,8 @@ import {
   Link,
   Monitor,
   ChevronRight,
+  MessageSquare,
+  Github,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { CreditIndicator } from './CreditBalance';
@@ -47,7 +49,8 @@ const fullSections: NavSection[] = [
     items: [
       { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, exact: true },
       { name: 'Projects', to: '/projects', icon: Folder },
-      { name: 'Templates', to: '/templates', icon: FileCode },
+      { name: 'Blueprints', to: '/blueprints', icon: FileCode },
+      { name: 'Smart Chat', to: '/chat', icon: MessageSquare },
       { name: 'Smart Advice', to: '/recommendations', icon: Sparkles },
     ],
   },
@@ -71,6 +74,7 @@ const fullSections: NavSection[] = [
     label: 'Connect',
     items: [
       { name: 'Connections', to: '/connections', icon: Server },
+      { name: 'GitHub', to: '/github', icon: Github },
       { name: 'Invoices', to: '/invoices', icon: FileText },
     ],
   },
@@ -83,6 +87,7 @@ const simplifiedSections: NavSection[] = [
     items: [
       { name: 'Overview', to: '/dashboard', icon: LayoutDashboard, exact: true },
       { name: 'Deploy App', to: '/simple/deploy', icon: Rocket },
+      { name: 'GitHub', to: '/simple/github', icon: Github },
       { name: 'Guides', to: '/simple/guides', icon: BookOpen },
     ],
   },

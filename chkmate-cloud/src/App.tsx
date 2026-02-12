@@ -50,6 +50,8 @@ import SimpleDeployWizard from './pages/SimpleDeployWizard';
 import SimpleResources from './pages/SimpleResources';
 import SimpleCosts from './pages/SimpleCosts';
 import SimpleGuides from './pages/SimpleGuides';
+import GitHubConnections from './pages/GitHubConnections';
+import SimpleGitHub from './pages/SimpleGitHub';
 
 // Initialize analytics on app load
 initAnalytics();
@@ -181,12 +183,14 @@ function App() {
                   <Route path="/deploy" element={<Deployments />} />
                   <Route path="/deploy/credentials" element={<DeploymentCredentials />} />
                   <Route path="/invoices" element={<Invoices />} />
+                  <Route path="/github" element={<GitHubConnections />} />
 
                   {/* Simplified mode routes */}
                   <Route path="/simple/deploy" element={<SimpleDeployWizard />} />
                   <Route path="/simple/resources" element={<SimpleResources />} />
                   <Route path="/simple/costs" element={<SimpleCosts />} />
                   <Route path="/simple/guides" element={<SimpleGuides />} />
+                  <Route path="/simple/github" element={<SimpleGitHub />} />
                 </Route>
               </Routes>
 
