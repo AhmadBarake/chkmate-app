@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Save, Code2, Layout, Database, File, ChevronLeft, ChevronRight, PenTool, Sparkles, CheckCircle, Shield, PanelRightOpen, PanelRightClose, GitCompare, Bot } from 'lucide-react';
+import { Save, Code2, Layout, Database, File, ChevronLeft, ChevronRight, PenTool, Sparkles, CheckCircle, Shield, PanelRightOpen, PanelRightClose, GitCompare, Bot, Github, Loader2 } from 'lucide-react';
 import { Editor } from '@monaco-editor/react';
 import { TemplateDiff } from '../components/TemplateDiff';
-import { generateTemplate, createTemplate, fetchTemplate, fetchTemplateDiff, DiffResult, CloudConnection, fetchConnections } from '../lib/api';
+import { generateTemplate, createTemplate, fetchTemplate, fetchTemplateDiff, DiffResult, CloudConnection, fetchConnections, fetchGitHubConnections, fetchTemplateRepoLinks, quickPushTemplateToGitHub, pushTemplateToGitHub as pushToGH, GitHubConnectionInfo, TemplateRepoLinkInfo } from '../lib/api';
 import {
   ReactFlow,
   Controls,
@@ -77,6 +77,11 @@ export default function Builder() {
   const [diffData, setDiffData] = useState<DiffResult | null>(null);
   const [comparing, setComparing] = useState(false);
 
+  // GitHub state
+  const [ghConnections, setGhConnections] = useState<GitHubConnectionInfo[]>([]);
+  const [ghRepoLinks, setGhRepoLinks] = useState<TemplateRepoLinkInfo[]>([]);
+  const [pushingToGH, setPushingToGH] = useState(false);
+
   // ReactFlow State
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -96,6 +101,36 @@ export default function Builder() {
     };
     loadConnections();
   }, [user]);
+
+  // Load GitHub connections
+  useEffect(() => {
+    const loadGH = async () => {
+      if (!user) return;
+      try {
+        const token = await getToken();
+        const conns = await fetchGitHubConnections(token);
+        setGhConnections(conns);
+      } catch (e) {
+        console.error('Failed to load GitHub connections', e);
+      }
+    };
+    loadGH();
+  }, [user]);
+
+  // Load template repo links when editing
+  useEffect(() => {
+    const loadLinks = async () => {
+      if (!templateId || !user) return;
+      try {
+        const token = await getToken();
+        const links = await fetchTemplateRepoLinks(templateId, token);
+        setGhRepoLinks(links);
+      } catch (e) {
+        console.error('Failed to load repo links', e);
+      }
+    };
+    loadLinks();
+  }, [templateId, user]);
 
   // Load template if editing
   useEffect(() => {
@@ -285,6 +320,42 @@ export default function Builder() {
 
     // Track template download
     trackTemplateDownloaded(templateId || 'new', selectedFile, selectedProvider);
+  };
+
+  const handlePushToGitHub = async () => {
+    if (!templateId) {
+      toast.info('Save your template first before pushing to GitHub');
+      return;
+    }
+    if (ghConnections.length === 0) {
+      toast.info('Connect your GitHub account first');
+      navigate('/github');
+      return;
+    }
+    setPushingToGH(true);
+    try {
+      const token = await getToken();
+      const content = generatedFiles[selectedFile] || '';
+      if (ghRepoLinks.length > 0) {
+        // Push to linked repo
+        const link = ghRepoLinks[0];
+        await pushToGH(templateId, link.repoId, link.branch, link.filePath, content, token);
+        toast.success(`Pushed to ${link.repo?.fullName || 'linked repo'}`);
+      } else {
+        // Quick push to first connection's default
+        const conn = ghConnections[0];
+        const result = await quickPushTemplateToGitHub(templateId, conn.id, content, token);
+        toast.success(`Pushed to ${result.repoFullName}`);
+        // Reload links
+        const links = await fetchTemplateRepoLinks(templateId, token);
+        setGhRepoLinks(links);
+      }
+    } catch (e) {
+      const error = parseError(e);
+      toast.error(error.message, 'GitHub push failed');
+    } finally {
+      setPushingToGH(false);
+    }
   };
 
   const handleToggleDiff = async () => {
@@ -713,6 +784,16 @@ export default function Builder() {
                     leftIcon={<Save className="w-4 h-4" />}
                   >
                     Save to Project
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handlePushToGitHub}
+                    loading={pushingToGH}
+                    loadingText="Pushing..."
+                    leftIcon={<Github className="w-4 h-4" />}
+                    className="border-slate-700 hover:border-slate-500"
+                  >
+                    {ghRepoLinks.length > 0 ? 'Push to GitHub' : 'Push to GitHub'}
                   </Button>
                   <Button variant="outline" onClick={handleDownload}>
                     Download

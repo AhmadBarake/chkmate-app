@@ -863,3 +863,193 @@ export async function fetchDeployments(templateId?: string, token?: string | nul
   const query = templateId ? `?templateId=${templateId}` : '';
   return apiRequest<DeploymentRecord[]>(`/deploy${query}`, {}, DEFAULT_TIMEOUT, token);
 }
+
+// ============================================================================
+// GITHUB INTEGRATION
+// ============================================================================
+
+export interface GitHubConnectionInfo {
+  id: string;
+  githubUsername: string;
+  avatarUrl: string | null;
+  createdAt: string;
+  _count: { repositories: number };
+}
+
+export interface GitHubRepoInfo {
+  name: string;
+  fullName: string;
+  owner: string;
+  isPrivate: boolean;
+  defaultBranch: string;
+  description: string | null;
+  language: string | null;
+  updatedAt: string;
+  htmlUrl: string;
+}
+
+export interface GitHubBranch {
+  name: string;
+  sha: string;
+  protected: boolean;
+}
+
+export interface GitHubFile {
+  name: string;
+  path: string;
+  type: 'file' | 'dir';
+  size: number;
+  sha: string;
+}
+
+export interface TemplateRepoLinkInfo {
+  id: string;
+  templateId: string;
+  repoId: string;
+  repoFullName?: string;
+  branch: string;
+  filePath: string;
+  syncDirection: 'PUSH' | 'PULL' | 'BIDIRECTIONAL';
+  autoSync: boolean;
+  autoDeploy: boolean;
+  lastPushAt: string | null;
+  lastPullAt: string | null;
+  repo?: {
+    id: string;
+    fullName: string;
+    repoOwner: string;
+    repoName: string;
+    defaultBranch: string;
+    isPrivate: boolean;
+    lastCommitSha: string | null;
+    lastSyncedAt: string | null;
+  };
+}
+
+export interface GitHubPushResult {
+  commitSha: string;
+  commitUrl: string;
+}
+
+export interface GitHubCreatedRepo {
+  id: string;
+  fullName: string;
+  owner: string;
+  name: string;
+  isPrivate: boolean;
+  defaultBranch: string;
+  htmlUrl: string;
+}
+
+// Connect GitHub account
+export async function connectGitHubAccount(accessToken: string, token?: string | null): Promise<{ id: string; githubUsername: string; avatarUrl: string | null }> {
+  return apiRequest('/github/connect', {
+    method: 'POST',
+    body: JSON.stringify({ accessToken }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+// List GitHub connections
+export async function fetchGitHubConnections(token?: string | null): Promise<GitHubConnectionInfo[]> {
+  return apiRequest<GitHubConnectionInfo[]>('/github/connections', {}, DEFAULT_TIMEOUT, token);
+}
+
+// Disconnect GitHub
+export async function disconnectGitHubAccount(connectionId: string, token?: string | null): Promise<{ success: boolean }> {
+  return apiRequest(`/github/connections/${connectionId}`, {
+    method: 'DELETE',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+// List repos from connected account
+export async function fetchGitHubRepos(connectionId: string, token?: string | null): Promise<GitHubRepoInfo[]> {
+  return apiRequest<GitHubRepoInfo[]>(`/github/connections/${connectionId}/repos`, {}, DEFAULT_TIMEOUT, token);
+}
+
+// Create new repo
+export async function createGitHubRepo(
+  connectionId: string,
+  name: string,
+  description: string,
+  isPrivate: boolean,
+  token?: string | null,
+): Promise<GitHubCreatedRepo> {
+  return apiRequest<GitHubCreatedRepo>(`/github/connections/${connectionId}/repos`, {
+    method: 'POST',
+    body: JSON.stringify({ name, description, isPrivate }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+// List branches
+export async function fetchRepoBranches(connectionId: string, owner: string, repo: string, token?: string | null): Promise<GitHubBranch[]> {
+  return apiRequest<GitHubBranch[]>(`/github/connections/${connectionId}/repos/${owner}/${repo}/branches`, {}, DEFAULT_TIMEOUT, token);
+}
+
+// List files
+export async function fetchRepoFiles(connectionId: string, owner: string, repo: string, path?: string, branch?: string, token?: string | null): Promise<GitHubFile[]> {
+  const params = new URLSearchParams();
+  if (path) params.set('path', path);
+  if (branch) params.set('branch', branch);
+  const query = params.toString() ? `?${params.toString()}` : '';
+  return apiRequest<GitHubFile[]>(`/github/connections/${connectionId}/repos/${owner}/${repo}/files${query}`, {}, DEFAULT_TIMEOUT, token);
+}
+
+// Link template to repo
+export async function linkTemplateToGitHub(
+  templateId: string,
+  connectionId: string,
+  repoFullName: string,
+  branch?: string,
+  filePath?: string,
+  syncDirection?: string,
+  token?: string | null,
+): Promise<TemplateRepoLinkInfo> {
+  return apiRequest<TemplateRepoLinkInfo>(`/templates/${templateId}/github/link`, {
+    method: 'POST',
+    body: JSON.stringify({ connectionId, repoFullName, branch, filePath, syncDirection }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+// Get template repo links
+export async function fetchTemplateRepoLinks(templateId: string, token?: string | null): Promise<TemplateRepoLinkInfo[]> {
+  return apiRequest<TemplateRepoLinkInfo[]>(`/templates/${templateId}/github/links`, {}, DEFAULT_TIMEOUT, token);
+}
+
+// Unlink
+export async function unlinkTemplateFromGitHub(templateId: string, linkId: string, token?: string | null): Promise<{ success: boolean }> {
+  return apiRequest(`/templates/${templateId}/github/link/${linkId}`, {
+    method: 'DELETE',
+  }, DEFAULT_TIMEOUT, token);
+}
+
+// Push template to GitHub
+export async function pushTemplateToGitHub(templateId: string, repoLinkId: string, commitMessage?: string, token?: string | null): Promise<GitHubPushResult> {
+  return apiRequest<GitHubPushResult>(`/templates/${templateId}/github/push`, {
+    method: 'POST',
+    body: JSON.stringify({ repoLinkId, commitMessage }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+// Pull from GitHub
+export async function pullTemplateFromGitHub(templateId: string, repoLinkId: string, token?: string | null): Promise<{ content: string; sha: string }> {
+  return apiRequest(`/templates/${templateId}/github/pull`, {
+    method: 'POST',
+    body: JSON.stringify({ repoLinkId }),
+  }, DEFAULT_TIMEOUT, token);
+}
+
+// Quick push (link + push in one action)
+export async function quickPushTemplateToGitHub(
+  templateId: string,
+  connectionId: string,
+  repoFullName: string,
+  branch?: string,
+  filePath?: string,
+  commitMessage?: string,
+  token?: string | null,
+): Promise<TemplateRepoLinkInfo & GitHubPushResult> {
+  return apiRequest(`/templates/${templateId}/github/quick-push`, {
+    method: 'POST',
+    body: JSON.stringify({ connectionId, repoFullName, branch, filePath, commitMessage }),
+  }, DEFAULT_TIMEOUT, token);
+}

@@ -81,6 +81,23 @@ import {
   getAgenticMode,
 } from './services/agentService.js';
 
+// Import GitHub service
+import {
+  connectGitHub,
+  getGitHubConnections,
+  disconnectGitHub,
+  listGitHubRepos,
+  createGitHubRepo,
+  listRepoBranches,
+  getRepoFiles,
+  pushTemplateToGitHub,
+  pullFromGitHub,
+  linkTemplateToRepo,
+  unlinkTemplateFromRepo,
+  getTemplateRepoLinks,
+  quickPushToGitHub,
+} from './services/githubService.js';
+
 // Import deployment service
 import {
   createDeploymentCredential,
@@ -1335,6 +1352,213 @@ app.get(
     const templateId = req.query.templateId as string | undefined;
     const deployments = await listDeployments(userId, templateId);
     res.json(deployments);
+  })
+);
+
+// ============================================================================
+// GITHUB INTEGRATION ROUTES
+// ============================================================================
+
+// Connect GitHub account (with personal access token)
+app.post(
+  '/api/github/connect',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const { accessToken } = req.body;
+    if (!accessToken || typeof accessToken !== 'string') {
+      throw new ValidationError('accessToken is required');
+    }
+    const connection = await connectGitHub(userId, accessToken);
+    res.json(connection);
+  })
+);
+
+// List GitHub connections
+app.get(
+  '/api/github/connections',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const connections = await getGitHubConnections(userId);
+    res.json(connections);
+  })
+);
+
+// Disconnect GitHub
+app.delete(
+  '/api/github/connections/:id',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const result = await disconnectGitHub(userId, req.params.id);
+    res.json(result);
+  })
+);
+
+// List repos from connected account
+app.get(
+  '/api/github/connections/:id/repos',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const repos = await listGitHubRepos(userId, req.params.id);
+    res.json(repos);
+  })
+);
+
+// Create new GitHub repo
+app.post(
+  '/api/github/connections/:id/repos',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const { name, description, isPrivate } = req.body;
+    if (!name || typeof name !== 'string') {
+      throw new ValidationError('name is required');
+    }
+    const repo = await createGitHubRepo(
+      userId,
+      req.params.id,
+      name,
+      description || '',
+      isPrivate !== false,
+    );
+    res.status(201).json(repo);
+  })
+);
+
+// List branches for a repo
+app.get(
+  '/api/github/connections/:id/repos/:owner/:repo/branches',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const branches = await listRepoBranches(
+      userId,
+      req.params.id,
+      req.params.owner,
+      req.params.repo,
+    );
+    res.json(branches);
+  })
+);
+
+// List files in a repo
+app.get(
+  '/api/github/connections/:id/repos/:owner/:repo/files',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const path = (req.query.path as string) || '';
+    const branch = req.query.branch as string | undefined;
+    const files = await getRepoFiles(
+      userId,
+      req.params.id,
+      req.params.owner,
+      req.params.repo,
+      path,
+      branch,
+    );
+    res.json(files);
+  })
+);
+
+// Link template to repo
+app.post(
+  '/api/templates/:templateId/github/link',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const { connectionId, repoFullName, branch, filePath, syncDirection } = req.body;
+    if (!connectionId || !repoFullName) {
+      throw new ValidationError('connectionId and repoFullName are required');
+    }
+    const link = await linkTemplateToRepo(
+      userId,
+      req.params.templateId,
+      connectionId,
+      repoFullName,
+      branch,
+      filePath,
+      syncDirection,
+    );
+    res.status(201).json(link);
+  })
+);
+
+// Get template repo links
+app.get(
+  '/api/templates/:templateId/github/links',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const links = await getTemplateRepoLinks(userId, req.params.templateId);
+    res.json(links);
+  })
+);
+
+// Unlink template from repo
+app.delete(
+  '/api/templates/:templateId/github/link/:linkId',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const result = await unlinkTemplateFromRepo(
+      userId,
+      req.params.templateId,
+      req.params.linkId,
+    );
+    res.json(result);
+  })
+);
+
+// Push template to GitHub
+app.post(
+  '/api/templates/:templateId/github/push',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const { repoLinkId, commitMessage } = req.body;
+    if (!repoLinkId) {
+      throw new ValidationError('repoLinkId is required');
+    }
+    const result = await pushTemplateToGitHub(
+      userId,
+      req.params.templateId,
+      repoLinkId,
+      commitMessage,
+    );
+    res.json(result);
+  })
+);
+
+// Pull from GitHub into template
+app.post(
+  '/api/templates/:templateId/github/pull',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const { repoLinkId } = req.body;
+    if (!repoLinkId) {
+      throw new ValidationError('repoLinkId is required');
+    }
+    const result = await pullFromGitHub(
+      userId,
+      req.params.templateId,
+      repoLinkId,
+    );
+    res.json(result);
+  })
+);
+
+// Quick push: link + push in one action
+app.post(
+  '/api/templates/:templateId/github/quick-push',
+  asyncHandler(async (req: any, res: any) => {
+    const userId = requireAuth(req);
+    const { connectionId, repoFullName, branch, filePath, commitMessage } = req.body;
+    if (!connectionId || !repoFullName) {
+      throw new ValidationError('connectionId and repoFullName are required');
+    }
+    const result = await quickPushToGitHub(
+      userId,
+      req.params.templateId,
+      connectionId,
+      repoFullName,
+      branch,
+      filePath,
+      commitMessage,
+    );
+    res.json(result);
   })
 );
 
