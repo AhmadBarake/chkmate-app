@@ -17,7 +17,7 @@ const FAQ: React.FC = () => {
         {/* Header */}
         <div className="md:w-1/3">
            <span className="text-purple-400 font-mono text-sm uppercase tracking-wider">Clarity First</span>
-           <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-4">Common Questions</h2>
+           <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mt-2 mb-4">Common Questions</h2>
            <p className="text-gray-400">
                Everything you need to know about how we work, deliver, and support your digital ambition.
            </p>
@@ -32,7 +32,7 @@ const FAQ: React.FC = () => {
                             onClick={() => toggleAccordion(index)}
                             className="w-full flex items-center justify-between p-6 text-left focus:outline-none hover:bg-neutral-900/50 transition-colors"
                         >
-                            <span className={`font-bold text-lg ${activeIndex === index ? 'text-white' : 'text-gray-300'}`}>
+                            <span className={`font-bold text-lg ${activeIndex === index ? 'text-slate-50' : 'text-gray-300'}`}>
                                 {item.question}
                             </span>
                             <div className={`p-2 rounded-full ${activeIndex === index ? 'bg-white text-black' : 'bg-gray-800 text-gray-400'}`}>

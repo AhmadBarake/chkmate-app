@@ -232,7 +232,7 @@ export default function SimpleDeployWizard() {
                     <preset.icon className="w-6 h-6 text-brand-400" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white group-hover:text-brand-300 transition-colors">{preset.name}</h3>
+                    <h3 className="font-bold text-slate-50 group-hover:text-brand-300 transition-colors">{preset.name}</h3>
                     <p className="text-sm text-slate-400 mt-1">{preset.description}</p>
                   </div>
                 </div>
@@ -262,7 +262,7 @@ export default function SimpleDeployWizard() {
                   value={appName}
                   onChange={(e) => setAppName(e.target.value.replace(/[^a-zA-Z0-9-]/g, ''))}
                   placeholder="my-web-app"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-50 placeholder:text-slate-600 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
                 />
                 <p className="text-[11px] text-slate-600 mt-1">Letters, numbers, and hyphens only</p>
               </div>
@@ -275,7 +275,7 @@ export default function SimpleDeployWizard() {
                 <select
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-50 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
                 >
                   {AWS_REGIONS.map(r => (
                     <option key={r.value} value={r.value}>{r.label}</option>
@@ -289,7 +289,7 @@ export default function SimpleDeployWizard() {
                   <select
                     value={selectedCredential}
                     onChange={(e) => setSelectedCredential(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-50 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
                   >
                     <option value="">Generate template only</option>
                     {credentials.map(c => (
@@ -324,27 +324,27 @@ export default function SimpleDeployWizard() {
             className="space-y-6 max-w-lg"
           >
             <div className="bg-slate-900/40 border border-slate-800/50 rounded-2xl p-6 space-y-4">
-              <h3 className="font-bold text-white">Deployment Summary</h3>
+              <h3 className="font-bold text-slate-50">Deployment Summary</h3>
 
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-400">Template</span>
-                  <span className="font-medium text-white">{selectedPreset?.name}</span>
+                  <span className="font-medium text-slate-50">{selectedPreset?.name}</span>
                 </div>
                 <div className="h-px bg-slate-800" />
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-400">App Name</span>
-                  <span className="font-medium text-white">{appName}</span>
+                  <span className="font-medium text-slate-50">{appName}</span>
                 </div>
                 <div className="h-px bg-slate-800" />
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-400">Region</span>
-                  <span className="font-medium text-white">{AWS_REGIONS.find(r => r.value === region)?.label}</span>
+                  <span className="font-medium text-slate-50">{AWS_REGIONS.find(r => r.value === region)?.label}</span>
                 </div>
                 <div className="h-px bg-slate-800" />
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-400">Deployment</span>
-                  <span className="font-medium text-white">
+                  <span className="font-medium text-slate-50">
                     {selectedCredential ? 'Auto-plan after generation' : 'Generate template only'}
                   </span>
                 </div>

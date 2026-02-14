@@ -204,7 +204,7 @@ export default function AuditPanel({
                   </div>
                   
                   <div className="flex items-baseline gap-1 mb-4">
-                    <span className="text-3xl font-bold text-white">${result.costBreakdown.totalMonthly.toFixed(2)}</span>
+                    <span className="text-3xl font-bold text-slate-50">${result.costBreakdown.totalMonthly.toFixed(2)}</span>
                     <span className="text-slate-500 text-xs">/ month</span>
                   </div>
 
@@ -236,7 +236,7 @@ export default function AuditPanel({
                     'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                     activeTab === 'all' 
                       ? 'bg-brand-500/20 text-brand-300' 
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      : 'text-slate-400 hover:text-slate-50 hover:bg-slate-800'
                   )}
                 >
                   All ({result.summary.totalIssues})
@@ -247,7 +247,7 @@ export default function AuditPanel({
                     'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                     activeTab === 'security' 
                       ? 'bg-red-500/20 text-red-300' 
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      : 'text-slate-400 hover:text-slate-50 hover:bg-slate-800'
                   )}
                 >
                   <Lock className="w-3.5 h-3.5" />
@@ -259,7 +259,7 @@ export default function AuditPanel({
                     'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                     activeTab === 'cost' 
                       ? 'bg-emerald-500/20 text-emerald-300' 
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      : 'text-slate-400 hover:text-slate-50 hover:bg-slate-800'
                   )}
                 >
                   <DollarSign className="w-3.5 h-3.5" />

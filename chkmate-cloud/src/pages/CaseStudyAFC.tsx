@@ -19,7 +19,7 @@ const CaseStudyAFC: React.FC = () => {
         </div>
         
         <div className="container mx-auto px-6 relative z-10 pt-20">
-            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-8 transition-colors">
+            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-slate-50 mb-8 transition-colors">
                 <ArrowLeft size={20} className="mr-2" /> Back to Home
             </Link>
             
@@ -32,7 +32,7 @@ const CaseStudyAFC: React.FC = () => {
                     <span className="bg-yellow-900/40 text-yellow-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-yellow-800">EdTech</span>
                     <span className="bg-blue-900/40 text-blue-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-blue-800">Financial Services</span>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 max-w-4xl leading-tight">
+                <h1 className="text-4xl md:text-6xl font-bold text-slate-50 mb-6 max-w-4xl leading-tight">
                     Democratizing Finance with <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-blue-500">Secure E-Learning</span>.
                 </h1>
                 <p className="text-xl text-slate-400 max-w-2xl mb-8">
@@ -51,7 +51,7 @@ const CaseStudyAFC: React.FC = () => {
       <Section className="bg-neutral-950">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                  <h2 className="text-3xl font-bold text-white mb-6">Full-Cycle Digital Consulting</h2>
+                  <h2 className="text-3xl font-bold text-slate-50 mb-6">Full-Cycle Digital Consulting</h2>
                   <p className="text-slate-400 leading-relaxed mb-6">
                       The project scope wasn't just code; it was a strategic overhaul. I partnered with AFC to map out their digital future, moving from legacy systems to a cloud-native ecosystem capable of serving thousands of aspiring investors.
                   </p>
@@ -59,21 +59,21 @@ const CaseStudyAFC: React.FC = () => {
                       <div className="flex items-start">
                           <CheckCircle className="text-yellow-500 mt-1 mr-3 flex-shrink-0" size={20} />
                           <div>
-                              <h4 className="text-white font-bold">Strategic Planning</h4>
+                              <h4 className="text-slate-50 font-bold">Strategic Planning</h4>
                               <p className="text-sm text-slate-400">Defined user personas, learning paths, and monetization strategies for premium courses.</p>
                           </div>
                       </div>
                       <div className="flex items-start">
                           <CheckCircle className="text-yellow-500 mt-1 mr-3 flex-shrink-0" size={20} />
                           <div>
-                              <h4 className="text-white font-bold">Architecture Design</h4>
+                              <h4 className="text-slate-50 font-bold">Architecture Design</h4>
                               <p className="text-sm text-slate-400">Designed a scalable AWS topology to handle spikes during market hours and course launches.</p>
                           </div>
                       </div>
                       <div className="flex items-start">
                           <CheckCircle className="text-yellow-500 mt-1 mr-3 flex-shrink-0" size={20} />
                           <div>
-                              <h4 className="text-white font-bold">End-to-End Development</h4>
+                              <h4 className="text-slate-50 font-bold">End-to-End Development</h4>
                               <p className="text-sm text-slate-400">Lead the full-stack development, ensuring pixel-perfect UI implementation and robust backend security.</p>
                           </div>
                       </div>
@@ -86,22 +86,22 @@ const CaseStudyAFC: React.FC = () => {
                    <div className="grid grid-cols-2 gap-6 text-center">
                        <div className="p-4 bg-slate-950 rounded-xl border border-gray-800">
                            <Users className="mx-auto text-blue-400 mb-2" size={32} />
-                           <div className="text-2xl font-bold text-white">10k+</div>
+                           <div className="text-2xl font-bold text-slate-50">10k+</div>
                            <div className="text-xs text-slate-400 uppercase tracking-wider">Active Students</div>
                        </div>
                        <div className="p-4 bg-slate-950 rounded-xl border border-gray-800">
                            <PlayCircle className="mx-auto text-yellow-400 mb-2" size={32} />
-                           <div className="text-2xl font-bold text-white">500+</div>
+                           <div className="text-2xl font-bold text-slate-50">500+</div>
                            <div className="text-xs text-slate-400 uppercase tracking-wider">Video Hours</div>
                        </div>
                        <div className="p-4 bg-slate-950 rounded-xl border border-gray-800">
                            <Zap className="mx-auto text-green-400 mb-2" size={32} />
-                           <div className="text-2xl font-bold text-white">99.9%</div>
+                           <div className="text-2xl font-bold text-slate-50">99.9%</div>
                            <div className="text-xs text-slate-400 uppercase tracking-wider">Uptime</div>
                        </div>
                        <div className="p-4 bg-slate-950 rounded-xl border border-gray-800">
                            <Globe className="mx-auto text-brand-400 mb-2" size={32} />
-                           <div className="text-2xl font-bold text-white">Global</div>
+                           <div className="text-2xl font-bold text-slate-50">Global</div>
                            <div className="text-xs text-slate-400 uppercase tracking-wider">Reach</div>
                        </div>
                    </div>
@@ -113,7 +113,7 @@ const CaseStudyAFC: React.FC = () => {
       <Section className="bg-slate-950">
           <div className="mb-16 text-center">
               <span className="text-blue-400 font-mono text-sm uppercase tracking-wider">The Core Engine</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">Secure, Adaptive Video Streaming</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mt-2 mb-6">Secure, Adaptive Video Streaming</h2>
               <p className="text-slate-400 max-w-3xl mx-auto">
                   We built a Netflix-grade streaming pipeline to protect intellectual property while delivering buffer-free education on any device.
               </p>
@@ -125,7 +125,7 @@ const CaseStudyAFC: React.FC = () => {
                   <div className="w-12 h-12 bg-blue-900/20 rounded-lg flex items-center justify-center mb-6 text-blue-400">
                       <Lock size={24} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">DRM & Signed Cookies</h3>
+                  <h3 className="text-xl font-bold text-slate-50 mb-3">DRM & Signed Cookies</h3>
                   <p className="text-slate-400 text-sm">
                       Content is locked behind AWS CloudFront Signed Cookies. Direct S3 access is blocked, preventing unauthorized downloads or sharing of paid course material.
                   </p>
@@ -136,7 +136,7 @@ const CaseStudyAFC: React.FC = () => {
                   <div className="w-12 h-12 bg-yellow-900/20 rounded-lg flex items-center justify-center mb-6 text-yellow-400">
                       <BarChart3 size={24} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">Adaptive Bitrate (HLS)</h3>
+                  <h3 className="text-xl font-bold text-slate-50 mb-3">Adaptive Bitrate (HLS)</h3>
                   <p className="text-slate-400 text-sm">
                       Raw uploads are transcoded via AWS MediaConvert into HLS playlists (360p to 4k). The player automatically adjusts quality based on the user's bandwidth.
                   </p>
@@ -147,7 +147,7 @@ const CaseStudyAFC: React.FC = () => {
                   <div className="w-12 h-12 bg-green-900/20 rounded-lg flex items-center justify-center mb-6 text-green-400">
                       <BookOpen size={24} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">Progress Tracking</h3>
+                  <h3 className="text-xl font-bold text-slate-50 mb-3">Progress Tracking</h3>
                   <p className="text-slate-400 text-sm">
                       Granular analytics track user engagement. Video timestamps, quiz scores, and completion certificates are synced in real-time to the student dashboard.
                   </p>
@@ -174,7 +174,7 @@ const CaseStudyAFC: React.FC = () => {
                                </div>
                                <div className="bg-green-900/20 border border-green-900/50 p-3 rounded text-center w-24">
                                    <Database size={20} className="text-green-500 mx-auto mb-1" />
-                                   <div className="text-[10px] text-white">S3 Raw</div>
+                                   <div className="text-[10px] text-slate-50">S3 Raw</div>
                                </div>
                            </div>
 
@@ -186,7 +186,7 @@ const CaseStudyAFC: React.FC = () => {
                            <div className="bg-brand-900/10 border border-brand-500/30 p-4 rounded text-center mx-auto w-3/4">
                                <div className="flex items-center justify-center space-x-2 mb-2">
                                   <Cpu size={20} className="text-brand-400" />
-                                  <span className="text-sm font-bold text-white">AWS MediaConvert</span>
+                                  <span className="text-sm font-bold text-slate-50">AWS MediaConvert</span>
                                </div>
                                <div className="text-[10px] text-slate-400">Transcode to HLS • Generate Thumbnails</div>
                            </div>
@@ -199,7 +199,7 @@ const CaseStudyAFC: React.FC = () => {
                            <div className="flex items-center justify-between">
                                <div className="bg-blue-900/20 border border-blue-900/50 p-3 rounded text-center w-24">
                                    <Cloud size={20} className="text-blue-500 mx-auto mb-1" />
-                                   <div className="text-[10px] text-white">CloudFront</div>
+                                   <div className="text-[10px] text-slate-50">CloudFront</div>
                                </div>
                                <div className="h-px bg-gray-700 flex-1 mx-4 relative">
                                     <div className="absolute right-0 -top-1 w-2 h-2 bg-gray-700 rotate-45"></div>
@@ -217,7 +217,7 @@ const CaseStudyAFC: React.FC = () => {
                </div>
                
                <div className="order-1 md:order-2">
-                   <h2 className="text-3xl font-bold text-white mb-6">Cloud-Native Reliability</h2>
+                   <h2 className="text-3xl font-bold text-slate-50 mb-6">Cloud-Native Reliability</h2>
                    <p className="text-slate-400 leading-relaxed mb-6">
                        Scaling to serve video/heavy content requires robust infrastructure. We utilized the full power of AWS to ensure 99.9% availability and low latency streaming globally.
                    </p>
@@ -243,17 +243,17 @@ const CaseStudyAFC: React.FC = () => {
       <Section className="bg-slate-950">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                  <h2 className="text-3xl font-bold text-white mb-6">Experience Redesign</h2>
+                  <h2 className="text-3xl font-bold text-slate-50 mb-6">Experience Redesign</h2>
                   <p className="text-slate-400 leading-relaxed mb-6">
                       Finance can be intimidating. We redesigned the AFC experience to be welcoming, modern, and trustworthy. We moved away from dense, text-heavy layouts to a card-based, visual hierarchy that guides users through their learning journey.
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 border border-gray-800 rounded bg-neutral-900">
-                          <h4 className="text-white font-bold mb-1">Mobile First</h4>
+                          <h4 className="text-slate-50 font-bold mb-1">Mobile First</h4>
                           <p className="text-xs text-slate-400">Fully responsive design optimization for learning on the go.</p>
                       </div>
                       <div className="p-4 border border-gray-800 rounded bg-neutral-900">
-                          <h4 className="text-white font-bold mb-1">Dark Mode</h4>
+                          <h4 className="text-slate-50 font-bold mb-1">Dark Mode</h4>
                           <p className="text-xs text-slate-400">Professional, trading-terminal inspired aesthetic.</p>
                       </div>
                   </div>

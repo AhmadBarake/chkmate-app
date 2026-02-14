@@ -117,7 +117,7 @@ export default function SmartChat() {
              <Bot className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white flex items-center gap-2">
+            <h1 className="text-xl font-bold text-slate-50 flex items-center gap-2">
               Smart Chat
               <span className="text-[10px] bg-brand-500 text-white px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">Beta</span>
             </h1>
@@ -131,7 +131,7 @@ export default function SmartChat() {
              className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 hover:border-slate-700 transition-colors"
            >
              <span className="text-slate-500">Context:</span>
-             <span className="font-medium text-white max-w-[150px] truncate">
+             <span className="font-medium text-slate-50 max-w-[150px] truncate">
                {selectedProject ? selectedProject.name : "Global (No Project)"}
              </span>
              <ChevronDown className="w-4 h-4 text-slate-500" />

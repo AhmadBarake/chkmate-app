@@ -4,6 +4,7 @@ import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, useUser } from '@
 
 // Context Providers
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { DashboardModeProvider, useDashboardMode } from './context/DashboardModeContext';
 
 // Components
@@ -111,6 +112,7 @@ if (!clerkPubKey) {
 function App() {
   return (
     <ErrorBoundary>
+      <ThemeProvider>
       <Router>
         <ClerkProvider publishableKey={clerkPubKey}>
           <ToastProvider>
@@ -200,6 +202,7 @@ function App() {
           </ToastProvider>
         </ClerkProvider>
       </Router>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

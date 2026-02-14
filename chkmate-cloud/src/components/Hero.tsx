@@ -5,7 +5,7 @@ import ThreeBackground from './ThreeBackground';
 
 const Hero: React.FC = () => {
   return (
-    <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-black text-white">
+    <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-black text-slate-50">
       {/* Three.js Background */}
       <ThreeBackground />
 
@@ -54,7 +54,7 @@ const Hero: React.FC = () => {
           </a>
           <a
             href="#contact"
-            className="px-8 py-4 border border-white text-white font-bold text-lg rounded-none hover:bg-white hover:text-black transition-colors w-full sm:w-auto"
+            className="px-8 py-4 border border-white text-slate-50 font-bold text-lg rounded-none hover:bg-white hover:text-black transition-colors w-full sm:w-auto"
           >
             Start Project
           </a>

@@ -104,7 +104,7 @@ export default function ViolationCard({
               {config.label}
             </span>
           </div>
-          <h3 className="font-medium text-white mt-1 truncate">{policyName}</h3>
+          <h3 className="font-medium text-slate-50 mt-1 truncate">{policyName}</h3>
         </div>
 
         <div className="flex items-center gap-2">

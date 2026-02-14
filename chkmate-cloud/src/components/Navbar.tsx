@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
           
           {/* Logo */}
           <div className="flex-shrink-0 cursor-pointer" onClick={handleLogoClick}>
-            <span className="text-2xl font-bold tracking-tighter text-white font-mono">
+            <span className="text-2xl font-bold tracking-tighter text-slate-50 font-mono">
               chkmate<span className="text-gray-500">_</span>
             </span>
           </div>
@@ -47,7 +47,7 @@ const Navbar: React.FC = () => {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:tracking-wide cursor-pointer"
+                  className="text-gray-300 hover:text-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:tracking-wide cursor-pointer"
                 >
                   {link.name}
                 </a>
@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
               </div>
 
               <span 
-                className="ml-4 px-5 py-2 border border-white/20 text-white/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none"
+                className="ml-4 px-5 py-2 border border-white/20 text-slate-50/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none"
               >
                 v1.41 (Closed Beta)
               </span>
@@ -71,7 +71,7 @@ const Navbar: React.FC = () => {
           <div className="-mr-2 flex md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-slate-50 hover:bg-gray-800 focus:outline-none"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleLinkClick(e, link.href)}
-                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
+                className="text-gray-300 hover:text-slate-50 block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
               >
                 {link.name}
               </a>
@@ -98,7 +98,7 @@ const Navbar: React.FC = () => {
                  <UserButton afterSignOutUrl="/" />
                </div>
              </SignedIn>
-             <div className="block w-full text-center mt-4 px-5 py-3 border border-white/20 text-white/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none">
+             <div className="block w-full text-center mt-4 px-5 py-3 border border-white/20 text-slate-50/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none">
                 v1.41 (Closed Beta)
              </div>
           </div>

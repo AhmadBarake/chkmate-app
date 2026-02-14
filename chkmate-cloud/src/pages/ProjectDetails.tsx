@@ -137,9 +137,9 @@ export default function ProjectDetails() {
           </Link>
           <div>
             <div className="flex items-center gap-2 mb-2 text-xs text-slate-500">
-              <Link to="/projects" className="hover:text-white transition-colors">Projects</Link>
+              <Link to="/projects" className="hover:text-slate-50 transition-colors">Projects</Link>
               <span className="text-slate-700">/</span>
-              <span className="text-white font-medium">{project.name}</span>
+              <span className="text-slate-50 font-medium">{project.name}</span>
             </div>
             <div className="flex items-center gap-3 mb-1">
                <h2 className="text-4xl font-black tracking-tight">{project.name}</h2>

@@ -2,8 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme CSS Custom Properties
+ *
+ * Light mode (default): slate scale is inverted so existing dark-theme
+ * utility classes render as a clean light UI.
+ * Dark mode (.dark on <html>): original Tailwind slate values.
+ */
+
 @layer base {
+  /* ── Light mode (default) ─────────────────────────── */
+  :root {
+    --slate-50:  2 6 23;          /* ← original 950 */
+    --slate-100: 15 23 42;        /* ← original 900 */
+    --slate-200: 30 41 59;        /* ← original 800 */
+    --slate-300: 51 65 85;        /* ← original 700 */
+    --slate-400: 71 85 105;       /* ← original 600 */
+    --slate-500: 100 116 139;     /* midpoint stays */
+    --slate-600: 148 163 184;     /* ← original 400 */
+    --slate-700: 203 213 225;     /* ← original 300 */
+    --slate-800: 226 232 240;     /* ← original 200 */
+    --slate-900: 241 245 249;     /* ← original 100 */
+    --slate-950: 248 250 252;     /* ← original 50  */
+    color-scheme: light;
+  }
+
+  /* ── Dark mode ────────────────────────────────────── */
+  .dark {
+    --slate-50:  248 250 252;
+    --slate-100: 241 245 249;
+    --slate-200: 226 232 240;
+    --slate-300: 203 213 225;
+    --slate-400: 148 163 184;
+    --slate-500: 100 116 139;
+    --slate-600: 71 85 105;
+    --slate-700: 51 65 85;
+    --slate-800: 30 41 59;
+    --slate-900: 15 23 42;
+    --slate-950: 2 6 23;
+    color-scheme: dark;
+  }
+
   body {
     @apply bg-slate-950 text-slate-100 antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }

@@ -19,7 +19,7 @@ const CaseStudyLumi: React.FC = () => {
         </div>
         
         <div className="container mx-auto px-6 relative z-10 pt-20">
-            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-8 transition-colors">
+            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-slate-50 mb-8 transition-colors">
                 <ArrowLeft size={20} className="mr-2" /> Back to Home
             </Link>
             
@@ -32,7 +32,7 @@ const CaseStudyLumi: React.FC = () => {
                     <span className="bg-brand-900/40 text-brand-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-brand-800">Artificial Intelligence</span>
                     <span className="bg-cyan-900/40 text-cyan-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-cyan-800">HealthTech Security</span>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 max-w-4xl leading-tight">
+                <h1 className="text-4xl md:text-6xl font-bold text-slate-50 mb-6 max-w-4xl leading-tight">
                     Intelligent Care with <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-300">Privacy-First AI</span>.
                 </h1>
                 <p className="text-xl text-slate-400 max-w-2xl mb-8">
@@ -85,12 +85,12 @@ const CaseStudyLumi: React.FC = () => {
                           <div className="grid grid-cols-2 gap-4">
                               <div className="bg-brand-900/10 border border-brand-500/30 p-4 rounded text-center">
                                   <Brain size={24} className="text-brand-400 mx-auto mb-2" />
-                                  <div className="text-sm font-bold text-white">Gemini Pro</div>
+                                  <div className="text-sm font-bold text-slate-50">Gemini Pro</div>
                                   <div className="text-[10px] text-slate-400">Complex Reasoning & Insight Generation</div>
                               </div>
                               <div className="bg-cyan-900/10 border border-cyan-500/30 p-4 rounded text-center">
                                   <Cpu size={24} className="text-cyan-400 mx-auto mb-2" />
-                                  <div className="text-sm font-bold text-white">Custom LLM</div>
+                                  <div className="text-sm font-bold text-slate-50">Custom LLM</div>
                                   <div className="text-[10px] text-slate-400">Fine-tuned on Clinical Methodology</div>
                               </div>
                           </div>
@@ -102,7 +102,7 @@ const CaseStudyLumi: React.FC = () => {
              </div>
              
              <div className="order-1 md:order-2">
-                 <h2 className="text-3xl font-bold text-white mb-6">Hybrid Intelligence Engine</h2>
+                 <h2 className="text-3xl font-bold text-slate-50 mb-6">Hybrid Intelligence Engine</h2>
                  <p className="text-slate-400 leading-relaxed mb-6">
                      Lumi isn't just a wrapper. We engineered a dual-model system. <strong>Gemini</strong> handles broad reasoning and complex summarization, while a lightweight <strong>Custom LLM</strong>, fine-tuned on anonymized clinical datasets, handles domain-specific terminology and structured data extraction.
                  </p>
@@ -124,7 +124,7 @@ const CaseStudyLumi: React.FC = () => {
       <Section className="bg-neutral-950 border-y border-neutral-900">
           <div className="text-center mb-16">
               <span className="text-red-400 font-mono text-sm uppercase tracking-wider">HIPAA Compliance</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">Zero-Trust Privacy Pipeline</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mt-2 mb-6">Zero-Trust Privacy Pipeline</h2>
               <p className="text-slate-400 max-w-3xl mx-auto">
                   Patient trust is paramount. We implemented a rigorous anonymization pipeline that ensures no Personally Identifiable Information (PII) ever reaches the LLM providers.
               </p>
@@ -137,7 +137,7 @@ const CaseStudyLumi: React.FC = () => {
                        <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-gray-700 shadow-lg">
                            <FileText size={24} className="text-slate-400" />
                        </div>
-                       <h4 className="text-white text-sm font-bold">Raw Input</h4>
+                       <h4 className="text-slate-50 text-sm font-bold">Raw Input</h4>
                        <p className="text-[10px] text-slate-400 mt-1">Session Transcript</p>
                    </div>
                    
@@ -151,7 +151,7 @@ const CaseStudyLumi: React.FC = () => {
                        <div className="w-16 h-16 bg-red-900/10 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-red-900/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
                            <EyeOff size={24} className="text-red-500" />
                        </div>
-                       <h4 className="text-white text-sm font-bold">PII Scrubbing</h4>
+                       <h4 className="text-slate-50 text-sm font-bold">PII Scrubbing</h4>
                        <p className="text-[10px] text-slate-400 mt-1">NER + Pattern Match</p>
                    </div>
 
@@ -165,7 +165,7 @@ const CaseStudyLumi: React.FC = () => {
                        <div className="w-16 h-16 bg-blue-900/10 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-blue-900/50 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
                            <Brain size={24} className="text-blue-500" />
                        </div>
-                       <h4 className="text-white text-sm font-bold">LLM Processing</h4>
+                       <h4 className="text-slate-50 text-sm font-bold">LLM Processing</h4>
                        <p className="text-[10px] text-slate-400 mt-1">Anonymized Context</p>
                    </div>
                    
@@ -187,20 +187,20 @@ const CaseStudyLumi: React.FC = () => {
                        <Cloud className="mr-3" />
                        <span className="uppercase tracking-widest font-mono text-sm">Cloud Infrastructure</span>
                    </div>
-                   <h3 className="text-3xl font-bold text-white mb-6">High Availability & Cost Efficiency</h3>
+                   <h3 className="text-3xl font-bold text-slate-50 mb-6">High Availability & Cost Efficiency</h3>
                    <p className="text-slate-400 leading-relaxed mb-6">
                        Deployed on AWS using <strong>Terraform</strong> for reproducible infrastructure. The architecture balances reliability with startup-friendly costs.
                    </p>
                    
                    <div className="space-y-4">
                        <div className="p-4 border border-gray-800 rounded bg-neutral-900 hover:border-orange-500/50 transition-colors">
-                           <h4 className="text-white font-bold flex items-center mb-2"><Layers size={16} className="text-orange-400 mr-2" /> Multi-AZ ECS Fargate</h4>
+                           <h4 className="text-slate-50 font-bold flex items-center mb-2"><Layers size={16} className="text-orange-400 mr-2" /> Multi-AZ ECS Fargate</h4>
                            <p className="text-xs text-slate-400">
                                Compute workload distributed across 3 Availability Zones for fault tolerance. Utilizing <strong>Fargate Spot</strong> integration for 70% cost reduction on non-critical tasks.
                            </p>
                        </div>
                        <div className="p-4 border border-gray-800 rounded bg-neutral-900 hover:border-blue-500/50 transition-colors">
-                           <h4 className="text-white font-bold flex items-center mb-2"><Database size={16} className="text-blue-400 mr-2" /> Aurora Serverless V2</h4>
+                           <h4 className="text-slate-50 font-bold flex items-center mb-2"><Database size={16} className="text-blue-400 mr-2" /> Aurora Serverless V2</h4>
                            <p className="text-xs text-slate-400">
                                PostgreSQL database that instantly scales compute capacity to match demand, dropping to minimum ACUs during off-hours to save costs.
                            </p>
@@ -210,16 +210,16 @@ const CaseStudyLumi: React.FC = () => {
 
                <div>
                    <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-xl">
-                       <h3 className="text-xl font-bold text-white mb-6 flex items-center"><Terminal size={20} className="mr-3 text-green-400"/> IaC & Pipeline</h3>
+                       <h3 className="text-xl font-bold text-slate-50 mb-6 flex items-center"><Terminal size={20} className="mr-3 text-green-400"/> IaC & Pipeline</h3>
                        
                        <div className="space-y-6 relative">
                            {/* Pipeline Visual */}
                            <div className="absolute left-3.5 top-2 bottom-2 w-0.5 bg-gray-800"></div>
 
                            <div className="flex items-start relative pl-10">
-                               <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700 font-mono text-xs text-white">1</div>
+                               <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700 font-mono text-xs text-slate-50">1</div>
                                <div>
-                                   <div className="text-white font-bold text-sm">Terraform Plan</div>
+                                   <div className="text-slate-50 font-bold text-sm">Terraform Plan</div>
                                    <div className="text-xs text-slate-400 mt-1">Infrastructure changes visualized</div>
                                </div>
                            </div>
@@ -227,7 +227,7 @@ const CaseStudyLumi: React.FC = () => {
                            <div className="flex items-start relative pl-10">
                                <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-900/20 flex items-center justify-center border border-blue-900/50 font-mono text-xs text-blue-400">2</div>
                                <div>
-                                   <div className="text-white font-bold text-sm">CI/CD (GitHub Actions)</div>
+                                   <div className="text-slate-50 font-bold text-sm">CI/CD (GitHub Actions)</div>
                                    <div className="text-xs text-slate-400 mt-1">Lint → Test → Build Container</div>
                                </div>
                            </div>
@@ -235,7 +235,7 @@ const CaseStudyLumi: React.FC = () => {
                            <div className="flex items-start relative pl-10">
                                <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-green-900/20 flex items-center justify-center border border-green-900/50 font-mono text-xs text-green-400">3</div>
                                <div>
-                                   <div className="text-white font-bold text-sm">Terraform Apply</div>
+                                   <div className="text-slate-50 font-bold text-sm">Terraform Apply</div>
                                    <div className="text-xs text-slate-400 mt-1">Atomic state update & Rollout</div>
                                </div>
                            </div>
@@ -252,7 +252,7 @@ const CaseStudyLumi: React.FC = () => {
                   <Monitor size={20} className="text-brand-400" />
                   <span className="text-brand-400 font-mono text-sm uppercase tracking-wider">Product Engineering</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Built for Focus & Scale</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mb-6">Built for Focus & Scale</h2>
               <p className="text-slate-400 max-w-3xl">
                   We designed Lumi to disappear. The interface is intentionally minimalist to reduce cognitive load for therapists during sessions, while the backend is architected for massive concurrent throughput.
               </p>
@@ -271,7 +271,7 @@ const CaseStudyLumi: React.FC = () => {
                               <Layout size={24} />
                           </div>
                           
-                          <h3 className="text-xl font-bold text-white mb-4">Clinical "Zen" UI</h3>
+                          <h3 className="text-xl font-bold text-slate-50 mb-4">Clinical "Zen" UI</h3>
                           <ul className="space-y-3 text-slate-400 text-sm">
                               <li className="flex items-start">
                                   <span className="text-brand-500 mr-2">●</span>
@@ -302,7 +302,7 @@ const CaseStudyLumi: React.FC = () => {
                               <Smartphone size={24} />
                           </div>
                           
-                          <h3 className="text-xl font-bold text-white mb-4">Frontend Engineering</h3>
+                          <h3 className="text-xl font-bold text-slate-50 mb-4">Frontend Engineering</h3>
                           <ul className="space-y-3 text-slate-400 text-sm">
                               <li className="flex items-start">
                                   <span className="text-cyan-500 mr-2">●</span>
@@ -333,7 +333,7 @@ const CaseStudyLumi: React.FC = () => {
                               <Globe size={24} />
                           </div>
                           
-                          <h3 className="text-xl font-bold text-white mb-4">Backend Architecture</h3>
+                          <h3 className="text-xl font-bold text-slate-50 mb-4">Backend Architecture</h3>
                           <ul className="space-y-3 text-slate-400 text-sm">
                               <li className="flex items-start">
                                   <span className="text-green-500 mr-2">●</span>

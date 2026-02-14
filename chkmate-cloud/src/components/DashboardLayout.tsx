@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useToastActions } from '../context/ToastContext';
 import { useDashboardMode } from '../context/DashboardModeContext';
+import { useTheme } from '../context/ThemeContext';
 import { useClerk, useUser, useAuth } from '@clerk/clerk-react';
 import {
   LayoutDashboard,
@@ -24,6 +25,8 @@ import {
   ChevronRight,
   MessageSquare,
   Github,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { CreditIndicator } from './CreditBalance';
@@ -115,6 +118,7 @@ export default function DashboardLayout() {
   const location = useLocation();
   const toast = useToastActions();
   const { mode, setMode } = useDashboardMode();
+  const { theme, toggleTheme } = useTheme();
   const [agenticEnabled, setAgenticEnabled] = useState(false);
   const [togglingAgentic, setTogglingAgentic] = useState(false);
 
@@ -183,7 +187,7 @@ export default function DashboardLayout() {
       <aside className="w-64 border-r border-slate-800/50 flex flex-col bg-slate-950/80 backdrop-blur-xl z-20">
         <div className="p-6">
           <div className="flex items-center gap-2 group cursor-pointer" onClick={() => navigate('/dashboard')}>
-            <h1 className="text-2xl font-bold tracking-tighter text-white font-mono flex items-center gap-1">
+            <h1 className="text-2xl font-bold tracking-tighter text-slate-50 font-mono flex items-center gap-1">
                 chkmate<span className="text-brand-500 group-hover:animate-pulse">_</span>
             </h1>
           </div>
@@ -209,7 +213,7 @@ export default function DashboardLayout() {
                         'w-full flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-all duration-300 group relative overflow-hidden',
                         isActive
                           ? 'bg-brand-500/10 text-brand-400 font-bold shadow-[0_0_20px_rgba(14,165,233,0.15)] border border-brand-500/20'
-                          : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
+                          : 'text-slate-400 hover:text-slate-50 hover:bg-slate-900/50'
                       )
                     }
                   >
@@ -234,7 +238,7 @@ export default function DashboardLayout() {
                 'w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all text-sm group',
                 agenticEnabled
                   ? 'bg-violet-500/10 border border-violet-500/30 text-violet-300'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
+                  : 'text-slate-400 hover:text-slate-50 hover:bg-slate-900/50'
               )}
             >
               <div className="flex items-center gap-2.5">
@@ -321,12 +325,21 @@ export default function DashboardLayout() {
               </button>
             </div>
 
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-slate-400 hover:text-slate-50 hover:bg-slate-900/50 transition-all"
+              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            >
+              {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            </button>
+
             <div className="h-8 w-[1px] bg-slate-800 mx-2" />
             <CreditIndicator />
             <div className="flex items-center gap-3 pl-2 group cursor-pointer">
               <div className="text-right flex flex-col items-end">
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Account</span>
-                <span className="text-xs font-bold text-white group-hover:text-brand-400 transition-colors">{userName}</span>
+                <span className="text-xs font-bold text-slate-50 group-hover:text-brand-400 transition-colors">{userName}</span>
               </div>
               {userAvatar ? (
                 <img

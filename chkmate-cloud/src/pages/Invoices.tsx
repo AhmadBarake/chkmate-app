@@ -10,7 +10,7 @@ export default function Invoices() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
          <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-50 flex items-center gap-2">
               <FileText className="w-6 h-6 text-brand-400" />
               Invoices
             </h1>
@@ -24,10 +24,10 @@ export default function Invoices() {
          <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 relative">
             <FileText className="w-8 h-8 text-slate-500" />
             <div className="absolute -right-2 -bottom-2 w-6 h-6 bg-brand-500 rounded-full flex items-center justify-center border border-slate-900">
-               <Plus className="w-3 h-3 text-white" />
+               <Plus className="w-3 h-3 text-slate-50" />
             </div>
          </div>
-         <h3 className="text-xl font-bold text-white mb-2">No Invoices Yet</h3>
+         <h3 className="text-xl font-bold text-slate-50 mb-2">No Invoices Yet</h3>
          <p className="text-slate-400 max-w-sm text-center mb-8">
             You haven't been billed for any services yet. Once you upgrade or incur charges, your invoices will appear here.
          </p>

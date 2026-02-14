@@ -126,7 +126,7 @@ export default function DeploymentCredentials() {
             exit={{ opacity: 0, y: -10 }}
             className="bg-slate-900/70 border border-violet-500/20 rounded-xl p-6 space-y-5"
           >
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <h3 className="text-lg font-bold text-slate-50 flex items-center gap-2">
               <Shield className="w-5 h-5 text-violet-400" />
               Connect Deployment Account
             </h3>
@@ -172,7 +172,7 @@ export default function DeploymentCredentials() {
                     value={newName}
                     onChange={e => setNewName(e.target.value)}
                     placeholder="e.g., Production Account"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:border-violet-500 focus:outline-none"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-50 placeholder:text-slate-600 focus:border-violet-500 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -182,7 +182,7 @@ export default function DeploymentCredentials() {
                     value={newRoleArn}
                     onChange={e => setNewRoleArn(e.target.value)}
                     placeholder="arn:aws:iam::123456789012:role/ChkmateDeploymentRole"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:border-violet-500 focus:outline-none font-mono text-xs"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-50 placeholder:text-slate-600 focus:border-violet-500 focus:outline-none font-mono text-xs"
                   />
                 </div>
               </div>
@@ -248,7 +248,7 @@ export default function DeploymentCredentials() {
               </div>
 
               <div className="flex-1">
-                <p className="text-sm font-medium text-white">{cred.name}</p>
+                <p className="text-sm font-medium text-slate-50">{cred.name}</p>
                 <div className="flex items-center gap-3 text-xs text-slate-500">
                   <span className="uppercase font-bold">{cred.provider}</span>
                   <span>{cred._count?.deployments || 0} deployments</span>

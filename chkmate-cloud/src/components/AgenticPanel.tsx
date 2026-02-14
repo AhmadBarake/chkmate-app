@@ -290,7 +290,7 @@ export default function AgenticPanel({
               {/* Bulk actions */}
               <div className="flex items-center justify-between">
                 <p className="text-sm text-slate-400">
-                  <span className="text-white font-medium">{acceptedCount}</span> of {totalChanges} changes selected
+                  <span className="text-slate-50 font-medium">{acceptedCount}</span> of {totalChanges} changes selected
                 </p>
                 <div className="flex gap-2">
                   <button
@@ -396,7 +396,7 @@ export default function AgenticPanel({
               <div className="p-4 rounded-full bg-emerald-500/10 mb-4">
                 <CheckCircle className="w-12 h-12 text-emerald-400" />
               </div>
-              <h3 className="text-lg font-medium text-white mb-2">
+              <h3 className="text-lg font-medium text-slate-50 mb-2">
                 Changes Applied Successfully
               </h3>
               <p className="text-sm text-slate-400 mb-6">
@@ -510,7 +510,7 @@ function ChangeCard({
               : 'border-slate-600 hover:border-slate-400'
           )}
         >
-          {isAccepted && <Check className="w-3 h-3 text-white" />}
+          {isAccepted && <Check className="w-3 h-3 text-slate-50" />}
         </button>
 
         {/* Info */}

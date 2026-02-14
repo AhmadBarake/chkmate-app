@@ -192,7 +192,7 @@ const statusConfig: Record<string, { label: string; color: string }> = {
 
 export default function Documentation() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white selection:bg-brand-500/30 font-sans">
+    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-brand-500/30 font-sans">
       <Navbar />
 
       <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
@@ -238,7 +238,7 @@ export default function Documentation() {
                   >
                     <span className={`absolute -left-[39px] top-1 h-5 w-5 rounded-full border-4 border-slate-950 ${entry.dotColor}`} />
                     <div className="mb-2 flex items-center gap-3">
-                      <h3 className="text-xl font-bold text-white">{entry.version}</h3>
+                      <h3 className="text-xl font-bold text-slate-50">{entry.version}</h3>
                       {entry.label && (
                         <span className={`text-xs font-mono px-2 py-0.5 rounded border ${entry.labelColor}`}>
                           {entry.label}

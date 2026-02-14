@@ -9,7 +9,7 @@ const Partners: React.FC = () => {
         <div className="flex flex-wrap justify-center gap-8 md:gap-16 items-center opacity-70 grayscale">
             {/* Using text representation for reliability, but styled to look like logos */}
             {PARTNERS.map((partner, index) => (
-                <span key={index} className="text-lg md:text-xl font-bold text-gray-300 hover:text-white transition-colors cursor-default">
+                <span key={index} className="text-lg md:text-xl font-bold text-gray-300 hover:text-slate-50 transition-colors cursor-default">
                     {partner}
                 </span>
             ))}

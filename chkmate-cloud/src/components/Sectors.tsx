@@ -7,7 +7,7 @@ const Sectors: React.FC = () => {
     <Section id="sectors" className="bg-neutral-900 border-y border-neutral-800">
       <div className="text-center mb-16 max-w-3xl mx-auto">
           <span className="text-emerald-400 font-mono text-sm tracking-wider uppercase">Industries</span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mt-2 mb-6">
             Specialized Solutions for <br />
             <span className="text-gray-500">High-Stakes Sectors.</span>
           </h2>
@@ -19,7 +19,7 @@ const Sectors: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {SECTORS.map((sector, index) => (
           <div key={index} className="flex flex-col p-6 bg-black border border-gray-800 hover:border-gray-600 transition-all duration-300 group">
-            <div className="flex items-center mb-4 text-white group-hover:text-gray-300 transition-colors">
+            <div className="flex items-center mb-4 text-slate-50 group-hover:text-gray-300 transition-colors">
               <div className="p-3 bg-neutral-900 rounded-lg mr-4 group-hover:bg-white group-hover:text-black transition-colors duration-300">
                 <sector.icon size={24} strokeWidth={2} />
               </div>
@@ -31,7 +31,7 @@ const Sectors: React.FC = () => {
       </div>
       
       <div className="text-center mt-12">
-        <a href="#contact" className="inline-flex items-center text-white font-bold border-b border-white pb-1 hover:text-gray-300 transition-colors">
+        <a href="#contact" className="inline-flex items-center text-slate-50 font-bold border-b border-white pb-1 hover:text-gray-300 transition-colors">
             Discuss your industry needs
         </a>
       </div>

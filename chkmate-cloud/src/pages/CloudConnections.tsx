@@ -347,7 +347,7 @@ export default function CloudConnections() {
                           type="text"
                           value={connectionName}
                           onChange={e => setConnectionName(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:border-brand-500 outline-none"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-50 focus:border-brand-500 outline-none"
                           placeholder="e.g. Production AWS"
                           required
                         />
@@ -360,7 +360,7 @@ export default function CloudConnections() {
                             type="text"
                             value={roleArn}
                             onChange={e => setRoleArn(e.target.value)}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:border-brand-500 outline-none font-mono text-sm"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-50 focus:border-brand-500 outline-none font-mono text-sm"
                             placeholder="arn:aws:iam::123456789012:role/ChkmateRole"
                             required
                           />
@@ -415,7 +415,7 @@ export default function CloudConnections() {
                         <Cloud className="w-6 h-6 text-[#FF9900]" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-white leading-tight">{conn.name}</h3>
+                        <h3 className="font-bold text-slate-50 leading-tight">{conn.name}</h3>
                         <div className="flex items-center gap-2 mt-1">
                           <span className={`w-2 h-2 rounded-full ${
                             conn.status === 'ACTIVE' ? 'bg-emerald-500' : 
@@ -457,7 +457,7 @@ export default function CloudConnections() {
                     <select
                       value={selectedRegions[conn.id] || 'us-east-1'}
                       onChange={(e) => setSelectedRegions(prev => ({ ...prev, [conn.id]: e.target.value }))}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-brand-500 outline-none"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-slate-50 focus:border-brand-500 outline-none"
                     >
                       {AWS_REGIONS.map(r => (
                         <option key={r.value} value={r.value}>{r.label}</option>

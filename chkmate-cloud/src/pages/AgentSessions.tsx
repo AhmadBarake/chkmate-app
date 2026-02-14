@@ -127,7 +127,7 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
         <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{label}</span>
         {icon}
       </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
+      <p className="text-2xl font-bold text-slate-50">{value}</p>
     </div>
   );
 }
@@ -155,7 +155,7 @@ function SessionCard({ session, index }: { session: AgentSession; index: number 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <FileCode className="w-3.5 h-3.5 text-slate-500" />
-            <span className="text-sm font-medium text-white truncate">
+            <span className="text-sm font-medium text-slate-50 truncate">
               {session.template?.name || 'Unknown Template'}
             </span>
             <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded border', statusConfig.color)}>

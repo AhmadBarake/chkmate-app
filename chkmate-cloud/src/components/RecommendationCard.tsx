@@ -66,7 +66,7 @@ export default function RecommendationCard({ recommendation, onDismiss, onApply 
            {/* Content */}
            <div className="flex-1 min-w-0">
                <div className="flex justify-between items-start mb-1">
-                   <h3 className="font-bold text-white text-base leading-tight pr-8">{recommendation.title}</h3>
+                   <h3 className="font-bold text-slate-50 text-base leading-tight pr-8">{recommendation.title}</h3>
                    <span className={cn("text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-slate-800 bg-slate-950", config.color)}>
                        {recommendation.type}
                    </span>

@@ -128,7 +128,7 @@ export default function SimpleGitHub() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
         <div className="flex items-center gap-2 mb-2">
-          <Github className="w-5 h-5 text-white" />
+          <Github className="w-5 h-5 text-slate-50" />
           <h2 className="text-3xl font-extrabold tracking-tight">GitHub</h2>
         </div>
         <p className="text-slate-400 mt-1 font-medium">Store your infrastructure code and deploy from repositories.</p>
@@ -143,7 +143,7 @@ export default function SimpleGitHub() {
         <div className="space-y-6">
           <div className="bg-slate-900/30 border border-slate-800 border-dashed rounded-2xl p-10 text-center">
             <Github className="w-14 h-14 mx-auto text-slate-600 mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">Connect Your GitHub Account</h3>
+            <h3 className="text-xl font-bold text-slate-50 mb-2">Connect Your GitHub Account</h3>
             <p className="text-sm text-slate-400 max-w-md mx-auto mb-6">
               Push your Terraform templates to GitHub, create infrastructure repos, and link them to deployments for automated workflows.
             </p>
@@ -164,7 +164,7 @@ export default function SimpleGitHub() {
             ].map(item => (
               <div key={item.title} className="bg-slate-900/40 border border-slate-800/50 rounded-xl p-5">
                 <item.icon className={cn('w-8 h-8 mb-3', `text-${item.color}-400`)} />
-                <p className="font-bold text-white text-sm">{item.title}</p>
+                <p className="font-bold text-slate-50 text-sm">{item.title}</p>
                 <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
               </div>
             ))}
@@ -179,10 +179,10 @@ export default function SimpleGitHub() {
               {connections[0].avatarUrl ? (
                 <img src={connections[0].avatarUrl} alt="" className="w-9 h-9 rounded-full border border-white/10" />
               ) : (
-                <Github className="w-9 h-9 text-white" />
+                <Github className="w-9 h-9 text-slate-50" />
               )}
               <div>
-                <p className="font-bold text-white text-sm">{connections[0].githubUsername}</p>
+                <p className="font-bold text-slate-50 text-sm">{connections[0].githubUsername}</p>
                 <p className="text-[11px] text-slate-500">Connected</p>
               </div>
               <div className="w-2 h-2 rounded-full bg-emerald-500 ml-1" />
@@ -218,7 +218,7 @@ export default function SimpleGitHub() {
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="min-w-0 flex-1">
-                        <p className="font-bold text-sm text-white truncate">{repo.name}</p>
+                        <p className="font-bold text-sm text-slate-50 truncate">{repo.name}</p>
                         {repo.description && (
                           <p className="text-xs text-slate-400 truncate mt-0.5">{repo.description}</p>
                         )}
@@ -275,7 +275,7 @@ export default function SimpleGitHub() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg text-white">Connect GitHub</h3>
+                <h3 className="font-bold text-lg text-slate-50">Connect GitHub</h3>
                 <button onClick={() => setShowConnect(false)} className="p-1 hover:bg-slate-800 rounded-lg">
                   <X className="w-4 h-4 text-slate-400" />
                 </button>
@@ -286,7 +286,7 @@ export default function SimpleGitHub() {
                 value={patInput}
                 onChange={(e) => setPatInput(e.target.value)}
                 placeholder="ghp_xxxxxxxxxxxx"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:border-brand-500/50 outline-none font-mono text-sm mb-4"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-50 placeholder:text-slate-600 focus:border-brand-500/50 outline-none font-mono text-sm mb-4"
               />
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setShowConnect(false)} className="flex-1">Cancel</Button>
@@ -322,7 +322,7 @@ export default function SimpleGitHub() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg text-white">Create Repository</h3>
+                <h3 className="font-bold text-lg text-slate-50">Create Repository</h3>
                 <button onClick={() => setShowCreateRepo(false)} className="p-1 hover:bg-slate-800 rounded-lg">
                   <X className="w-4 h-4 text-slate-400" />
                 </button>
@@ -337,7 +337,7 @@ export default function SimpleGitHub() {
                   )}
                 >
                   <FolderGit2 className={cn('w-5 h-5 mb-1', repoPurpose === 'terraform' ? 'text-brand-400' : 'text-slate-500')} />
-                  <p className="text-xs font-bold text-white">Terraform Infra</p>
+                  <p className="text-xs font-bold text-slate-50">Terraform Infra</p>
                   <p className="text-[10px] text-slate-500">Infrastructure code</p>
                 </button>
                 <button
@@ -347,7 +347,7 @@ export default function SimpleGitHub() {
                   )}
                 >
                   <Globe className={cn('w-5 h-5 mb-1', repoPurpose === 'webapp' ? 'text-brand-400' : 'text-slate-500')} />
-                  <p className="text-xs font-bold text-white">Web App Code</p>
+                  <p className="text-xs font-bold text-slate-50">Web App Code</p>
                   <p className="text-[10px] text-slate-500">Application source</p>
                 </button>
               </div>
@@ -358,14 +358,14 @@ export default function SimpleGitHub() {
                   value={repoName}
                   onChange={(e) => setRepoName(e.target.value.replace(/[^a-zA-Z0-9._-]/g, ''))}
                   placeholder="my-infrastructure"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:border-brand-500/50 outline-none"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-50 placeholder:text-slate-600 focus:border-brand-500/50 outline-none"
                 />
                 <input
                   type="text"
                   value={repoDesc}
                   onChange={(e) => setRepoDesc(e.target.value)}
                   placeholder="Description (optional)"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:border-brand-500/50 outline-none"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-50 placeholder:text-slate-600 focus:border-brand-500/50 outline-none"
                 />
               </div>
               <div className="flex gap-3 mt-4">

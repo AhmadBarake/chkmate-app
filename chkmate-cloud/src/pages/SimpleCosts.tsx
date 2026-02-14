@@ -121,7 +121,7 @@ export default function SimpleCosts() {
                 </div>
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Est. Monthly Spend</p>
               </div>
-              <p className="text-4xl font-black text-white">${totalMonthly.toFixed(0)}</p>
+              <p className="text-4xl font-black text-slate-50">${totalMonthly.toFixed(0)}</p>
               <p className="text-xs text-slate-500 mt-1">Based on current resource usage</p>
             </motion.div>
 
@@ -151,7 +151,7 @@ export default function SimpleCosts() {
                 </div>
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Services</p>
               </div>
-              <p className="text-4xl font-black text-white">{pieData.length}</p>
+              <p className="text-4xl font-black text-slate-50">{pieData.length}</p>
               <p className="text-xs text-slate-500 mt-1">Active AWS services with cost</p>
             </motion.div>
           </motion.div>
@@ -225,7 +225,7 @@ export default function SimpleCosts() {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
-                          <p className="font-medium text-sm text-white">{rec.title}</p>
+                          <p className="font-medium text-sm text-slate-50">{rec.title}</p>
                           <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{rec.description}</p>
                         </div>
                         {rec.impact.savings && (
@@ -263,7 +263,7 @@ export default function SimpleCosts() {
           {/* Link to Full Cost Control */}
           <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-6 flex items-center justify-between">
             <div>
-              <p className="font-bold text-white">Need more detail?</p>
+              <p className="font-bold text-slate-50">Need more detail?</p>
               <p className="text-sm text-slate-400">Switch to Full mode for the complete Cost Control dashboard with trends, filters, and export.</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => navigate('/cost-control')}>
