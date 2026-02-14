@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-type DashboardMode = 'full' | 'simplified';
+type DashboardMode = 'lite' | 'full' | 'simplified';
 
 interface DashboardModeContextType {
   mode: DashboardMode;
@@ -8,7 +8,7 @@ interface DashboardModeContextType {
 }
 
 const DashboardModeContext = createContext<DashboardModeContextType>({
-  mode: 'full',
+  mode: 'lite',
   setMode: () => {},
 });
 
@@ -17,7 +17,8 @@ const STORAGE_KEY = 'chkmate-dashboard-mode';
 export function DashboardModeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<DashboardMode>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored === 'simplified' ? 'simplified' : 'full';
+    if (stored === 'full' || stored === 'simplified' || stored === 'lite') return stored;
+    return 'lite';
   });
 
   const setMode = (newMode: DashboardMode) => {

@@ -45,13 +45,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       primary:
         'bg-brand-600 text-white hover:bg-brand-500 active:bg-brand-700 shadow-sm hover:shadow',
       secondary:
-        'bg-slate-100 text-slate-900 hover:bg-white active:bg-slate-200 border border-transparent',
+        'bg-slate-800 text-slate-200 hover:bg-slate-700 active:bg-slate-800 border border-slate-700',
       ghost:
-        'bg-transparent text-slate-400 hover:bg-slate-800 hover:text-white',
+        'bg-transparent text-slate-400 hover:bg-slate-900/50 hover:text-slate-50',
       danger:
         'bg-red-600 text-white hover:bg-red-500 active:bg-red-700 shadow-sm',
       outline:
-        'border border-slate-700 bg-transparent text-slate-400 hover:bg-slate-800 hover:text-white hover:border-slate-600',
+        'border border-slate-700 bg-transparent text-slate-400 hover:bg-slate-900/50 hover:text-slate-50 hover:border-slate-600',
     };
 
     const sizes = {
@@ -121,8 +121,8 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
 
     const variants = {
       primary: 'bg-brand-600 text-white hover:bg-brand-500 focus:ring-brand-500',
-      secondary: 'bg-slate-700 text-white hover:bg-slate-600 focus:ring-slate-500',
-      ghost: 'text-slate-400 hover:text-white hover:bg-slate-800 focus:ring-slate-500',
+      secondary: 'bg-slate-700 text-slate-200 hover:bg-slate-600 focus:ring-slate-500',
+      ghost: 'text-slate-400 hover:text-slate-50 hover:bg-slate-900/50 focus:ring-slate-500',
       danger: 'text-slate-400 hover:text-red-400 hover:bg-red-500/10 focus:ring-red-500',
     };
 
