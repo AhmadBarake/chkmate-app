@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
     <footer className="bg-black border-t border-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
         <div className="mb-6 md:mb-0">
-          <span className="text-2xl font-bold tracking-tighter text-white font-mono">
+          <span className="text-2xl font-bold tracking-tighter text-slate-50 font-mono">
               chkmate<span className="text-gray-500">_</span>
           </span>
           <p className="text-gray-500 text-sm mt-2">© {new Date().getFullYear()} chkmate interactive. All rights reserved.</p>
@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8 text-center md:text-left">
           <div className="space-x-6">
             {NAV_LINKS.map((link) => (
-             <a key={link.name} href={link.href} className="text-gray-500 hover:text-white text-sm transition-colors">
+             <a key={link.name} href={link.href} className="text-gray-500 hover:text-slate-50 text-sm transition-colors">
                {link.name}
              </a>
             ))}

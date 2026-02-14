@@ -167,28 +167,28 @@ export default function SimpleResources() {
               <div className="bg-slate-900/40 border border-slate-800/50 rounded-xl p-4 flex items-center gap-3">
                 <Cloud className="w-5 h-5 text-brand-400" />
                 <div>
-                  <p className="text-lg font-black text-white">{scanResult.summary.totalResources}</p>
+                  <p className="text-lg font-black text-slate-50">{scanResult.summary.totalResources}</p>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Resources</p>
                 </div>
               </div>
               <div className="bg-slate-900/40 border border-slate-800/50 rounded-xl p-4 flex items-center gap-3">
                 <Shield className="w-5 h-5 text-red-400" />
                 <div>
-                  <p className="text-lg font-black text-white">{scanResult.summary.criticalIssues}</p>
+                  <p className="text-lg font-black text-slate-50">{scanResult.summary.criticalIssues}</p>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Critical</p>
                 </div>
               </div>
               <div className="bg-slate-900/40 border border-slate-800/50 rounded-xl p-4 flex items-center gap-3">
                 <AlertTriangle className="w-5 h-5 text-amber-400" />
                 <div>
-                  <p className="text-lg font-black text-white">{scanResult.summary.highIssues}</p>
+                  <p className="text-lg font-black text-slate-50">{scanResult.summary.highIssues}</p>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">High</p>
                 </div>
               </div>
               <div className="bg-slate-900/40 border border-slate-800/50 rounded-xl p-4 flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                 <div>
-                  <p className="text-lg font-black text-white">
+                  <p className="text-lg font-black text-slate-50">
                     ${scanResult.summary.estimatedMonthlySavings?.toFixed(0) ?? '0'}
                   </p>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Potential Savings</p>
@@ -216,7 +216,7 @@ export default function SimpleResources() {
                     <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center', colors.bg, colors.border, 'border')}>
                       <config.icon className={cn('w-4 h-4', colors.text)} />
                     </div>
-                    <h3 className="font-bold text-white">{config.label}</h3>
+                    <h3 className="font-bold text-slate-50">{config.label}</h3>
                     <span className="text-xs font-bold text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">{items.length}</span>
                   </div>
 
@@ -228,7 +228,7 @@ export default function SimpleResources() {
                       >
                         <div className="flex items-start justify-between">
                           <div className="min-w-0 flex-1">
-                            <p className="font-medium text-sm text-white truncate">{resource.name || resource.resourceId}</p>
+                            <p className="font-medium text-sm text-slate-50 truncate">{resource.name || resource.resourceId}</p>
                             <p className="text-[11px] text-slate-500 font-mono mt-0.5">{resource.resourceType}</p>
                           </div>
                           <span className="text-[10px] font-bold text-slate-600 bg-slate-800 px-1.5 py-0.5 rounded shrink-0 ml-2">

@@ -173,7 +173,7 @@ export default function Deployments() {
             className="overflow-hidden"
           >
             <div className="bg-slate-900/70 border border-violet-500/20 rounded-xl p-6 space-y-4">
-              <h3 className="text-lg font-bold text-white">New Deployment</h3>
+              <h3 className="text-lg font-bold text-slate-50">New Deployment</h3>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
@@ -181,7 +181,7 @@ export default function Deployments() {
                   <select
                     value={selectedTemplate}
                     onChange={e => setSelectedTemplate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-50 focus:border-violet-500 focus:outline-none"
                   >
                     <option value="">Select template...</option>
                     {templates.map(t => (
@@ -194,7 +194,7 @@ export default function Deployments() {
                   <select
                     value={selectedCredential}
                     onChange={e => setSelectedCredential(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-50 focus:border-violet-500 focus:outline-none"
                   >
                     <option value="">Select credentials...</option>
                     {credentials.filter(c => c.isActive).map(c => (
@@ -207,7 +207,7 @@ export default function Deployments() {
                   <select
                     value={selectedRegion}
                     onChange={e => setSelectedRegion(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-50 focus:border-violet-500 focus:outline-none"
                   >
                     {REGIONS.map(r => (
                       <option key={r} value={r}>{r}</option>
@@ -282,7 +282,7 @@ export default function Deployments() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <FileCode className="w-3.5 h-3.5 text-slate-500" />
-                      <span className="text-sm font-medium text-white truncate">
+                      <span className="text-sm font-medium text-slate-50 truncate">
                         {dep.template?.name || 'Unknown'}
                       </span>
                       <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded border', statusConfig.color)}>
@@ -352,7 +352,7 @@ export default function Deployments() {
                         {dep.planOutput?.auditScore != null && (
                           <div className="flex items-center gap-2 text-xs text-slate-400">
                             <Shield className="w-3.5 h-3.5 text-violet-400" />
-                            Security Score: <span className="text-white font-medium">{dep.planOutput.auditScore}</span>/100
+                            Security Score: <span className="text-slate-50 font-medium">{dep.planOutput.auditScore}</span>/100
                             {dep.planOutput?.auditIssues > 0 && (
                               <span className="text-amber-400">({dep.planOutput.auditIssues} issues)</span>
                             )}
@@ -387,7 +387,7 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
         <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{label}</span>
         {icon}
       </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
+      <p className="text-2xl font-bold text-slate-50">{value}</p>
     </div>
   );
 }

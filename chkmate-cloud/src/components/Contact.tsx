@@ -25,7 +25,7 @@ const Contact: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         <div>
           <span className="text-red-400 font-mono text-sm uppercase tracking-wider">Start Now</span>
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 mt-2">
+          <h2 className="text-4xl md:text-6xl font-bold text-slate-50 mb-6 mt-2">
             Let's Build the <br /> Future.
           </h2>
           <p className="text-gray-400 text-lg mb-8 max-w-md">
@@ -34,11 +34,11 @@ const Contact: React.FC = () => {
           
           <div className="flex items-center space-x-4 text-gray-300 mb-2">
             <Mail size={20} />
-            <a href="mailto:hello@chkmate.io" className="hover:text-white transition-colors">hello@chkmate.io</a>
+            <a href="mailto:hello@chkmate.io" className="hover:text-slate-50 transition-colors">hello@chkmate.io</a>
           </div>
           
           <div className="mt-12 p-6 border border-gray-800 bg-gray-900/50">
-            <h4 className="text-white font-bold mb-2">Office Hours</h4>
+            <h4 className="text-slate-50 font-bold mb-2">Office Hours</h4>
             <p className="text-gray-400 text-sm">Mon - Fri: 9:00 AM - 6:00 PM (EST)</p>
           </div>
         </div>
@@ -54,7 +54,7 @@ const Contact: React.FC = () => {
                   name="name"
                   value={formState.name}
                   onChange={handleChange}
-                  className="w-full bg-black border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-white transition-colors"
+                  className="w-full bg-black border border-gray-700 text-slate-50 px-4 py-3 focus:outline-none focus:border-white transition-colors"
                   required
                 />
               </div>
@@ -66,7 +66,7 @@ const Contact: React.FC = () => {
                   name="email"
                   value={formState.email}
                   onChange={handleChange}
-                  className="w-full bg-black border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-white transition-colors"
+                  className="w-full bg-black border border-gray-700 text-slate-50 px-4 py-3 focus:outline-none focus:border-white transition-colors"
                   required
                 />
               </div>
@@ -80,7 +80,7 @@ const Contact: React.FC = () => {
                 name="company"
                 value={formState.company}
                 onChange={handleChange}
-                className="w-full bg-black border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-white transition-colors"
+                className="w-full bg-black border border-gray-700 text-slate-50 px-4 py-3 focus:outline-none focus:border-white transition-colors"
               />
             </div>
 
@@ -92,7 +92,7 @@ const Contact: React.FC = () => {
                 rows={4}
                 value={formState.message}
                 onChange={handleChange}
-                className="w-full bg-black border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-white transition-colors"
+                className="w-full bg-black border border-gray-700 text-slate-50 px-4 py-3 focus:outline-none focus:border-white transition-colors"
                 required
               ></textarea>
             </div>

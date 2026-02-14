@@ -39,7 +39,7 @@ const CaseStudyADSG: React.FC = () => {
         </div>
         
         <div className="container mx-auto px-6 relative z-10 pt-20">
-            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-8 transition-colors">
+            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-slate-50 mb-8 transition-colors">
                 <ArrowLeft size={20} className="mr-2" /> Back to Home
             </Link>
             
@@ -52,11 +52,11 @@ const CaseStudyADSG: React.FC = () => {
                     <span className="bg-blue-900/40 text-blue-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-blue-800">Cloud Architecture</span>
                     <span className="bg-brand-900/40 text-brand-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-brand-800">Education Tech</span>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 max-w-4xl leading-tight">
+                <h1 className="text-4xl md:text-6xl font-bold text-slate-50 mb-6 max-w-4xl leading-tight">
                     Scaling Learning for <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">60,000+ Users</span> with Serverless AWS Architecture.
                 </h1>
                 <p className="text-xl text-slate-400 max-w-2xl mb-8">
-                    Implementing a secure, high-concurrency video streaming platform for <span className="text-white font-semibold">Abu Dhabi School of Government</span>.
+                    Implementing a secure, high-concurrency video streaming platform for <span className="text-slate-50 font-semibold">Abu Dhabi School of Government</span>.
                 </p>
             </motion.div>
         </div>
@@ -71,7 +71,7 @@ const CaseStudyADSG: React.FC = () => {
       <Section className="bg-slate-950">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
              <div>
-                 <h2 className="text-3xl font-bold text-white mb-6">The Challenge</h2>
+                 <h2 className="text-3xl font-bold text-slate-50 mb-6">The Challenge</h2>
                  <p className="text-slate-400 leading-relaxed mb-6">
                      The Abu Dhabi School of Government (ADSG) needed to democratize access to world-class learning materials for government employees across the emirate. The existing legacy infrastructure struggled with:
                  </p>
@@ -92,7 +92,7 @@ const CaseStudyADSG: React.FC = () => {
              </div>
              
              <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-lg">
-                 <h3 className="text-xl font-bold text-white mb-6">Impact Analysis</h3>
+                 <h3 className="text-xl font-bold text-slate-50 mb-6">Impact Analysis</h3>
                  <div className="space-y-6">
                       <div>
                           <div className="flex justify-between text-sm mb-2 text-slate-400">
@@ -130,7 +130,7 @@ const CaseStudyADSG: React.FC = () => {
       <Section className="bg-neutral-950 border-y border-neutral-900">
           <div className="text-center mb-16">
               <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">The Solution</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">3-Tier AWS Serverless Architecture</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mt-2 mb-6">3-Tier AWS Serverless Architecture</h2>
               <p className="text-slate-400 max-w-3xl mx-auto">
                   We designed a fully decoupled, event-driven architecture utilizing AWS Managed Services to ensure auto-scaling, high availability, and zero-maintenance overhead.
               </p>
@@ -143,7 +143,7 @@ const CaseStudyADSG: React.FC = () => {
                   {/* CLIENT */}
                   <div className="text-center">
                       <div className="w-20 h-20 bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-700">
-                          <Users size={32} className="text-white" />
+                          <Users size={32} className="text-slate-50" />
                       </div>
                       <p className="text-sm font-mono text-slate-400">60k+ Users</p>
                       <p className="text-xs text-slate-500">(Web & Mobile)</p>
@@ -157,9 +157,9 @@ const CaseStudyADSG: React.FC = () => {
                   {/* CDN / EDGE */}
                   <div className="text-center relative group">
                       <div className="w-24 h-24 bg-gradient-to-br from-blue-900 to-blue-700 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-900/20 group-hover:scale-105 transition-transform">
-                          <Cloud size={40} className="text-white" />
+                          <Cloud size={40} className="text-slate-50" />
                       </div>
-                      <p className="text-sm font-bold text-white">CloudFront CDN</p>
+                      <p className="text-sm font-bold text-slate-50">CloudFront CDN</p>
                       <p className="text-xs text-slate-400 mt-1">Global Edge Caching</p>
                   </div>
 
@@ -176,14 +176,14 @@ const CaseStudyADSG: React.FC = () => {
                               <div className="w-16 h-16 bg-neutral-800 rounded-lg flex items-center justify-center mx-auto mb-2 border border-neutral-700">
                                   <Server size={24} className="text-cyan-400" />
                               </div>
-                              <p className="text-xs text-white">ECS Fargate</p>
+                              <p className="text-xs text-slate-50">ECS Fargate</p>
                               <p className="text-[10px] text-slate-400">Microservices</p>
                           </div>
                           <div className="text-center">
                               <div className="w-16 h-16 bg-neutral-800 rounded-lg flex items-center justify-center mx-auto mb-2 border border-neutral-700">
                                   <Play size={24} className="text-brand-400" />
                               </div>
-                              <p className="text-xs text-white">Lambda</p>
+                              <p className="text-xs text-slate-50">Lambda</p>
                               <p className="text-[10px] text-slate-400">Video Encoding</p>
                           </div>
                       </div>
@@ -197,7 +197,7 @@ const CaseStudyADSG: React.FC = () => {
                       <div className="w-20 h-20 bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-700">
                           <Database size={32} className="text-orange-400" />
                       </div>
-                      <p className="text-sm font-bold text-white">RDS & S3</p>
+                      <p className="text-sm font-bold text-slate-50">RDS & S3</p>
                       <p className="text-xs text-slate-500">Persistent Storage</p>
                   </div>
 
@@ -213,7 +213,7 @@ const CaseStudyADSG: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="order-2 md:order-1">
                    <div className="bg-neutral-900 p-6 rounded-xl border border-neutral-800 shadow-2xl">
-                       <h4 className="text-lg font-bold text-white mb-4 border-b border-neutral-800 pb-2">Adaptive Bitrate Streaming</h4>
+                       <h4 className="text-lg font-bold text-slate-50 mb-4 border-b border-neutral-800 pb-2">Adaptive Bitrate Streaming</h4>
                        {/* Chart: Traffic Spikes */}
                        <div className="h-64 w-full">
                            <ResponsiveContainer width="100%" height="100%">
@@ -240,7 +240,7 @@ const CaseStudyADSG: React.FC = () => {
                       <Video className="mr-3" />
                       <span className="uppercase tracking-widest font-mono text-sm">Media Engineering</span>
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-6">Seamless Video Experience</h3>
+                  <h3 className="text-3xl font-bold text-slate-50 mb-6">Seamless Video Experience</h3>
                   <p className="text-slate-400 leading-relaxed mb-6">
                       Education relies on content. We implemented an automated media pipeline using <strong>AWS MediaConvert</strong> triggered by S3 uploads.
                   </p>
@@ -263,7 +263,7 @@ const CaseStudyADSG: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               
               <div className="col-span-1 md:col-span-2">
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
+                  <h3 className="text-2xl font-bold text-slate-50 mb-6 flex items-center">
                       <GitBranch className="mr-3 text-green-400" /> 
                       DevSecOps Pipeline
                   </h3>
@@ -298,21 +298,21 @@ const CaseStudyADSG: React.FC = () => {
               </div>
 
               <div>
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
+                  <h3 className="text-2xl font-bold text-slate-50 mb-6 flex items-center">
                       <Shield className="mr-3 text-orange-400" />
                       Security Audit
                   </h3>
                   <ul className="space-y-4">
                       <li className="bg-slate-950 p-4 border-l-2 border-green-500">
-                          <h4 className="text-white font-bold text-sm">WAF (Web Application Firewall)</h4>
+                          <h4 className="text-slate-50 font-bold text-sm">WAF (Web Application Firewall)</h4>
                           <p className="text-xs text-slate-400 mt-1">Blocked 99.9% of SQLi and XSS attempts during penetration testing.</p>
                       </li>
                       <li className="bg-slate-950 p-4 border-l-2 border-green-500">
-                          <h4 className="text-white font-bold text-sm">KMS Encryption</h4>
+                          <h4 className="text-slate-50 font-bold text-sm">KMS Encryption</h4>
                           <p className="text-xs text-slate-400 mt-1">AES-256 Encryption for all PII data at rest and in transit.</p>
                       </li>
                       <li className="bg-slate-950 p-4 border-l-2 border-green-500">
-                          <h4 className="text-white font-bold text-sm">IAM Roles</h4>
+                          <h4 className="text-slate-50 font-bold text-sm">IAM Roles</h4>
                           <p className="text-xs text-slate-400 mt-1">Least Privilege access policy enforced across all microservices.</p>
                       </li>
                   </ul>
@@ -324,25 +324,25 @@ const CaseStudyADSG: React.FC = () => {
       {/* Results / Growth */}
       <Section className="bg-slate-950">
           <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-white">The Result</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-50">The Result</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               <div className="p-8 border border-gray-800 text-center">
-                  <div className="text-4xl font-bold text-white mb-2">99.99%</div>
+                  <div className="text-4xl font-bold text-slate-50 mb-2">99.99%</div>
                   <div className="text-sm text-slate-400 uppercase tracking-widest">Uptime Achieved</div>
               </div>
               <div className="p-8 border border-gray-800 text-center">
-                  <div className="text-4xl font-bold text-white mb-2">60,000+</div>
+                  <div className="text-4xl font-bold text-slate-50 mb-2">60,000+</div>
                   <div className="text-sm text-slate-400 uppercase tracking-widest">Active Learners</div>
               </div>
               <div className="p-8 border border-gray-800 text-center">
-                  <div className="text-4xl font-bold text-white mb-2">-40%</div>
+                  <div className="text-4xl font-bold text-slate-50 mb-2">-40%</div>
                   <div className="text-sm text-slate-400 uppercase tracking-widest">Infra Costs</div>
               </div>
           </div>
           
           <div className="h-96 w-full bg-neutral-900/50 p-8 rounded-xl border border-neutral-800">
-               <h3 className="text-white font-bold mb-8">User Adoption Growth</h3>
+               <h3 className="text-slate-50 font-bold mb-8">User Adoption Growth</h3>
                <ResponsiveContainer width="100%" height="80%">
                     <LineChart data={userData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#333" />

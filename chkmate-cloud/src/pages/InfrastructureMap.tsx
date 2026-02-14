@@ -323,7 +323,7 @@ function InfrastructureMapContent() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-50 flex items-center gap-2">
               <div className="p-2 bg-brand-500/10 rounded-lg border border-brand-500/20">
                 <Map className="w-6 h-6 text-brand-400" />
               </div>
@@ -342,7 +342,7 @@ function InfrastructureMapContent() {
                     onClick={() => setViewMode('list')}
                     className={cn(
                         "p-1.5 rounded-md transition-all",
-                        viewMode === 'list' ? "bg-slate-800 text-white shadow-sm" : "text-slate-500 hover:text-slate-300"
+                        viewMode === 'list' ? "bg-slate-800 text-slate-50 shadow-sm" : "text-slate-500 hover:text-slate-300"
                     )}
                     title="List View"
                 >
@@ -402,7 +402,7 @@ function InfrastructureMapContent() {
           <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-colors shadow-sm">
             <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Total Resources</p>
             <div className="flex items-end justify-between">
-               <div className="text-3xl font-bold text-white">{stats.total}</div>
+               <div className="text-3xl font-bold text-slate-50">{stats.total}</div>
                <Box className="w-8 h-8 text-slate-800" />
             </div>
           </div>
@@ -538,7 +538,7 @@ function InfrastructureMapContent() {
                         minZoom={0.1}
                     >
                         <Background color="#333" gap={20} />
-                        <Controls className="bg-slate-900 border-slate-800 text-white" />
+                        <Controls className="bg-slate-900 border-slate-800 text-slate-50" />
                         <Panel position="top-right" className="bg-slate-950/80 backdrop-blur border border-slate-800 p-2 rounded-lg text-xs text-slate-400">
                              {nodes.length} Resources Visualized
                         </Panel>

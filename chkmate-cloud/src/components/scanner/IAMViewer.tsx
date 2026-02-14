@@ -63,7 +63,7 @@ export function IAMViewer({ details, issues }: IAMViewerProps) {
             onClick={() => setActiveTab('users')}
             className={cn(
               "px-6 py-4 text-sm font-medium transition-colors flex items-center gap-2",
-              activeTab === 'users' ? "bg-slate-800 text-white" : "text-slate-400 hover:text-white"
+              activeTab === 'users' ? "bg-slate-800 text-slate-50" : "text-slate-400 hover:text-slate-50"
             )}
           >
             <User className="w-4 h-4" /> Users
@@ -72,7 +72,7 @@ export function IAMViewer({ details, issues }: IAMViewerProps) {
             onClick={() => setActiveTab('roles')}
             className={cn(
               "px-6 py-4 text-sm font-medium transition-colors flex items-center gap-2",
-              activeTab === 'roles' ? "bg-slate-800 text-white" : "text-slate-400 hover:text-white"
+              activeTab === 'roles' ? "bg-slate-800 text-slate-50" : "text-slate-400 hover:text-slate-50"
             )}
           >
             <Users className="w-4 h-4" /> Roles
@@ -81,7 +81,7 @@ export function IAMViewer({ details, issues }: IAMViewerProps) {
             onClick={() => setActiveTab('policies')}
             className={cn(
               "px-6 py-4 text-sm font-medium transition-colors flex items-center gap-2",
-              activeTab === 'policies' ? "bg-slate-800 text-white" : "text-slate-400 hover:text-white"
+              activeTab === 'policies' ? "bg-slate-800 text-slate-50" : "text-slate-400 hover:text-slate-50"
             )}
           >
             <FileText className="w-4 h-4" /> Policies

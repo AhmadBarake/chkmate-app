@@ -19,7 +19,7 @@ const CaseStudyAEMENA: React.FC = () => {
         </div>
         
         <div className="container mx-auto px-6 relative z-10 pt-20">
-            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-8 transition-colors">
+            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-slate-50 mb-8 transition-colors">
                 <ArrowLeft size={20} className="mr-2" /> Back to Home
             </Link>
             
@@ -32,7 +32,7 @@ const CaseStudyAEMENA: React.FC = () => {
                     <span className="bg-green-900/40 text-green-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-green-800">Sustainable Energy</span>
                     <span className="bg-yellow-900/40 text-yellow-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-yellow-800">Cloud Architecture</span>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 max-w-4xl leading-tight">
+                <h1 className="text-4xl md:text-6xl font-bold text-slate-50 mb-6 max-w-4xl leading-tight">
                     Powering the Future with <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-green-500">Digital Intelligence</span>.
                 </h1>
                 <p className="text-xl text-slate-400 max-w-2xl mb-8">
@@ -51,7 +51,7 @@ const CaseStudyAEMENA: React.FC = () => {
       <Section className="bg-neutral-950">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                  <h2 className="text-3xl font-bold text-white mb-6">Empowering Green Energy</h2>
+                  <h2 className="text-3xl font-bold text-slate-50 mb-6">Empowering Green Energy</h2>
                   <p className="text-slate-400 leading-relaxed mb-6">
                       AE MENA needed a digital presence that matched their innovation in the solar sector. We delivered a complete overhaul—from a high-performance diverse website to a secure, internal content management system that gives them full control over their project portfolio.
                   </p>
@@ -59,21 +59,21 @@ const CaseStudyAEMENA: React.FC = () => {
                       <div className="flex items-start">
                           <CheckCircle className="text-green-500 mt-1 mr-3 flex-shrink-0" size={20} />
                           <div>
-                              <h4 className="text-white font-bold">Custom CMS Development</h4>
+                              <h4 className="text-slate-50 font-bold">Custom CMS Development</h4>
                               <p className="text-sm text-slate-400">Tailored admin dashboard with role-based access control (RBAC) for managing solar projects and news.</p>
                           </div>
                       </div>
                       <div className="flex items-start">
                           <CheckCircle className="text-green-500 mt-1 mr-3 flex-shrink-0" size={20} />
                           <div>
-                              <h4 className="text-white font-bold">AWS Cloud Infrastructure</h4>
+                              <h4 className="text-slate-50 font-bold">AWS Cloud Infrastructure</h4>
                               <p className="text-sm text-slate-400">Serverless file storage and global CDN integration for lightning-fast asset loading.</p>
                           </div>
                       </div>
                       <div className="flex items-start">
                           <CheckCircle className="text-green-500 mt-1 mr-3 flex-shrink-0" size={20} />
                           <div>
-                              <h4 className="text-white font-bold">Website Redesign</h4>
+                              <h4 className="text-slate-50 font-bold">Website Redesign</h4>
                               <p className="text-sm text-slate-400">Modern, responsive UI that communicates reliability and technological leadership.</p>
                           </div>
                       </div>
@@ -86,22 +86,22 @@ const CaseStudyAEMENA: React.FC = () => {
                    <div className="grid grid-cols-2 gap-6 text-center">
                        <div className="p-4 bg-slate-950 rounded-xl border border-gray-800">
                            <Zap className="mx-auto text-yellow-400 mb-2" size={32} />
-                           <div className="text-2xl font-bold text-white">40%</div>
+                           <div className="text-2xl font-bold text-slate-50">40%</div>
                            <div className="text-xs text-slate-400 uppercase tracking-wider">Faster Load Time</div>
                        </div>
                        <div className="p-4 bg-slate-950 rounded-xl border border-gray-800">
                            <Shield className="mx-auto text-green-400 mb-2" size={32} />
-                           <div className="text-2xl font-bold text-white">100%</div>
+                           <div className="text-2xl font-bold text-slate-50">100%</div>
                            <div className="text-xs text-slate-400 uppercase tracking-wider">RBAC Security</div>
                        </div>
                        <div className="p-4 bg-slate-950 rounded-xl border border-gray-800">
                            <Globe className="mx-auto text-blue-400 mb-2" size={32} />
-                           <div className="text-2xl font-bold text-white">CDN</div>
+                           <div className="text-2xl font-bold text-slate-50">CDN</div>
                            <div className="text-xs text-slate-400 uppercase tracking-wider">Global Caching</div>
                        </div>
                        <div className="p-4 bg-slate-950 rounded-xl border border-gray-800">
                            <Layout className="mx-auto text-brand-400 mb-2" size={32} />
-                           <div className="text-2xl font-bold text-white">Custom</div>
+                           <div className="text-2xl font-bold text-slate-50">Custom</div>
                            <div className="text-xs text-slate-400 uppercase tracking-wider">CMS Interface</div>
                        </div>
                    </div>
@@ -113,7 +113,7 @@ const CaseStudyAEMENA: React.FC = () => {
       <Section className="bg-slate-950">
            <div className="mb-16 text-center">
               <span className="text-yellow-500 font-mono text-sm uppercase tracking-wider">Infrastructure</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">Scalable AWS Backbone</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mt-2 mb-6">Scalable AWS Backbone</h2>
               <p className="text-slate-400 max-w-3xl mx-auto">
                   We architected a robust cloud environment to handle high-resolution project imagery and secure data storage, ensuring zero downtime and maximum security.
               </p>
@@ -128,7 +128,7 @@ const CaseStudyAEMENA: React.FC = () => {
                   <div className="w-12 h-12 bg-yellow-900/20 rounded-lg flex items-center justify-center mb-6 text-yellow-400 relative z-10">
                       <Database size={24} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3 relative z-10">S3 Object Storage</h3>
+                  <h3 className="text-xl font-bold text-slate-50 mb-3 relative z-10">S3 Object Storage</h3>
                   <p className="text-slate-400 text-sm relative z-10">
                       Centralized, durable storage for all media assets. Configured with lifecycle policies to manage costs and versioning for data recovery.
                   </p>
@@ -142,7 +142,7 @@ const CaseStudyAEMENA: React.FC = () => {
                   <div className="w-12 h-12 bg-blue-900/20 rounded-lg flex items-center justify-center mb-6 text-blue-400 relative z-10">
                       <Cloud size={24} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3 relative z-10">CloudFront CDN</h3>
+                  <h3 className="text-xl font-bold text-slate-50 mb-3 relative z-10">CloudFront CDN</h3>
                   <p className="text-slate-400 text-sm relative z-10">
                       Content Delivery Network ensuring low-latency access to site content from anywhere in the MENA region and beyond.
                   </p>
@@ -156,7 +156,7 @@ const CaseStudyAEMENA: React.FC = () => {
                   <div className="w-12 h-12 bg-green-900/20 rounded-lg flex items-center justify-center mb-6 text-green-400 relative z-10">
                       <Shield size={24} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3 relative z-10">IAM & Security</h3>
+                  <h3 className="text-xl font-bold text-slate-50 mb-3 relative z-10">IAM & Security</h3>
                   <p className="text-slate-400 text-sm relative z-10">
                       Granular IAM policies and bucket policies to strictly control access. Data is encrypted at rest (AES-256) and in transit (SSL/TLS).
                   </p>
@@ -210,7 +210,7 @@ const CaseStudyAEMENA: React.FC = () => {
                         <Layout size={20} className="text-green-400" />
                         <span className="text-green-400 font-mono text-sm uppercase tracking-wider">Custom CMS</span>
                    </div>
-                   <h2 className="text-3xl font-bold text-white mb-6">Control at Your Fingertips</h2>
+                   <h2 className="text-3xl font-bold text-slate-50 mb-6">Control at Your Fingertips</h2>
                    <p className="text-slate-400 leading-relaxed mb-6">
                        Off-the-shelf CMS solutions were too rigid for AE MENA's specific portfolio needs. We built a custom React-based admin panel that empowers their team to manage content effortlessly.
                    </p>

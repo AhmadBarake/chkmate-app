@@ -148,7 +148,7 @@ export default function GitHubConnections() {
       <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
           <div className="flex items-center gap-2 mb-2">
-            <Github className="w-5 h-5 text-white" />
+            <Github className="w-5 h-5 text-slate-50" />
             <h2 className="text-3xl font-extrabold tracking-tight">GitHub</h2>
           </div>
           <p className="text-slate-400 font-medium">Connect your GitHub account to push templates, create repos, and link deployments.</p>
@@ -208,11 +208,11 @@ export default function GitHubConnections() {
                   <img src={conn.avatarUrl} alt={conn.githubUsername} className="w-10 h-10 rounded-full border border-white/10" />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center">
-                    <Github className="w-5 h-5 text-white" />
+                    <Github className="w-5 h-5 text-slate-50" />
                   </div>
                 )}
                 <div>
-                  <p className="font-bold text-white">{conn.githubUsername}</p>
+                  <p className="font-bold text-slate-50">{conn.githubUsername}</p>
                   <p className="text-xs text-slate-500">{conn._count.repositories} repo{conn._count.repositories !== 1 ? 's' : ''} linked &middot; Connected {formatRelativeTime(conn.createdAt)}</p>
                 </div>
               </div>
@@ -265,7 +265,7 @@ export default function GitHubConnections() {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="min-w-0 flex-1">
-                      <p className="font-bold text-sm text-white truncate group-hover:text-brand-300 transition-colors">{repo.name}</p>
+                      <p className="font-bold text-sm text-slate-50 truncate group-hover:text-brand-300 transition-colors">{repo.name}</p>
                       <p className="text-[11px] text-slate-500">{repo.owner}</p>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -325,7 +325,7 @@ export default function GitHubConnections() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg text-white">Connect GitHub</h3>
+                <h3 className="font-bold text-lg text-slate-50">Connect GitHub</h3>
                 <button onClick={() => setShowConnectModal(false)} className="p-1 hover:bg-slate-800 rounded-lg">
                   <X className="w-4 h-4 text-slate-400" />
                 </button>
@@ -341,7 +341,7 @@ export default function GitHubConnections() {
                     value={patInput}
                     onChange={(e) => setPatInput(e.target.value)}
                     placeholder="ghp_xxxxxxxxxxxx"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all font-mono text-sm"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-50 placeholder:text-slate-600 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all font-mono text-sm"
                   />
                 </div>
                 <p className="text-[11px] text-slate-500">
@@ -382,7 +382,7 @@ export default function GitHubConnections() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg text-white">Create Repository</h3>
+                <h3 className="font-bold text-lg text-slate-50">Create Repository</h3>
                 <button onClick={() => setShowCreateRepo(false)} className="p-1 hover:bg-slate-800 rounded-lg">
                   <X className="w-4 h-4 text-slate-400" />
                 </button>
@@ -395,7 +395,7 @@ export default function GitHubConnections() {
                     value={newRepoName}
                     onChange={(e) => setNewRepoName(e.target.value.replace(/[^a-zA-Z0-9._-]/g, ''))}
                     placeholder="my-infrastructure"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-50 placeholder:text-slate-600 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -405,7 +405,7 @@ export default function GitHubConnections() {
                     value={newRepoDesc}
                     onChange={(e) => setNewRepoDesc(e.target.value)}
                     placeholder="Terraform infrastructure managed by Chkmate"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-50 placeholder:text-slate-600 focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 outline-none transition-all"
                   />
                 </div>
                 <div className="flex items-center gap-3">

@@ -8,7 +8,7 @@ const Services: React.FC = () => {
     <Section id="services" className="bg-black">
       <div className="text-left mb-16 border-b border-gray-800 pb-8">
         <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">Our Expertise</span>
-        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 mt-2">Core Competencies</h2>
+        <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mb-4 mt-2">Core Competencies</h2>
         <p className="text-gray-400 max-w-2xl">We don't just write code; we engineer value. Our expertise spans across critical domains required for modern digital transformation.</p>
       </div>
 
@@ -22,11 +22,11 @@ const Services: React.FC = () => {
               <ArrowUpRight size={24} />
             </div>
             
-            <div className="mb-6 p-4 inline-block rounded-full bg-gray-900 text-white group-hover:bg-white group-hover:text-black transition-colors duration-300">
+            <div className="mb-6 p-4 inline-block rounded-full bg-gray-900 text-slate-50 group-hover:bg-white group-hover:text-black transition-colors duration-300">
               <service.icon size={28} />
             </div>
 
-            <h3 className="text-2xl font-bold text-white mb-4">{service.title}</h3>
+            <h3 className="text-2xl font-bold text-slate-50 mb-4">{service.title}</h3>
             <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
               {service.description}
             </p>

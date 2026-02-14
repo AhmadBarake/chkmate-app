@@ -32,7 +32,7 @@ export default function Pricing() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white selection:bg-brand-500/30 font-sans">
+    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-brand-500/30 font-sans">
       <Navbar />
 
       <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
@@ -88,7 +88,7 @@ export default function Pricing() {
                     <div className="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center mb-4">
                       <Rocket className="w-5 h-5 text-brand-400" />
                     </div>
-                    <h3 className="text-xl font-bold text-white">Pro</h3>
+                    <h3 className="text-xl font-bold text-slate-50">Pro</h3>
                     <p className="text-slate-400 text-sm mt-1">For professionals & power users.</p>
                   </div>
                   <div className="mb-6">
@@ -172,7 +172,7 @@ export default function Pricing() {
                   <div key={pack.name} className="border border-slate-800 bg-slate-900/50 p-6 rounded-2xl">
                     <div className="flex justify-between items-start mb-4">
                       <pack.icon className={`w-6 h-6 ${pack.color}`} />
-                      <span className="font-mono text-lg font-bold text-white">{pack.price}</span>
+                      <span className="font-mono text-lg font-bold text-slate-50">{pack.price}</span>
                     </div>
                     <h3 className="font-bold text-lg mb-1">{pack.name}</h3>
                     <p className="text-slate-400 text-sm">{pack.credits}</p>
@@ -207,7 +207,7 @@ export default function Pricing() {
                   <Sparkles className="w-6 h-6 text-brand-400" />
                 </div>
               </div>
-              <h3 className="text-3xl font-bold text-white mb-3">Pricing Coming Soon</h3>
+              <h3 className="text-3xl font-bold text-slate-50 mb-3">Pricing Coming Soon</h3>
               <p className="text-slate-400 max-w-lg mx-auto mb-8 text-lg">
                 We're finalizing our pricing model. Join the waitlist to be the first to know and lock in early-adopter rates.
               </p>

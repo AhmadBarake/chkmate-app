@@ -60,7 +60,7 @@ export default function Newsletter() {
             {status === 'success' ? (
               <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 text-center animate-in fade-in slide-in-from-bottom-2">
                 <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
-                <h3 className="font-bold text-white">Subscribed!</h3>
+                <h3 className="font-bold text-slate-50">Subscribed!</h3>
                 <p className="text-emerald-200/60 text-sm">Thanks for joining.</p>
               </div>
             ) : (
@@ -73,7 +73,7 @@ export default function Newsletter() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={status === 'loading'}
-                    className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-5 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all disabled:opacity-50"
+                    className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-5 py-3 text-slate-50 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all disabled:opacity-50"
                   />
                   <div className="absolute right-2 top-2">
                     <button 

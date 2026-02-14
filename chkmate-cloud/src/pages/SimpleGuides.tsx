@@ -212,7 +212,7 @@ export default function SimpleGuides() {
                   <guide.icon className={cn('w-6 h-6', colors.text)} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-white">{guide.title}</h3>
+                  <h3 className="font-bold text-slate-50">{guide.title}</h3>
                   <p className="text-sm text-slate-400 mt-0.5">{guide.description}</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
@@ -256,7 +256,7 @@ export default function SimpleGuides() {
                               )}
                             </div>
                             <div className="pb-4 flex-1">
-                              <p className="font-bold text-sm text-white">{guideStep.title}</p>
+                              <p className="font-bold text-sm text-slate-50">{guideStep.title}</p>
                               <p className="text-sm text-slate-400 mt-1">{guideStep.description}</p>
                               {guideStep.action && (
                                 <button

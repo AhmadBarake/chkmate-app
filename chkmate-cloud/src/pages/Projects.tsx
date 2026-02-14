@@ -132,7 +132,7 @@ export default function Projects() {
                     <input
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
-                      className="w-full bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-white focus:border-brand-500/50 outline-none transition-all placeholder:text-slate-700"
+                      className="w-full bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-slate-50 focus:border-brand-500/50 outline-none transition-all placeholder:text-slate-700"
                       placeholder="e.g. Production Cluster"
                       required
                       disabled={creating}
@@ -145,7 +145,7 @@ export default function Projects() {
                     <input
                       value={newDesc}
                       onChange={(e) => setNewDesc(e.target.value)}
-                      className="w-full bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-white focus:border-brand-500/50 outline-none transition-all placeholder:text-slate-700"
+                      className="w-full bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-slate-50 focus:border-brand-500/50 outline-none transition-all placeholder:text-slate-700"
                       placeholder="e.g. Multi-tier application stack"
                       disabled={creating}
                     />

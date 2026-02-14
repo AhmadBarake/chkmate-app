@@ -116,7 +116,7 @@ const CostChartAnimation = () => {
                 <motion.div 
                     animate={{ scale: [1, 1.05, 1] }}
                     transition={{ repeat: Infinity, duration: 2 }}
-                    className="text-xl font-bold text-white"
+                    className="text-xl font-bold text-slate-50"
                 >
                     $1,382<span className="text-xs font-normal text-slate-400">/mo</span>
                 </motion.div>

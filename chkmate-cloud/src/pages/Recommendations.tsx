@@ -141,7 +141,7 @@ export default function Recommendations() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-50 flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-brand-400" />
               Smart Recommendations
             </h1>
@@ -192,7 +192,7 @@ export default function Recommendations() {
                 <p className="text-slate-400 text-sm font-medium mb-1 flex items-center gap-2">
                     <DollarSign className="w-4 h-4 text-emerald-400" /> Potential Savings
                 </p>
-                <div className="text-3xl font-bold text-white">${stats.savings.toFixed(2)}<span className="text-sm text-slate-500 font-normal">/mo</span></div>
+                <div className="text-3xl font-bold text-slate-50">${stats.savings.toFixed(2)}<span className="text-sm text-slate-500 font-normal">/mo</span></div>
             </div>
 
             <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 relative overflow-hidden">
@@ -200,7 +200,7 @@ export default function Recommendations() {
                 <p className="text-slate-400 text-sm font-medium mb-1 flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-red-400" /> Critical Risks
                 </p>
-                <div className="text-3xl font-bold text-white">{stats.critical}</div>
+                <div className="text-3xl font-bold text-slate-50">{stats.critical}</div>
             </div>
 
             <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 relative overflow-hidden">
@@ -208,7 +208,7 @@ export default function Recommendations() {
                 <p className="text-slate-400 text-sm font-medium mb-1 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-brand-400" /> Open Opportunities
                 </p>
-                <div className="text-3xl font-bold text-white">{stats.total}</div>
+                <div className="text-3xl font-bold text-slate-50">{stats.total}</div>
             </div>
         </div>
 

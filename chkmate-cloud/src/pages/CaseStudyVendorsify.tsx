@@ -26,7 +26,7 @@ const CaseStudyVendorsify: React.FC = () => {
         </div>
         
         <div className="container mx-auto px-6 relative z-10 pt-20">
-            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-8 transition-colors">
+            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-slate-50 mb-8 transition-colors">
                 <ArrowLeft size={20} className="mr-2" /> Back to Home
             </Link>
             
@@ -39,7 +39,7 @@ const CaseStudyVendorsify: React.FC = () => {
                     <span className="bg-indigo-900/40 text-indigo-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-indigo-800">SaaS Engineering</span>
                     <span className="bg-emerald-900/40 text-emerald-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-emerald-800">AWS Consulting</span>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 max-w-4xl leading-tight">
+                <h1 className="text-4xl md:text-6xl font-bold text-slate-50 mb-6 max-w-4xl leading-tight">
                     Building <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-300">Vendorsify</span>: End-to-End SaaS Engineering.
                 </h1>
                 <p className="text-xl text-slate-400 max-w-2xl mb-8">
@@ -58,7 +58,7 @@ const CaseStudyVendorsify: React.FC = () => {
       <Section className="bg-slate-950">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
              <div>
-                 <h2 className="text-3xl font-bold text-white mb-6">The Challenge</h2>
+                 <h2 className="text-3xl font-bold text-slate-50 mb-6">The Challenge</h2>
                  <p className="text-slate-400 leading-relaxed mb-6">
                      Vendorsify needed to transform a B2B concept into a production-ready, multi-tenant SaaS platform. The challenge was multifaceted:
                  </p>
@@ -79,26 +79,26 @@ const CaseStudyVendorsify: React.FC = () => {
              </div>
              
              <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-lg relative overflow-hidden">
-                 <h3 className="text-xl font-bold text-white mb-6">Scope of Work</h3>
+                 <h3 className="text-xl font-bold text-slate-50 mb-6">Scope of Work</h3>
                  <div className="grid grid-cols-2 gap-4">
                      <div className="p-4 bg-slate-950/50 rounded border border-gray-800">
                          <PenTool className="text-pink-400 mb-2" size={24} />
-                         <span className="text-sm font-bold block text-white">UI/UX Design</span>
+                         <span className="text-sm font-bold block text-slate-50">UI/UX Design</span>
                          <span className="text-xs text-slate-400">Figma & Prototyping</span>
                      </div>
                      <div className="p-4 bg-slate-950/50 rounded border border-gray-800">
                          <Layout className="text-blue-400 mb-2" size={24} />
-                         <span className="text-sm font-bold block text-white">Frontend Dev</span>
+                         <span className="text-sm font-bold block text-slate-50">Frontend Dev</span>
                          <span className="text-xs text-slate-400">React & Next.js</span>
                      </div>
                      <div className="p-4 bg-slate-950/50 rounded border border-gray-800">
                          <Database className="text-emerald-400 mb-2" size={24} />
-                         <span className="text-sm font-bold block text-white">Backend & DB</span>
+                         <span className="text-sm font-bold block text-slate-50">Backend & DB</span>
                          <span className="text-xs text-slate-400">Node.js & PostgreSQL</span>
                      </div>
                       <div className="p-4 bg-slate-950/50 rounded border border-gray-800">
                          <CloudLightning className="text-orange-400 mb-2" size={24} />
-                         <span className="text-sm font-bold block text-white">AWS Infra</span>
+                         <span className="text-sm font-bold block text-slate-50">AWS Infra</span>
                          <span className="text-xs text-slate-400">Terraform & ECS</span>
                      </div>
                  </div>
@@ -110,7 +110,7 @@ const CaseStudyVendorsify: React.FC = () => {
       <Section className="bg-neutral-950 border-t border-neutral-900">
           <div className="max-w-4xl mx-auto text-center mb-12">
               <span className="text-blue-400 font-mono text-sm uppercase tracking-wider">The Application</span>
-              <h2 className="text-3xl font-bold text-white mt-2 mb-6">Vendor Lifecycle Management</h2>
+              <h2 className="text-3xl font-bold text-slate-50 mt-2 mb-6">Vendor Lifecycle Management</h2>
               <p className="text-slate-400">
                   Vendorsify serves as a central hub for enterprise procurement teams, streamlining the chaotic process of onboarding, managing, and analyzing vendor relationships.
               </p>
@@ -141,22 +141,22 @@ const CaseStudyVendorsify: React.FC = () => {
                       <Database className="mr-3" />
                       <span className="uppercase tracking-widest font-mono text-sm">Core Engineering</span>
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-6">Robust Systems Architecture</h3>
+                  <h3 className="text-3xl font-bold text-slate-50 mb-6">Robust Systems Architecture</h3>
                   <p className="text-slate-400 mb-6">
                       From atomic design components in React to normalized SQL schemas in PostgreSQL, every layer was built for scalability.
                   </p>
                   <div className="bg-neutral-900 p-6 rounded-lg border border-neutral-800 mb-6">
-                      <h4 className="text-white font-bold mb-2 flex items-center"><Layout size={16} className="mr-2 text-pink-400"/> Frontend</h4>
+                      <h4 className="text-slate-50 font-bold mb-2 flex items-center"><Layout size={16} className="mr-2 text-pink-400"/> Frontend</h4>
                       <p className="text-xs text-slate-400">Next.js with SSR, using a strict design system for consistent UX across tenant portals.</p>
                   </div>
                    <div className="bg-neutral-900 p-6 rounded-lg border border-neutral-800">
-                      <h4 className="text-white font-bold mb-2 flex items-center"><Database size={16} className="mr-2 text-emerald-400"/> Backend</h4>
+                      <h4 className="text-slate-50 font-bold mb-2 flex items-center"><Database size={16} className="mr-2 text-emerald-400"/> Backend</h4>
                       <p className="text-xs text-slate-400">Node.js microservices with Zod validation and a multi-tenant PostgreSQL schema.</p>
                   </div>
               </div>
                   <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-xl relative overflow-hidden">
                       <div className="absolute top-0 right-0 p-4 opacity-5">
-                          <GitMerge size={120} className="text-white" />
+                          <GitMerge size={120} className="text-slate-50" />
                       </div>
                       
                       {/* Detailed UML Diagram Visual */}
@@ -217,7 +217,7 @@ const CaseStudyVendorsify: React.FC = () => {
                            </div>
                       </div>
                       <div className="mt-8 pt-6 border-t border-gray-800">
-                          <h4 className="text-white font-bold mb-2 text-sm">Database Structure & Isolation</h4>
+                          <h4 className="text-slate-50 font-bold mb-2 text-sm">Database Structure & Isolation</h4>
                           <p className="text-xs text-slate-400 leading-relaxed">
                               We implemented a <strong>Schema-per-Tenant</strong> strategy within PostgreSQL. This ensures that while all tenants share the same physical RDS instance (cost-efficient), their data lives in completely separate logical schemas (secure). 
                               <br/><br/>
@@ -232,7 +232,7 @@ const CaseStudyVendorsify: React.FC = () => {
       <Section className="bg-neutral-950 border-t border-neutral-900">
           <div className="text-center mb-16">
               <span className="text-orange-400 font-mono text-sm uppercase tracking-wider">Infrastructure & DevOps</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">Enterprise-Grade AWS Stack</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mt-2 mb-6">Enterprise-Grade AWS Stack</h2>
               <p className="text-slate-400 max-w-3xl mx-auto">
                   A fully automated, secure, and resilient cloud architecture designed to support strict enterprise compliance.
               </p>
@@ -272,12 +272,12 @@ const CaseStudyVendorsify: React.FC = () => {
                        <div className="grid grid-cols-2 gap-4 mt-4">
                            <div className="bg-slate-950 border border-orange-800 p-3 rounded text-center">
                                <Server size={24} className="text-orange-500 mx-auto mb-1" />
-                               <span className="text-xs text-white">ECS Cluster</span>
+                               <span className="text-xs text-slate-50">ECS Cluster</span>
                                <span className="block text-[8px] text-slate-400">Auto-Scaling</span>
                            </div>
                            <div className="bg-slate-950 border border-orange-800 p-3 rounded text-center">
                                <Cpu size={24} className="text-yellow-500 mx-auto mb-1" />
-                               <span className="text-xs text-white">Lambda</span>
+                               <span className="text-xs text-slate-50">Lambda</span>
                                <span className="block text-[8px] text-slate-400">Async Tasks</span>
                            </div>
                        </div>
@@ -300,7 +300,7 @@ const CaseStudyVendorsify: React.FC = () => {
                   <div className="w-10 h-10 bg-neutral-900 rounded-full flex items-center justify-center mb-4 border border-gray-700">
                       <RefreshCw className="text-brand-400" size={20} />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">CI/CD Pipelines</h3>
+                  <h3 className="text-lg font-bold text-slate-50 mb-2">CI/CD Pipelines</h3>
                   <div className="text-sm text-slate-400 space-y-3">
                       <div className="flex items-center">
                           <span className="w-2 h-2 bg-brand-500 rounded-full mr-2"></span>
@@ -321,7 +321,7 @@ const CaseStudyVendorsify: React.FC = () => {
                   <div className="w-10 h-10 bg-neutral-900 rounded-full flex items-center justify-center mb-4 border border-gray-700">
                       <Shield className="text-red-400" size={20} />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">Security First</h3>
+                  <h3 className="text-lg font-bold text-slate-50 mb-2">Security First</h3>
                    <div className="text-sm text-slate-400 space-y-3">
                       <div className="flex items-center">
                           <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
@@ -342,7 +342,7 @@ const CaseStudyVendorsify: React.FC = () => {
                   <div className="w-10 h-10 bg-neutral-900 rounded-full flex items-center justify-center mb-4 border border-gray-700">
                       <Database className="text-blue-400" size={20} />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">Data Management</h3>
+                  <h3 className="text-lg font-bold text-slate-50 mb-2">Data Management</h3>
                    <div className="text-sm text-slate-400 space-y-3">
                       <div className="flex items-center">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
@@ -365,9 +365,9 @@ const CaseStudyVendorsify: React.FC = () => {
       <Section className="bg-slate-950">
            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                <div className="order-2 md:order-1">
-                   <h3 className="text-3xl font-bold text-white mb-6">Accelerated Time-to-Market</h3>
+                   <h3 className="text-3xl font-bold text-slate-50 mb-6">Accelerated Time-to-Market</h3>
                    <div className="bg-neutral-900 p-6 rounded-xl border border-neutral-800 shadow-2xl">
-                       <h4 className="text-lg font-bold text-white mb-4 border-b border-neutral-800 pb-2">Onboarding Efficiency</h4>
+                       <h4 className="text-lg font-bold text-slate-50 mb-4 border-b border-neutral-800 pb-2">Onboarding Efficiency</h4>
                        <div className="h-64 w-full">
                            <ResponsiveContainer width="100%" height="100%">
                                <BarChart data={onboardingData} layout="vertical">
@@ -388,18 +388,18 @@ const CaseStudyVendorsify: React.FC = () => {
                       <Users className="mr-3" />
                       <span className="uppercase tracking-widest font-mono text-sm">Team Orchestration</span>
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-6">Building the Dream Team</h3>
+                  <h3 className="text-3xl font-bold text-slate-50 mb-6">Building the Dream Team</h3>
                   <p className="text-slate-400 leading-relaxed mb-6">
                       Beyond code, we built the company. We sourced, screened, and integrated a dedicated specialist team, implementing Agile methodologies that maximized delivery velocity.
                   </p>
                   
                   <div className="grid grid-cols-2 gap-4 text-center">
                       <div className="p-4 border border-gray-800 rounded bg-gray-900/30">
-                          <div className="text-2xl font-bold text-white">2 Weeks</div>
+                          <div className="text-2xl font-bold text-slate-50">2 Weeks</div>
                           <div className="text-xs text-slate-400 uppercase">Sourcing Time</div>
                       </div>
                       <div className="p-4 border border-gray-800 rounded bg-gray-900/30">
-                          <div className="text-2xl font-bold text-white">High</div>
+                          <div className="text-2xl font-bold text-slate-50">High</div>
                           <div className="text-xs text-slate-400 uppercase">Retention Rate</div>
                       </div>
                   </div>

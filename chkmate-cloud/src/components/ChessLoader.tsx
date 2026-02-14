@@ -34,7 +34,7 @@ export default function ChessLoader() {
           strokeWidth="1" // Minimal stroke
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="w-full h-full text-white"
+          className="w-full h-full text-slate-50"
           initial="hidden"
           animate={["visible", "erase"]}
           transition={{
@@ -55,7 +55,7 @@ export default function ChessLoader() {
 
            {/* KING (Right) */}
            <motion.g 
-                className="text-white" // Highlight the King? Or keep white? Let's keep it subtle purple.
+                className="text-slate-50" // Highlight the King? Or keep white? Let's keep it subtle purple.
                 style={{ translateX: 20, translateY: -2 }} // Position slightly higher
            > 
                <motion.path variants={drawAndErase} d="M12 22h-4c-1.1 0-1.88-.9-1.88-2 0-3.1 3.1-4 3.1-9a2.76 2.76 0 0 1-2.2-2.1c-.6-3.1 2-5.4 5-5.9" />

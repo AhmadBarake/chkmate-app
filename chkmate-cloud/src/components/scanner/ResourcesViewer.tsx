@@ -38,7 +38,7 @@ export function ResourcesViewer({ results }: ResourcesViewerProps) {
       {/* LAMBDA */}
       {hasLambda && (
           <div className="space-y-4">
-              <h3 className="text-lg font-bold flex items-center gap-2 text-white border-b border-slate-800 pb-2">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-slate-50 border-b border-slate-800 pb-2">
                   <Code2 className="w-5 h-5 text-orange-400" /> Lambda Functions
                   <span className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full ml-auto">
                       {lambdaIssues?.length} Issues
@@ -68,7 +68,7 @@ export function ResourcesViewer({ results }: ResourcesViewerProps) {
       {/* DYNAMODB */}
       {hasDynamo && (
           <div className="space-y-4">
-              <h3 className="text-lg font-bold flex items-center gap-2 text-white border-b border-slate-800 pb-2">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-slate-50 border-b border-slate-800 pb-2">
                   <Database className="w-5 h-5 text-blue-400" /> DynamoDB Tables
                   <span className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full ml-auto">
                       {dynamoDBIssues?.length} Issues
@@ -96,7 +96,7 @@ export function ResourcesViewer({ results }: ResourcesViewerProps) {
       {/* ELB */}
       {hasELB && (
           <div className="space-y-4">
-              <h3 className="text-lg font-bold flex items-center gap-2 text-white border-b border-slate-800 pb-2">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-slate-50 border-b border-slate-800 pb-2">
                   <Share2 className="w-5 h-5 text-purple-400" /> Load Balancers
                   <span className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full ml-auto">
                       {elbIssues?.length} Issues
@@ -126,7 +126,7 @@ export function ResourcesViewer({ results }: ResourcesViewerProps) {
       {/* EKS */}
       {hasEKS && (
           <div className="space-y-4">
-              <h3 className="text-lg font-bold flex items-center gap-2 text-white border-b border-slate-800 pb-2">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-slate-50 border-b border-slate-800 pb-2">
                   <Radio className="w-5 h-5 text-emerald-400" /> EKS Clusters
                   <span className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full ml-auto">
                       {eksIssues?.length} Issues

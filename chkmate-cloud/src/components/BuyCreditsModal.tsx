@@ -134,12 +134,12 @@ export default function BuyCreditsModal({ isOpen, onClose, onSuccess }: BuyCredi
                   Credit Top-up
                 </span>
               </div>
-              <h2 className="text-3xl font-black text-white tracking-tight">Fuel Your Cloud Engine</h2>
+              <h2 className="text-3xl font-black text-slate-50 tracking-tight">Fuel Your Cloud Engine</h2>
               <p className="text-slate-400 mt-2 font-medium">Select a credit package to continue building and auditing.</p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-500 hover:text-white hover:bg-slate-800 transition-all"
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-50 hover:bg-slate-800 transition-all"
             >
               <X className="w-6 h-6" />
             </button>
@@ -161,7 +161,7 @@ export default function BuyCreditsModal({ isOpen, onClose, onSuccess }: BuyCredi
                 )}
               >
                 {pack.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-brand-600 to-indigo-600 text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-brand-600 to-indigo-600 text-[10px] font-black uppercase tracking-widest text-slate-50 shadow-lg">
                     Best Value
                   </div>
                 )}
@@ -170,12 +170,12 @@ export default function BuyCreditsModal({ isOpen, onClose, onSuccess }: BuyCredi
                   "w-12 h-12 rounded-xl mb-4 flex items-center justify-center bg-gradient-to-br transition-transform group-hover:scale-110",
                   pack.color
                 )}>
-                  <Zap className="w-6 h-6 text-white" />
+                  <Zap className="w-6 h-6 text-slate-50" />
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-1">{pack.name}</h3>
+                <h3 className="text-lg font-bold text-slate-50 mb-1">{pack.name}</h3>
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-2xl font-black text-white">{pack.credits}</span>
+                  <span className="text-2xl font-black text-slate-50">{pack.credits}</span>
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Credits</span>
                 </div>
 
@@ -183,7 +183,7 @@ export default function BuyCreditsModal({ isOpen, onClose, onSuccess }: BuyCredi
                   {pack.description}
                 </p>
 
-                <div className="text-xl font-black text-white border-t border-slate-800 pt-4 group-hover:text-brand-400 transition-colors">
+                <div className="text-xl font-black text-slate-50 border-t border-slate-800 pt-4 group-hover:text-brand-400 transition-colors">
                   {pack.price}
                 </div>
 
@@ -191,7 +191,7 @@ export default function BuyCreditsModal({ isOpen, onClose, onSuccess }: BuyCredi
                   "absolute bottom-4 right-4 w-6 h-6 rounded-full flex items-center justify-center transition-all",
                   selectedPack === pack.id ? "bg-brand-500 scale-100" : "bg-slate-800 scale-0"
                 )}>
-                  <Check className="w-4 h-4 text-white" />
+                  <Check className="w-4 h-4 text-slate-50" />
                 </div>
               </div>
             ))}
@@ -204,7 +204,7 @@ export default function BuyCreditsModal({ isOpen, onClose, onSuccess }: BuyCredi
                 <Shield className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs font-bold text-white uppercase tracking-widest">Premium Security</p>
+                <p className="text-xs font-bold text-slate-50 uppercase tracking-widest">Premium Security</p>
                 <p className="text-xs text-slate-500">Processed by Stripe. 256-bit encrypted.</p>
               </div>
             </div>
@@ -218,7 +218,7 @@ export default function BuyCreditsModal({ isOpen, onClose, onSuccess }: BuyCredi
         {/* Footer */}
         <div className="p-8 border-t border-slate-800 bg-slate-900/50 backdrop-blur-md flex items-center justify-between gap-6">
           <div className="hidden md:block">
-            <p className="text-sm font-bold text-white flex items-center gap-2">
+            <p className="text-sm font-bold text-slate-50 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-brand-400" />
               Instant provisioning
             </p>

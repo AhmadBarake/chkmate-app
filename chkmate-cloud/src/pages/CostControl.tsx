@@ -143,7 +143,7 @@ export default function CostControl() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-slate-50 flex items-center gap-2">
             <DollarSign className="w-6 h-6 text-emerald-400" />
             Cost Control Dashboard
           </h1>
@@ -193,10 +193,10 @@ export default function CostControl() {
             <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 relative">
                <DollarSign className="w-8 h-8 text-slate-500" />
                <div className="absolute -right-2 -bottom-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center border border-slate-900">
-                  <Plus className="w-3 h-3 text-white" />
+                  <Plus className="w-3 h-3 text-slate-50" />
                </div>
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">No Cost Data Available</h3>
+            <h3 className="text-xl font-bold text-slate-50 mb-2">No Cost Data Available</h3>
             <p className="text-slate-400 max-w-sm text-center mb-8">
                {connections.length === 0 
                  ? "Connect your cloud provider to start tracking costs and optimizing your spending." 
@@ -227,7 +227,7 @@ export default function CostControl() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
           <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Monthly Forecast</div>
-          <div className="text-3xl font-bold text-white mb-2">
+          <div className="text-3xl font-bold text-slate-50 mb-2">
             ${scanResult?.costBreakdown?.totalMonthly?.toFixed(2) || '0.00'}
           </div>
           {scanResult?.costTrend && scanResult.costTrend.length >= 2 && (() => {
@@ -255,7 +255,7 @@ export default function CostControl() {
 
         <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
           <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Active Resources</div>
-          <div className="text-3xl font-bold text-white mb-2">{scanResult?.summary.totalResources || 0}</div>
+          <div className="text-3xl font-bold text-slate-50 mb-2">{scanResult?.summary.totalResources || 0}</div>
           <div className="flex items-center gap-1.5 text-xs text-slate-500">
             <Server className="w-3.5 h-3.5" /> Infrastructure footprint
           </div>

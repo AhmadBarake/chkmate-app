@@ -188,7 +188,7 @@ export default function CloudScanner() {
                  <div className="w-16 h-16 bg-brand-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand-500/20">
                    <Key className="w-8 h-8 text-brand-400" />
                  </div>
-                 <h2 className="text-xl font-bold mb-2 text-white">Connect AWS Account</h2>
+                 <h2 className="text-xl font-bold mb-2 text-slate-50">Connect AWS Account</h2>
                  <p className="text-sm text-slate-400">
                    {scanMode === 'saved' ? 'Select a saved connection to scan.' : 'Enter credentials for a one-time scan.'}
                  </p>
@@ -200,7 +200,7 @@ export default function CloudScanner() {
                     onClick={() => setScanMode('saved')}
                     className={cn(
                        "flex-1 py-2 text-xs font-bold rounded-lg transition-all",
-                       scanMode === 'saved' ? "bg-slate-800 text-white shadow-sm" : "text-slate-400 hover:text-white"
+                       scanMode === 'saved' ? "bg-slate-800 text-slate-50 shadow-sm" : "text-slate-400 hover:text-slate-50"
                     )}
                  >
                     Saved Connection
@@ -209,7 +209,7 @@ export default function CloudScanner() {
                     onClick={() => setScanMode('manual')}
                     className={cn(
                        "flex-1 py-2 text-xs font-bold rounded-lg transition-all",
-                       scanMode === 'manual' ? "bg-slate-800 text-white shadow-sm" : "text-slate-400 hover:text-white"
+                       scanMode === 'manual' ? "bg-slate-800 text-slate-50 shadow-sm" : "text-slate-400 hover:text-slate-50"
                     )}
                  >
                     Manual Credentials
@@ -225,7 +225,7 @@ export default function CloudScanner() {
                         <select
                            value={selectedConnectionId}
                            onChange={(e) => setSelectedConnectionId(e.target.value)}
-                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none appearance-none cursor-pointer hover:border-slate-700 transition-colors"
+                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-slate-50 focus:border-brand-500 outline-none appearance-none cursor-pointer hover:border-slate-700 transition-colors"
                         >
                            <option value="">-- Choose Connection --</option>
                            {connections
@@ -251,7 +251,7 @@ export default function CloudScanner() {
                         <select
                            value={selectedRegion}
                            onChange={(e) => setSelectedRegion(e.target.value)}
-                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none appearance-none cursor-pointer hover:border-slate-700 transition-colors"
+                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-slate-50 focus:border-brand-500 outline-none appearance-none cursor-pointer hover:border-slate-700 transition-colors"
                         >
                            {regions.map(r => (
                               <option key={r.value} value={r.value}>{r.label}</option>
@@ -262,7 +262,7 @@ export default function CloudScanner() {
                      <div className="bg-brand-500/5 border border-brand-500/10 rounded-lg p-3 flex gap-3 text-xs text-brand-200">
                         <DollarSign className="w-5 h-5 flex-shrink-0 text-brand-400" />
                         <p>
-                           Scan Cost: <strong className="text-white">{CREDIT_COSTS.CLOUD_SCAN} credits</strong>.
+                           Scan Cost: <strong className="text-slate-50">{CREDIT_COSTS.CLOUD_SCAN} credits</strong>.
                            Includes full IAM audit, resource inventory, and cost analysis.
                         </p>
                      </div>
@@ -288,7 +288,7 @@ export default function CloudScanner() {
                          type="text"
                          value={credentials.accessKeyId}
                          onChange={e => setCredentials({ ...credentials, accessKeyId: e.target.value })}
-                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none"
+                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-slate-50 focus:border-brand-500 outline-none"
                          placeholder="AKIA..."
                          required
                        />
@@ -300,11 +300,11 @@ export default function CloudScanner() {
                            type={showSecret ? 'text' : 'password'}
                            value={credentials.secretAccessKey}
                            onChange={e => setCredentials({ ...credentials, secretAccessKey: e.target.value })}
-                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none pr-10"
+                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-slate-50 focus:border-brand-500 outline-none pr-10"
                            placeholder="wJalr..."
                            required
                          />
-                         <button type="button" onClick={() => setShowSecret(!showSecret)} className="absolute right-3 top-3.5 text-slate-500 hover:text-white">
+                         <button type="button" onClick={() => setShowSecret(!showSecret)} className="absolute right-3 top-3.5 text-slate-500 hover:text-slate-50">
                            {showSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                          </button>
                        </div>
@@ -314,7 +314,7 @@ export default function CloudScanner() {
                         <select
                            value={credentials.region}
                            onChange={e => setCredentials({ ...credentials, region: e.target.value })}
-                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-brand-500 outline-none"
+                           className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-slate-50 focus:border-brand-500 outline-none"
                         >
                            {regions.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                         </select>
@@ -348,10 +348,10 @@ export default function CloudScanner() {
               <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-brand-500 animate-spin" />
               <div className="absolute inset-4 rounded-full border-4 border-slate-800" />
               <div className="absolute inset-4 rounded-full border-4 border-transparent border-t-emerald-500 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-              <Cloud className="absolute inset-0 m-auto w-10 h-10 text-white animate-pulse" />
+              <Cloud className="absolute inset-0 m-auto w-10 h-10 text-slate-50 animate-pulse" />
             </div>
             
-            <h2 className="text-3xl font-bold mb-3 text-white">Scanning Environment</h2>
+            <h2 className="text-3xl font-bold mb-3 text-slate-50">Scanning Environment</h2>
             <p className="text-slate-400 max-w-lg mx-auto mb-12 text-lg">
               We are deeply analyzing your AWS account across multiple dimensions...
             </p>
@@ -390,9 +390,9 @@ export default function CloudScanner() {
              {/* Header */}
              <div className="flex justify-between items-start">
                  <div>
-                    <h2 className="text-2xl font-bold text-white mb-1">Scan Results</h2>
+                    <h2 className="text-2xl font-bold text-slate-50 mb-1">Scan Results</h2>
                     <p className="text-slate-400">
-                        Detailed analysis for <span className="font-mono text-white">{results.scannedRegion}</span>
+                        Detailed analysis for <span className="font-mono text-slate-50">{results.scannedRegion}</span>
                         <span className="mx-2">•</span>
                         {results.summary.totalResources} Resources Found
                     </p>
@@ -434,8 +434,8 @@ export default function CloudScanner() {
                         className={cn(
                             "px-6 py-4 text-sm font-medium flex items-center gap-2 border-b-2 transition-all",
                             resultTab === tab.id 
-                                ? "border-brand-500 text-white" 
-                                : "border-transparent text-slate-400 hover:text-white"
+                                ? "border-brand-500 text-slate-50" 
+                                : "border-transparent text-slate-400 hover:text-slate-50"
                         )}
                     >
                         <tab.icon className={cn("w-4 h-4", resultTab === tab.id ? "text-brand-400" : "")} />
@@ -452,7 +452,7 @@ export default function CloudScanner() {
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
                                 <div className="text-slate-400 text-sm mb-1">Overall Score</div>
-                                <div className="text-3xl font-bold text-white mb-2">
+                                <div className="text-3xl font-bold text-slate-50 mb-2">
                                     {Math.max(0, 100 - (results.summary.criticalIssues * 10) - (results.summary.highIssues * 5))}
                                     <span className="text-sm text-slate-500 font-normal ml-1">/100</span>
                                 </div>
@@ -474,7 +474,7 @@ export default function CloudScanner() {
                             
                             <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
                                 <div className="text-slate-400 text-sm mb-1">Monthly Cost</div>
-                                <div className="text-3xl font-bold text-white mb-2">
+                                <div className="text-3xl font-bold text-slate-50 mb-2">
                                     ${results.costBreakdown?.totalMonthly.toFixed(2)}
                                 </div>
                                 <div className="text-xs text-slate-500">
@@ -496,7 +496,7 @@ export default function CloudScanner() {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Security Feed */}
                             <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                                <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                                <h3 className="font-bold text-slate-50 mb-4 flex items-center gap-2">
                                     <ShieldCheck className="w-5 h-5 text-brand-400" /> Top Security Risks
                                 </h3>
                                 <div className="space-y-3">
@@ -521,7 +521,7 @@ export default function CloudScanner() {
 
                             {/* Cost Chart Preview */}
                             <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                                 <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                                 <h3 className="font-bold text-slate-50 mb-4 flex items-center gap-2">
                                     <DollarSign className="w-5 h-5 text-emerald-400" /> Cost Distribution
                                 </h3>
                                 <div className="h-64">
@@ -555,14 +555,14 @@ export default function CloudScanner() {
                      <div className="space-y-6">
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                                 <h3 className="font-bold text-white mb-2">Monthly Forecast</h3>
-                                 <div className="text-4xl font-bold text-white mb-1">
+                                 <h3 className="font-bold text-slate-50 mb-2">Monthly Forecast</h3>
+                                 <div className="text-4xl font-bold text-slate-50 mb-1">
                                     ${(results.costForecast || results.costBreakdown?.totalMonthly || 0).toFixed(2)}
                                  </div>
                                  <p className="text-sm text-slate-500">Projected cost for this month</p>
                             </div>
                             <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                                 <h3 className="font-bold text-white mb-2">Potential Savings</h3>
+                                 <h3 className="font-bold text-slate-50 mb-2">Potential Savings</h3>
                                  <div className="text-4xl font-bold text-emerald-500 mb-1">
                                     ${results.summary.estimatedMonthlySavings.toFixed(2)}
                                  </div>
@@ -571,7 +571,7 @@ export default function CloudScanner() {
                          </div>
 
                          <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                             <h3 className="font-bold text-white mb-6">Cost by Service</h3>
+                             <h3 className="font-bold text-slate-50 mb-6">Cost by Service</h3>
                              <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <RechartsBarChart data={costData}>
@@ -588,7 +588,7 @@ export default function CloudScanner() {
                          </div>
                          
                          <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                             <h3 className="font-bold text-white mb-4">Cost Issues & Recommendations</h3>
+                             <h3 className="font-bold text-slate-50 mb-4">Cost Issues & Recommendations</h3>
                              {results.costOpportunities.map((opp, idx) => (
                                  <div key={idx} className="flex justify-between items-center py-3 border-b border-slate-800 last:border-0">
                                      <div>

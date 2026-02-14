@@ -66,7 +66,7 @@ export default function Templates() {
              <LayoutGrid className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-4xl font-black tracking-tight text-white">Infrastructure Blueprints</h2>
+            <h2 className="text-4xl font-black tracking-tight text-slate-50">Infrastructure Blueprints</h2>
             <p className="text-slate-500 mt-1 font-medium capitalize">Global repository of your architectural designs.</p>
           </div>
         </div>

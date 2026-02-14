@@ -93,7 +93,7 @@ export default function CreditBalance({ onBuyCredits, className, compact = false
             <div>
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Available Credits</p>
               <div className="flex items-baseline gap-1">
-                <p className="text-3xl font-black text-white tracking-tight">{balance.balance.toLocaleString()}</p>
+                <p className="text-3xl font-black text-slate-50 tracking-tight">{balance.balance.toLocaleString()}</p>
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               </div>
             </div>

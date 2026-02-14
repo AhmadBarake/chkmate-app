@@ -19,7 +19,7 @@ const CaseStudySGH: React.FC = () => {
         </div>
         
         <div className="container mx-auto px-6 relative z-10 pt-20">
-            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-8 transition-colors">
+            <Link to="/" className="inline-flex items-center text-slate-400 hover:text-slate-50 mb-8 transition-colors">
                 <ArrowLeft size={20} className="mr-2" /> Back to Home
             </Link>
             
@@ -32,7 +32,7 @@ const CaseStudySGH: React.FC = () => {
                     <span className="bg-blue-900/40 text-blue-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-blue-800">Healthcare Strategy</span>
                     <span className="bg-emerald-900/40 text-emerald-300 px-3 py-1 rounded-full text-xs font-mono uppercase border border-emerald-800">Digital Integration</span>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 max-w-4xl leading-tight">
+                <h1 className="text-4xl md:text-6xl font-bold text-slate-50 mb-6 max-w-4xl leading-tight">
                     Transforming Patient Care with <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-300">Integrated E-Commerce</span>.
                 </h1>
                 <p className="text-xl text-slate-400 max-w-2xl mb-8">
@@ -51,7 +51,7 @@ const CaseStudySGH: React.FC = () => {
       <Section className="bg-slate-950">
            <div className="text-center mb-16">
               <span className="text-blue-400 font-mono text-sm uppercase tracking-wider">The Patient Experience</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">Digital Prescription Journey</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mt-2 mb-6">Digital Prescription Journey</h2>
               <p className="text-slate-400 max-w-3xl mx-auto">
                   We architected a "Zero-Friction" flow that connects physical consultations to digital fulfillment, minimizing patient effort while maintaining strict medical compliance.
               </p>
@@ -64,7 +64,7 @@ const CaseStudySGH: React.FC = () => {
                    <div className="w-12 h-12 bg-blue-900/30 text-blue-400 rounded-lg flex items-center justify-center mb-4 border border-blue-900/50">
                        <Stethoscope size={24} />
                    </div>
-                   <h3 className="font-bold text-white mb-2">Doctor's Console</h3>
+                   <h3 className="font-bold text-slate-50 mb-2">Doctor's Console</h3>
                    <p className="text-sm text-slate-400">Doctor enters prescription into HIS (Hospital Information System) with specific dosage and duration.</p>
                </div>
                
@@ -81,7 +81,7 @@ const CaseStudySGH: React.FC = () => {
                    <div className="w-12 h-12 bg-brand-900/30 text-brand-400 rounded-lg flex items-center justify-center mb-4 border border-brand-900/50">
                        <Network size={24} />
                    </div>
-                   <h3 className="font-bold text-white mb-2">Middleware Sync</h3>
+                   <h3 className="font-bold text-slate-50 mb-2">Middleware Sync</h3>
                    <p className="text-sm text-slate-400">HL7 message triggers API payload. Prescription object is created in E-Com DB linked to Patient MRN.</p>
                </div>
 
@@ -98,7 +98,7 @@ const CaseStudySGH: React.FC = () => {
                    <div className="w-12 h-12 bg-emerald-900/30 text-emerald-400 rounded-lg flex items-center justify-center mb-4 border border-emerald-900/50">
                        <ShoppingCart size={24} />
                    </div>
-                   <h3 className="font-bold text-white mb-2">Pre-Populated Cart</h3>
+                   <h3 className="font-bold text-slate-50 mb-2">Pre-Populated Cart</h3>
                    <p className="text-sm text-slate-400">Patient receives SMS link. Clicking it opens the App with meds already in cart, pending checkout.</p>
                </div>
           </div>
@@ -108,20 +108,20 @@ const CaseStudySGH: React.FC = () => {
       <Section className="bg-neutral-900 border-y border-neutral-800">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
              <div>
-                 <h2 className="text-3xl font-bold text-white mb-6">Integration Architecture</h2>
+                 <h2 className="text-3xl font-bold text-slate-50 mb-6">Integration Architecture</h2>
                  <p className="text-slate-400 leading-relaxed mb-6">
                      The core complexity lay in the bidirectional synchronization between the legacy on-premise HIS and the cloud-native e-commerce platform. We implemented a robust <strong>Enterprise Service Bus (ESB)</strong> pattern.
                  </p>
                  
                  <div className="space-y-6">
                      <div className="bg-slate-950 p-4 rounded-lg border-l-4 border-blue-500">
-                         <h4 className="text-white font-bold flex items-center"><Activity size={16} className="mr-2 text-blue-500"/> Patient History Integration</h4>
+                         <h4 className="text-slate-50 font-bold flex items-center"><Activity size={16} className="mr-2 text-blue-500"/> Patient History Integration</h4>
                          <p className="text-xs text-slate-400 mt-2">
                              The system queries the EMR for patient allergies and contraindications in real-time before checkout. If a conflict affects the cart (e.g., potential drug interaction), the order is flagged for pharmacist review.
                          </p>
                      </div>
                      <div className="bg-slate-950 p-4 rounded-lg border-l-4 border-brand-500">
-                         <h4 className="text-white font-bold flex items-center"><CreditCard size={16} className="mr-2 text-brand-500"/> Real-time Adjudication</h4>
+                         <h4 className="text-slate-50 font-bold flex items-center"><CreditCard size={16} className="mr-2 text-brand-500"/> Real-time Adjudication</h4>
                          <p className="text-xs text-slate-400 mt-2">
                              Checkout flow integrates with Insurance Gateways (Waseel/Nawn) to calculate patient copay instantly. Logic handles coverage rejection by offering full-pay overrides.
                          </p>
@@ -139,7 +139,7 @@ const CaseStudySGH: React.FC = () => {
                           <div className="flex items-center">
                               <Database className="text-slate-400 mr-3" />
                               <div>
-                                  <div className="text-white font-bold text-sm">Legacy HIS (ERP)</div>
+                                  <div className="text-slate-50 font-bold text-sm">Legacy HIS (ERP)</div>
                                   <div className="text-[10px] text-slate-400">Oracle DB • HL7 Standards</div>
                               </div>
                           </div>
@@ -173,7 +173,7 @@ const CaseStudySGH: React.FC = () => {
                           <div className="flex items-center">
                               <ShoppingCart className="text-emerald-500 mr-3" />
                               <div>
-                                  <div className="text-white font-bold text-sm">Cloud E-Commerce</div>
+                                  <div className="text-slate-50 font-bold text-sm">Cloud E-Commerce</div>
                                   <div className="text-[10px] text-slate-400">Headless API • React Frontend</div>
                               </div>
                           </div>
@@ -188,7 +188,7 @@ const CaseStudySGH: React.FC = () => {
       <Section className="bg-slate-950">
           <div className="text-center mb-16">
               <span className="text-orange-400 font-mono text-sm uppercase tracking-wider">Operational Excellence</span>
-              <h2 className="text-3xl font-bold text-white mt-2">Logistics & Stock Control</h2>
+              <h2 className="text-3xl font-bold text-slate-50 mt-2">Logistics & Stock Control</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -196,7 +196,7 @@ const CaseStudySGH: React.FC = () => {
                   <div className="w-12 h-12 bg-orange-900/20 rounded-full flex items-center justify-center mb-6 border border-orange-900/50">
                       <ScanBarcode className="text-orange-400" size={24} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">Live Stock Synchronization</h3>
+                  <h3 className="text-xl font-bold text-slate-50 mb-3">Live Stock Synchronization</h3>
                   <p className="text-slate-400 text-sm leading-relaxed mb-4">
                       To prevent overselling, we implemented a <strong>"Soft Lock"</strong> mechanism. When a user adds an item to cart, middleware queries the specific hospital branch's inventory and reserves the unit for 15 minutes.
                   </p>
@@ -210,7 +210,7 @@ const CaseStudySGH: React.FC = () => {
                   <div className="w-12 h-12 bg-cyan-900/20 rounded-full flex items-center justify-center mb-6 border border-cyan-900/50">
                       <FileText className="text-cyan-400" size={24} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">Checkout Validation</h3>
+                  <h3 className="text-xl font-bold text-slate-50 mb-3">Checkout Validation</h3>
                   <p className="text-slate-400 text-sm leading-relaxed mb-4">
                       Checkout is not just payment; it's a medical validation gate. The logic checks for valid prescription expiry, insurance coverage limits, and controlled substance regulations before capturing payment.
                   </p>
@@ -224,7 +224,7 @@ const CaseStudySGH: React.FC = () => {
                   <div className="w-12 h-12 bg-pink-900/20 rounded-full flex items-center justify-center mb-6 border border-pink-900/50">
                       <Truck className="text-pink-400" size={24} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">Order Fulfillment</h3>
+                  <h3 className="text-xl font-bold text-slate-50 mb-3">Order Fulfillment</h3>
                   <p className="text-slate-400 text-sm leading-relaxed mb-4">
                       Orders are routed to the nearest hospital pharmacy for packing. The system generates a digital pick-list for pharmacists. Once packed, a "Ready for Pickup" or "Out for Delivery" status triggers a patient notification.
                   </p>

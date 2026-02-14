@@ -426,7 +426,7 @@ export default function Builder() {
             key={s}
             className={cn(
               "capitalize font-medium flex items-center gap-2 px-3 py-1 rounded transition-colors text-sm",
-              step === s ? 'bg-slate-900/50 text-white' : 'text-slate-500 hover:text-slate-400',
+              step === s ? 'bg-slate-900/50 text-slate-50' : 'text-slate-500 hover:text-slate-400',
               (s !== 'provider' && !selectedProvider) && 'opacity-50 cursor-not-allowed'
             )}
             onClick={() => {
@@ -717,7 +717,7 @@ export default function Builder() {
                         <span className="font-mono text-slate-200">${item.cost}/mo</span>
                       </motion.div>
                     ))}
-                    <div className="flex justify-between text-lg font-bold pt-3 text-white border-t border-slate-700 mt-2">
+                    <div className="flex justify-between text-lg font-bold pt-3 text-slate-50 border-t border-slate-700 mt-2">
                       <span>Total Estimated</span>
                       <span className="text-emerald-400">${costEstimate?.total}/mo</span>
                     </div>
@@ -814,7 +814,7 @@ export default function Builder() {
                           "flex items-center gap-2 w-full text-left px-3 py-1.5 rounded-lg text-xs transition-all",
                           selectedFile === file
                             ? "bg-brand-500/20 text-brand-300 font-medium"
-                            : "text-slate-400 hover:text-white hover:bg-slate-900/50"
+                            : "text-slate-400 hover:text-slate-50 hover:bg-slate-900/50"
                         )}
                       >
                         <File className="w-3.5 h-3.5" />

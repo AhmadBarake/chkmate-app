@@ -46,7 +46,7 @@ export default function LandingPage() {
   const goToDocs = () => navigate('/docs');
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white selection:bg-brand-500/30 font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-brand-500/30 font-sans overflow-x-hidden">
       <Navbar />
 
       {/* Hero Section */}
@@ -84,7 +84,7 @@ export default function LandingPage() {
                 <button onClick={openModal} className="bg-slate-100 text-slate-950 hover:bg-slate-200 px-8 py-4 rounded-full font-semibold text-lg transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-white/10">
                     Request Access
                 </button>
-                <button onClick={goToDocs} className="bg-slate-900/80 hover:bg-slate-800 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all border border-slate-700 backdrop-blur-sm flex items-center justify-center">
+                <button onClick={goToDocs} className="bg-slate-900/80 hover:bg-slate-800 text-slate-50 px-8 py-4 rounded-full font-semibold text-lg transition-all border border-slate-700 backdrop-blur-sm flex items-center justify-center">
                    View Roadmap
                 </button>
             </div>
@@ -370,7 +370,7 @@ export default function LandingPage() {
                    <div className="mb-6 w-14 h-14 rounded-2xl bg-slate-950 text-brand-400 border border-slate-800 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors duration-300">
                       <Code size={28} />
                    </div>
-                   <h3 className="text-3xl font-semibold mb-4 text-white">Developers</h3>
+                   <h3 className="text-3xl font-semibold mb-4 text-slate-50">Developers</h3>
                    <ul className="space-y-4 text-slate-400 text-lg">
                        <li className="flex gap-3"><span className="text-brand-500">•</span> Stop context-switching to documentation.</li>
                        <li className="flex gap-3"><span className="text-brand-500">•</span> Write the logic, let Chkmate handle the syntax.</li>
@@ -387,7 +387,7 @@ export default function LandingPage() {
                     <div className="mb-6 w-14 h-14 rounded-2xl bg-slate-950 text-brand-400 border border-slate-800 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors duration-300">
                       <Layout size={28} />
                    </div>
-                   <h3 className="text-3xl font-semibold mb-4 text-white">Architects</h3>
+                   <h3 className="text-3xl font-semibold mb-4 text-slate-50">Architects</h3>
                    <ul className="space-y-4 text-slate-400 text-lg">
                        <li className="flex gap-3"><span className="text-brand-500">•</span> Standardize infrastructure patterns across your team.</li>
                        <li className="flex gap-3"><span className="text-brand-500">•</span> Get instant cost estimates for client proposals.</li>
@@ -425,7 +425,7 @@ export default function LandingPage() {
                                    <PieChart size={28} />
                                </div>
                                <div>
-                                   <h3 className="text-xl font-semibold mb-2 text-white">Deep Cost Intelligence</h3>
+                                   <h3 className="text-xl font-semibold mb-2 text-slate-50">Deep Cost Intelligence</h3>
                                    <p className="text-slate-400 leading-relaxed mb-2">
                                        Stop flying blind. Visualize spend by service, region, and team.
                                    </p>
@@ -443,7 +443,7 @@ export default function LandingPage() {
                                    <ShieldCheck size={28} />
                                </div>
                                <div>
-                                   <h3 className="text-xl font-semibold mb-2 text-white">Continuous Security Auditing</h3>
+                                   <h3 className="text-xl font-semibold mb-2 text-slate-50">Continuous Security Auditing</h3>
                                    <p className="text-slate-400 leading-relaxed mb-2">
                                        Automated scanning against industry benchmarks (CIS, SOC2).
                                    </p>
@@ -461,7 +461,7 @@ export default function LandingPage() {
                                    <FileText size={28} />
                                </div>
                                <div>
-                                   <h3 className="text-xl font-semibold mb-2 text-white">Policy Management</h3>
+                                   <h3 className="text-xl font-semibold mb-2 text-slate-50">Policy Management</h3>
                                    <p className="text-slate-400 leading-relaxed mb-2">
                                        Define guardrails as code and prevent drift before it happens.
                                    </p>
@@ -542,7 +542,7 @@ export default function LandingPage() {
                          <div className="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center mb-4">
                            <Rocket className="w-5 h-5 text-brand-400" />
                          </div>
-                         <h3 className="text-xl font-semibold text-white mb-1">Pro</h3>
+                         <h3 className="text-xl font-semibold text-slate-50 mb-1">Pro</h3>
                          <p className="text-slate-400 text-sm">For professionals & power users.</p>
                        </div>
                        <div className="mb-6">
@@ -608,7 +608,7 @@ export default function LandingPage() {
                          <Sparkles className="w-5 h-5 text-brand-400" />
                        </div>
                      </div>
-                     <h3 className="text-2xl font-bold text-white mb-2">Pricing Coming Soon</h3>
+                     <h3 className="text-2xl font-bold text-slate-50 mb-2">Pricing Coming Soon</h3>
                      <p className="text-slate-400 max-w-md mx-auto mb-6">
                        We're finalizing our pricing model. Join the waitlist to be the first to know and lock in early-adopter rates.
                      </p>

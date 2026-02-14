@@ -36,7 +36,7 @@ const CaseStudies: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-gray-800 pb-8">
         <div className="max-w-2xl">
           <span className="text-orange-400 font-mono text-sm uppercase tracking-wider">Success Stories</span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 mt-2">Proven Results</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-50 mb-4 mt-2">Proven Results</h2>
           <p className="text-gray-400">
             Real-world challenges solved with precision engineering and strategic foresight.
           </p>
@@ -44,17 +44,17 @@ const CaseStudies: React.FC = () => {
         <div className="mt-6 md:mt-0 flex items-center space-x-6">
             {!viewAll && (
                 <div className="flex space-x-2">
-                    <button onClick={prevSlide} className="p-2 border border-gray-700 rounded-full hover:bg-neutral-800 transition-colors text-white">
+                    <button onClick={prevSlide} className="p-2 border border-gray-700 rounded-full hover:bg-neutral-800 transition-colors text-slate-50">
                         <ChevronLeft size={20} />
                     </button>
-                    <button onClick={nextSlide} className="p-2 border border-gray-700 rounded-full hover:bg-neutral-800 transition-colors text-white">
+                    <button onClick={nextSlide} className="p-2 border border-gray-700 rounded-full hover:bg-neutral-800 transition-colors text-slate-50">
                         <ChevronRight size={20} />
                     </button>
                 </div>
             )}
             <button 
                 onClick={() => setViewAll(!viewAll)}
-                className="hidden md:inline-block text-white hover:text-gray-300 font-mono text-sm uppercase tracking-widest border-b border-white pb-1 transition-colors"
+                className="hidden md:inline-block text-slate-50 hover:text-gray-300 font-mono text-sm uppercase tracking-widest border-b border-white pb-1 transition-colors"
             >
                 {viewAll ? "Show Less" : "View All Projects"}
             </button>
@@ -95,10 +95,10 @@ const CaseStudies: React.FC = () => {
                             {/* Link to case study if URL is provided and not hash */}
                             {study.link && study.link !== '#' ? (
                             <Link to={study.link} className="hover:text-cyan-400 transition-colors">
-                                <h3 className="text-xl font-bold text-white mt-1 underline decoration-1 underline-offset-4">{study.title}</h3>
+                                <h3 className="text-xl font-bold text-slate-50 mt-1 underline decoration-1 underline-offset-4">{study.title}</h3>
                             </Link>
                             ) : (
-                            <h3 className="text-xl font-bold text-white mt-1 group-hover:underline decoration-1 underline-offset-4">{study.title}</h3>
+                            <h3 className="text-xl font-bold text-slate-50 mt-1 group-hover:underline decoration-1 underline-offset-4">{study.title}</h3>
                             )}
                         </div>
                         
@@ -131,7 +131,7 @@ const CaseStudies: React.FC = () => {
       <div className="mt-8 md:hidden text-center">
          <button 
             onClick={() => setViewAll(!viewAll)}
-            className="text-white hover:text-gray-300 font-mono text-sm uppercase tracking-widest border-b border-white pb-1 transition-colors"
+            className="text-slate-50 hover:text-gray-300 font-mono text-sm uppercase tracking-widest border-b border-white pb-1 transition-colors"
         >
             {viewAll ? "Show Less" : "View All Projects"}
         </button>

@@ -103,7 +103,7 @@ export default function InfrastructureExplorer({ connectionId, onClose }: Infras
       {/* Header */}
       <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
         <div>
-            <h2 className="font-bold text-white flex items-center gap-2">
+            <h2 className="font-bold text-slate-50 flex items-center gap-2">
                 <Box className="w-5 h-5 text-brand-400" />
                 Infrastructure Explorer
             </h2>
@@ -132,7 +132,7 @@ export default function InfrastructureExplorer({ connectionId, onClose }: Infras
             placeholder="Search by name, ID, or type..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-1.5 text-sm text-white focus:border-brand-500 outline-none"
+            className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-1.5 text-sm text-slate-50 focus:border-brand-500 outline-none"
           />
         </div>
         <div className="relative min-w-[150px]">
@@ -140,7 +140,7 @@ export default function InfrastructureExplorer({ connectionId, onClose }: Infras
             <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-sm text-white focus:border-brand-500 outline-none appearance-none"
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-sm text-slate-50 focus:border-brand-500 outline-none appearance-none"
             >
                 <option value="all">All Types</option>
                 {resourceTypes.map(type => (

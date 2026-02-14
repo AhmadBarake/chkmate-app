@@ -52,14 +52,14 @@ const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({ isOpen, o
       <div className="relative bg-slate-900 border border-slate-800 rounded-2xl p-8 w-full max-w-md shadow-2xl shadow-brand-500/20 animate-in fade-in zoom-in duration-200">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-slate-500 hover:text-slate-50 transition-colors"
         >
           <X size={20} />
         </button>
 
         {!isSubmitted ? (
           <>
-            <h2 className="text-2xl font-bold text-white mb-2">Join the Waitlist</h2>
+            <h2 className="text-2xl font-bold text-slate-50 mb-2">Join the Waitlist</h2>
             <p className="text-slate-400 mb-6">
               We're currently in closed beta (v1.40). Enter your email to get notified when spots open up.
             </p>
@@ -74,7 +74,7 @@ const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({ isOpen, o
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-slate-50 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all"
                 />
               </div>
               <button
@@ -90,7 +90,7 @@ const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({ isOpen, o
             <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check size={32} />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">You're on the list!</h3>
+            <h3 className="text-xl font-bold text-slate-50 mb-2">You're on the list!</h3>
             <p className="text-slate-400">
               We'll be in touch soon.
             </p>

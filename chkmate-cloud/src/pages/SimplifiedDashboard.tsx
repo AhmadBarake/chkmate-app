@@ -122,7 +122,7 @@ export default function SimplifiedDashboard() {
               <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all duration-300', colors.bg, colors.border, 'border')}>
                 <action.icon className={cn('w-6 h-6', colors.text)} />
               </div>
-              <h3 className="text-lg font-bold text-white mb-1 group-hover:text-brand-300 transition-colors">{action.title}</h3>
+              <h3 className="text-lg font-bold text-slate-50 mb-1 group-hover:text-brand-300 transition-colors">{action.title}</h3>
               <p className="text-sm text-slate-400 mb-4">{action.description}</p>
               <div className={cn('flex items-center gap-1 text-sm font-medium', colors.text)}>
                 Get started <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -174,7 +174,7 @@ export default function SimplifiedDashboard() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Resources</p>
-                  <p className="text-2xl font-black text-white">{scanResult?.summary.totalResources ?? 0}</p>
+                  <p className="text-2xl font-black text-slate-50">{scanResult?.summary.totalResources ?? 0}</p>
                 </div>
               </div>
               <p className="text-xs text-slate-500">Total AWS resources discovered</p>
@@ -187,7 +187,7 @@ export default function SimplifiedDashboard() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Est. Monthly</p>
-                  <p className="text-2xl font-black text-white">
+                  <p className="text-2xl font-black text-slate-50">
                     ${scanResult?.costBreakdown?.totalMonthly?.toFixed(0) ?? '—'}
                   </p>
                 </div>
@@ -206,7 +206,7 @@ export default function SimplifiedDashboard() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Security</p>
-                  <p className="text-2xl font-black text-white">
+                  <p className="text-2xl font-black text-slate-50">
                     {(scanResult?.summary.criticalIssues ?? 0) + (scanResult?.summary.highIssues ?? 0)} issues
                   </p>
                 </div>
