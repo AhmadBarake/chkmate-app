@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { SignedIn, UserButton } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
+import { useTheme } from '../context/ThemeContext';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,8 +61,16 @@ const Navbar: React.FC = () => {
                 </SignedIn>
               </div>
 
-              <span 
-                className="ml-4 px-5 py-2 border border-white/20 text-slate-50/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none"
+              <button
+                onClick={toggleTheme}
+                className="ml-2 p-2 rounded-lg text-slate-400 hover:text-slate-50 hover:bg-slate-800/50 transition-all"
+                title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+              >
+                {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+              </button>
+
+              <span
+                className="ml-2 px-5 py-2 border border-white/20 text-slate-50/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none"
               >
                 v1.41 (Closed Beta)
               </span>
@@ -98,6 +108,13 @@ const Navbar: React.FC = () => {
                  <UserButton afterSignOutUrl="/" />
                </div>
              </SignedIn>
+             <button
+               onClick={toggleTheme}
+               className="flex items-center gap-2 px-3 py-2 text-gray-300 hover:text-slate-50 rounded-md text-base font-medium"
+             >
+               {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+               {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+             </button>
              <div className="block w-full text-center mt-4 px-5 py-3 border border-white/20 text-slate-50/60 text-sm font-mono rounded-full cursor-default select-none pointer-events-none">
                 v1.41 (Closed Beta)
              </div>
