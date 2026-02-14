@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Cpu, DollarSign, Check, ChevronRight, Server, Globe, Database, HardDrive } from 'lucide-react';
+import { DollarSign, Check, Server } from 'lucide-react';
 
 const examples = [
     {
@@ -118,10 +118,8 @@ const TypewriterHero = () => {
 
       <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 items-center h-[380px]">
 
-        {/* Input Card (User) — Fixed height, text truncates/wraps within */}
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+        {/* Input Card (User) — Fixed height, text fits within */}
+        <div
             className="lg:col-span-4 w-full h-[280px] bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-3xl p-6 shadow-2xl flex flex-col relative z-20 overflow-hidden"
         >
             <div className="flex items-center gap-2 mb-4 text-slate-400 text-xs font-medium uppercase tracking-wider flex-shrink-0">
@@ -141,20 +139,20 @@ const TypewriterHero = () => {
                  <div className="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded-full border border-slate-700">Plain English</div>
                  <div className="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded-full border border-slate-700">NLP</div>
              </div>
-        </motion.div>
+        </div>
 
 
-        {/* Output Card (System) */}
+        {/* Output Card (System) — Fixed container, content fades in-place */}
             <div className="lg:col-span-8 relative w-full h-[380px]">
          <AnimatePresence mode='wait'>
             {showResult ? (
                 <motion.div
-                    key={exampleIndex} // Re-animate on change
-                    initial={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
-                    animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="w-full h-full bg-slate-950/90 backdrop-blur-xl border border-brand-500/30 rounded-3xl p-0 shadow-2xl overflow-hidden relative z-10 flex flex-col"
+                    key={exampleIndex}
+                    initial={{ opacity: 0, filter: 'blur(8px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, filter: 'blur(8px)' }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl border border-brand-500/30 rounded-3xl p-0 shadow-2xl overflow-hidden z-10 flex flex-col"
                 >
                     {/* Header */}
                     <div className="h-12 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between px-6 flex-shrink-0">
@@ -205,7 +203,7 @@ const TypewriterHero = () => {
                      </div>
                 </motion.div>
             ) : (
-                 <div className="w-full h-full flex items-center justify-center border border-slate-800/50 rounded-3xl bg-slate-900/20">
+                 <div className="absolute inset-0 flex items-center justify-center border border-slate-800/50 rounded-3xl bg-slate-900/20">
                     <div className="flex flex-col items-center gap-3 opacity-30">
                          <div className="w-12 h-12 rounded-full border-2 border-slate-600 border-t-brand-500 animate-spin" />
                          <span className="font-mono text-sm text-slate-400">Architecting...</span>
