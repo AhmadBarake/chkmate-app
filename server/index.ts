@@ -1362,8 +1362,9 @@ app.get(
 // Connect GitHub account (with personal access token)
 app.post(
   '/api/github/connect',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const { accessToken } = req.body;
     if (!accessToken || typeof accessToken !== 'string') {
       throw new ValidationError('accessToken is required');
@@ -1376,8 +1377,9 @@ app.post(
 // List GitHub connections
 app.get(
   '/api/github/connections',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const connections = await getGitHubConnections(userId);
     res.json(connections);
   })
@@ -1386,9 +1388,10 @@ app.get(
 // Disconnect GitHub
 app.delete(
   '/api/github/connections/:id',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
-    const result = await disconnectGitHub(userId, req.params.id);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const result = await disconnectGitHub(userId, (req.params as { id: string }).id);
     res.json(result);
   })
 );
@@ -1396,9 +1399,10 @@ app.delete(
 // List repos from connected account
 app.get(
   '/api/github/connections/:id/repos',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
-    const repos = await listGitHubRepos(userId, req.params.id);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const repos = await listGitHubRepos(userId, (req.params as { id: string }).id);
     res.json(repos);
   })
 );
@@ -1406,15 +1410,16 @@ app.get(
 // Create new GitHub repo
 app.post(
   '/api/github/connections/:id/repos',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const { name, description, isPrivate } = req.body;
     if (!name || typeof name !== 'string') {
       throw new ValidationError('name is required');
     }
     const repo = await createGitHubRepo(
       userId,
-      req.params.id,
+      (req.params as { id: string }).id,
       name,
       description || '',
       isPrivate !== false,
@@ -1426,13 +1431,15 @@ app.post(
 // List branches for a repo
 app.get(
   '/api/github/connections/:id/repos/:owner/:repo/branches',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const { id, owner, repo } = req.params as { id: string; owner: string; repo: string };
     const branches = await listRepoBranches(
       userId,
-      req.params.id,
-      req.params.owner,
-      req.params.repo,
+      id,
+      owner,
+      repo,
     );
     res.json(branches);
   })
@@ -1441,15 +1448,17 @@ app.get(
 // List files in a repo
 app.get(
   '/api/github/connections/:id/repos/:owner/:repo/files',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const path = (req.query.path as string) || '';
     const branch = req.query.branch as string | undefined;
+    const { id, owner, repo } = req.params as { id: string; owner: string; repo: string };
     const files = await getRepoFiles(
       userId,
-      req.params.id,
-      req.params.owner,
-      req.params.repo,
+      id,
+      owner,
+      repo,
       path,
       branch,
     );
@@ -1460,15 +1469,16 @@ app.get(
 // Link template to repo
 app.post(
   '/api/templates/:templateId/github/link',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const { connectionId, repoFullName, branch, filePath, syncDirection } = req.body;
     if (!connectionId || !repoFullName) {
       throw new ValidationError('connectionId and repoFullName are required');
     }
     const link = await linkTemplateToRepo(
       userId,
-      req.params.templateId,
+      (req.params as { templateId: string }).templateId,
       connectionId,
       repoFullName,
       branch,
@@ -1482,9 +1492,10 @@ app.post(
 // Get template repo links
 app.get(
   '/api/templates/:templateId/github/links',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
-    const links = await getTemplateRepoLinks(userId, req.params.templateId);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const links = await getTemplateRepoLinks(userId, (req.params as { templateId: string }).templateId);
     res.json(links);
   })
 );
@@ -1492,12 +1503,14 @@ app.get(
 // Unlink template from repo
 app.delete(
   '/api/templates/:templateId/github/link/:linkId',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
+    const { templateId, linkId } = req.params as { templateId: string; linkId: string };
     const result = await unlinkTemplateFromRepo(
       userId,
-      req.params.templateId,
-      req.params.linkId,
+      templateId,
+      linkId,
     );
     res.json(result);
   })
@@ -1506,15 +1519,16 @@ app.delete(
 // Push template to GitHub
 app.post(
   '/api/templates/:templateId/github/push',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const { repoLinkId, commitMessage } = req.body;
     if (!repoLinkId) {
       throw new ValidationError('repoLinkId is required');
     }
     const result = await pushTemplateToGitHub(
       userId,
-      req.params.templateId,
+      (req.params as { templateId: string }).templateId,
       repoLinkId,
       commitMessage,
     );
@@ -1525,15 +1539,16 @@ app.post(
 // Pull from GitHub into template
 app.post(
   '/api/templates/:templateId/github/pull',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const { repoLinkId } = req.body;
     if (!repoLinkId) {
       throw new ValidationError('repoLinkId is required');
     }
     const result = await pullFromGitHub(
       userId,
-      req.params.templateId,
+      (req.params as { templateId: string }).templateId,
       repoLinkId,
     );
     res.json(result);
@@ -1543,15 +1558,16 @@ app.post(
 // Quick push: link + push in one action
 app.post(
   '/api/templates/:templateId/github/quick-push',
-  asyncHandler(async (req: any, res: any) => {
-    const userId = requireAuth(req);
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).userId;
     const { connectionId, repoFullName, branch, filePath, commitMessage } = req.body;
     if (!connectionId || !repoFullName) {
       throw new ValidationError('connectionId and repoFullName are required');
     }
     const result = await quickPushToGitHub(
       userId,
-      req.params.templateId,
+      (req.params as { templateId: string }).templateId,
       connectionId,
       repoFullName,
       branch,
